@@ -1,0 +1,34 @@
+<h2>All Sellers</h2>
+
+<form method="get" action="{% url 'seller_list' %}">
+    <input type="text" name="q" placeholder="Search sellers..." value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+<h3>Matching Sellers</h3>
+<ul>
+    {% for seller in sellers %}
+        <li>
+            <a href="{% url 'user_profile' seller.id %}">{{ seller.username }}</a>
+            {% if seller in following %}
+                ✅ Following
+            {% endif %}
+            <br><small>{{ seller.location }}</small>
+        </li>
+    {% empty %}
+        <li>No sellers found.</li>
+    {% endfor %}
+</ul>
+
+{% if user.is_authenticated and following %}
+    <h3>Sellers You Follow</h3>
+    <ul>
+        {% for seller in following %}
+            <li>
+                <a href="{% url 'user_profile' seller.id %}">{{ seller.username }}</a> – {{ seller.location }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<a href="{% url 'home' %}">← Back to Home</a>

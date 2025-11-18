@@ -1,0 +1,115 @@
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}User Profiles{% endblock %}
+
+{% block content %}
+
+
+<main>
+    {% if messages %}
+    <div class="alert alert-success">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+    <!-- section -->
+    <section>
+       <!-- container -->
+       <div class="container">
+          <!-- row -->
+          <div class="row">
+             <!-- col -->
+             <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center d-md-none py-4">
+                   <!-- heading -->
+                   <h3 class="fs-5 mb-0">Account Setting</h3>
+                   <!-- button -->
+                   <button
+                      class="btn btn-outline-gray-400 text-muted d-md-none btn-icon btn-sm ms-3"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasAccount"
+                      aria-controls="offcanvasAccount">
+                      <i class="bi bi-text-indent-left fs-3"></i>
+                   </button>
+                </div>
+             </div>
+             <!-- col -->
+             {% include 'shared/admin_nav.html' %}
+             <div class="col-lg-9 col-md-8 col-12">
+                    <div class="py-6 p-md-6 p-lg-10">
+                    <!-- heading -->
+                    <div class="row mb-6">
+                        <div class="col d-flex justify-content-between">
+                            <h2 class="mb-0">All Users</h2>
+                        </div>
+                    </div>
+                    <div class="table-responsive-xxl border-0">
+                        <table class="table mb-0 text-nowrap table-centered">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Location</th>
+                                    <th>Is Seller</th>
+                                    <th>Bio</th>
+                                    <!-- <th>Actions</th> -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td class="align-middle border-top-0 w-0">
+                                                {% if user.profile_picture %}
+                                                <a href="#"><img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="25" class="rounded-circle"></a>
+                                                {% else %}
+                                                <a href="#"><img src="{% static 'assets/images/added/user-profile.png' %}" alt="Profile Picture" width="25"></a>
+                                                {% endif %}
+                                        </td>
+                                        <td class="align-middle border-top-0">{{ user.username }}</td>
+                                        <td class="align-middle border-top-0">{{ user.email }}</td>
+                                        <td class="align-middle border-top-0">{{ user.location }}</td>
+                                        <td class="align-middle border-top-0">{{ user.is_seller }}</td>
+                                        <!-- <td class="align-middle border-top-0">
+                                            <a href="{% url 'update_user' user.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                        </td> -->
+                                        <!-- <td class="text-muted align-middle border-top-0"> -->
+                                            <!-- View Button -->
+                                            <!-- <a href="" class="text-inherit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View">
+                                                <i class="feather-icon icon-eye"></i>
+                                            </a> -->
+                                            <!-- Gap between View and Edit -->
+                                            <!-- <a href="{% url 'update_user' user.id %}" class="text-inherit ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                                                <i class="feather-icon icon-edit"></i>
+                                            </a> -->
+                                        <!-- </td> -->
+                                        <td class="align-middle border-top-0">{{ user.bio }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <p>No Users to show.</p>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </section>
+ </main>
+
+ <script>
+   function submitForm(productId) {
+       document.getElementById('status-form-' + productId).submit();
+   }
+</script>
+
+
+
+{% endblock %}

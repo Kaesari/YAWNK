@@ -1,0 +1,938 @@
+
+
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+<main>
+   <!-- Hero Responsive Container - Two Column Category Section -->
+   <section class="hero-responsive-container">
+      <!-- Women's Category Block -->
+      <div class="category-women" style="background-image: url({% static 'asset/yawnk_images/hero_women.webp' %})">
+         <div class="overlay-content">
+            <h2>Women</h2>
+            <a href="{% url 'product_list' %}?target=Women">
+               <button class="category-button">Shop now</button>
+            </a>
+         </div>
+      </div>
+
+      <!-- Men's Category Block -->
+      <div class="category-men" style="background-image: url({% static 'asset/yawnk_images/hero_men.webp' %})">
+         <div class="overlay-content">
+            <h2>Men</h2>
+            <a href="{% url 'product_list' %}?target=Men">
+               <button class="category-button">Shop now</button>
+            </a>
+         </div>
+      </div>
+   </section>
+
+   <!-- section category -->
+   <section class="my-lg-14 my-8">
+      <div class="container">
+         <div class="row align-items-center mb-6">
+            <div class="col-10">
+               <div>
+                  <!-- heading -->
+                  <h3 class="align-items-center d-flex mb-0 h4">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-layers text-danger">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                        <polyline points="2 17 12 22 22 17"></polyline>
+                        <polyline points="2 12 12 17 22 12"></polyline>
+                     </svg>
+                     <span class="ms-3 fw-bold fs-1">Shop by Price</span>
+                  </h3>
+               </div>
+            </div>
+            <div class="col-2">
+               <div class="slider-arrow slider-8-columns-arrow" id="slider-8-columns-arrows"></div>
+            </div>
+         </div>
+   
+         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"> <!-- Use grid system here -->
+            <div class="col">
+               <!-- item 1-->
+               <a href="{% url 'product_list' %}?max_price=1000" class="text-decoration-none text-inherit">
+                  <!-- card -->
+                  <div class="card mb-3 card-lift">
+                     <div class="card-body text-center py-6 text-center">
+                        <!-- text -->
+                        <div class="text-dark fw-bold fs-5">Under Ksh 1000</div>
+                     </div>
+                  </div>
+               </a>
+            </div>            
+   
+            <!-- item 2 -->
+            <div class="col">
+               <!-- item 1-->
+               <a href="{% url 'product_list' %}?max_price=2000" class="text-decoration-none text-inherit">
+                  <!-- card -->
+                  <div class="card mb-3 card-lift">
+                     <div class="card-body text-center py-6 text-center">
+                        <!-- text -->
+                        <div class="text-dark fw-bold fs-5">Under Ksh 2000</div>
+                     </div>
+                  </div>
+               </a>
+            </div>
+            
+            <!-- item 3 -->
+            <div class="col">
+               <!-- item 1-->
+               <a href="{% url 'product_list' %}?max_price=5000" class="text-decoration-none text-inherit">
+                  <!-- card -->
+                  <div class="card mb-3 card-lift">
+                     <div class="card-body text-center py-6 text-center">
+                        <!-- text -->
+                        <div class="text-dark fw-bold fs-5">Under Ksh 5000</div>
+                     </div>
+                  </div>
+               </a>
+            </div>            
+         </div>
+      </div>
+   </section>
+   <!-- section -->
+   <!-- section -->
+   <section class="text-center my-5">
+      <h2 class="mb-4">You don't wear it? Someone else will.</h2>
+      <!-- <a href="#!" class="btn btn-danger text-white px-4 py-2">
+         <i class="bi bi-tag fs-4"></i> Sell now
+      </a> -->
+      {% if user.is_authenticated %}
+         <a href="{% url 'create_product' %}" class="btn btn-danger text-white p-8 py-2 fw-bold fs-5">
+            <i class="bi bi-tag fs-4 px-2"></i> Sell now
+         </a>
+      {% else %}
+            <!-- Display Login button if user is not authenticated -->
+            <a href="{% url 'login' %}?next={% url 'create_product' %}" class="btn btn-danger text-white p-4 py-2">
+               <i class="bi bi-tag fs-4"></i> Sell now
+            </a>
+      {% endif %}
+   </section>
+   <!-- section -->
+   <!-- section -->
+
+   <section>
+      <div class="container">
+        <!-- row -->
+        <div class="row">
+          <div class="col-12 mb-6">
+            <!-- heading -->
+            <h3 class="align-items-center d-flex mb-0 h4">
+              <i class="bi bi-flag fs-3 text-danger me-2"></i>
+              <span class="ms-3  fw-bold fs-1">Homegrown KE</span>
+              <span class="fs-4 text-warning ms-2">🔥</span>
+            </h3>
+            <p class="mb-0">Check our our locally made products.</p>
+          </div>
+        </div>
+        <!-- slider -->
+        <div class="carousel-container w-100">
+          <div id="directionCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+             <!-- In your carousel template -->
+            <div class="carousel-inner">
+               {% for slide in home_grown_banners %}
+               <div class="carousel-item {% if forloop.first %}active{% endif %} {{ slide.slide_direction }}-slide">
+                  <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.alt_text }}">
+                  <div class="carousel-shop-now">
+                     <h4 class="category-title mb-2">{{ slide.title }}</h4>
+                     <p class="category-description mb-3">{{ slide.description }}</p>
+                     <a href="{% url 'product_list' %}?target={{ slide.category|urlencode }}" class="btn btn-shop-now">
+                     {{ slide.buttontext }} <i class="bi bi-arrow-right ms-2"></i>
+                     </a>
+                  </div>
+               </div>
+               {% endfor %}
+            </div>
+            
+            <!-- Your existing next button -->
+            <button class="carousel-control-next" type="button" data-bs-target="#directionCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   <!-- section -->
+   <!-- section -->
+   <section class="my-lg-14 my-8">
+      <!-- category -->
+      <div class="container">
+         <!-- row -->
+         <div class="row">
+            <div class="col-12">
+               <div class="mb-8">
+                  <!-- heading -->
+                  <h3 class="mb-0 fw-bold fs-1">Shop Men's wear</h3>
+               </div>
+            </div>
+         </div>
+         <!-- row -->
+         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xxl-6 g-6">
+            {% for category in men_categories %}
+            <!-- col -->
+            <div class="col">
+                <a href="{% url 'product_list' %}?category={{ category.name }}&target=Men" class="text-decoration-none text-inherit">
+                    <!-- card -->
+                    <div class="card card-product" style="background-color: #d4d6db;">
+                        <div class="card-body text-center py-8">
+                            <!-- img -->
+                            <img src="{{ category.image.url }}" alt="{{ category.name }}" class="mb-3 img-fluid" />
+                            <!-- text -->
+                            <!-- <div class="text-truncate  fw-bold fs-5">{{ category.name }}</div> -->
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+                <p>No Category to show.</p>
+            {% endfor %}
+        </div>                       
+      </div>
+   </section>
+   <!-- section -->
+   <section class="my-lg-14 my-8">
+      <!-- category -->
+      <div class="container">
+         <!-- row -->
+         <div class="row">
+            <div class="col-12">
+               <div class="mb-8">
+                  <!-- heading -->
+                  <h3 class="mb-0 fw-bold fs-1">Shop Women's wear</h3>
+               </div>
+            </div>
+         </div>
+         <!-- row -->
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xxl-6 g-6">
+         {% for category in women_categories %}
+         <!-- col -->
+               <div class="col">
+                  <a href="{% url 'product_list' %}?category={{ category.name }}&target=Women" class="text-decoration-none text-inherit">
+                     <!-- card -->
+                     <div class="card card-product"  style="background-color: #d4d6db;">
+                           <div class="card-body text-center py-8">
+                              <!-- img -->
+                              <img src="{{ category.image.url }}" alt="{{ category.name }}" class="mb-3 img-fluid" />
+                              <!-- text -->
+                              <!-- <div class="text-truncate  fw-bold fs-5">{{ category.name }}</div> -->
+                           </div>
+                     </div>
+                  </a>
+               </div>
+               {% empty %}
+                  <p>No Category to show.</p>
+               {% endfor %}
+         </div>
+      </div>
+   </section>
+    <!-- section -->
+
+   <section class="my-lg-14  d-none d-lg-block my-8">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 mb-6">
+            <h3 class="mb-1 fw-bold fs-1">Staff Pick</h3>
+            <p class="mb-0">Get a wide variety from our collections</p>
+          </div>
+        </div>
+        <div class="container">
+          <div class="row g-3">
+            <!-- Left column with 3x2 grid (col-8) -->
+            <div class="col-lg-7 col-12">
+              <div class="row g-3">
+                {% for product in StaffPickProducts|slice:":6" %}
+                <div class="col-md-4 col-6">
+                  <a href="{% url 'product_detail' product.id %}">
+                  <div class="gallery-img-container small-img">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="gallery-img">
+                    <div class="gallery-overlay">
+                      <h5>{{ product.name|truncatechars:20 }}</h5>
+                      <div class="price">Ksh {{ product.price }}</div>
+                    </div>
+                  </div>
+                  </a>
+                </div>
+                {% endfor %}
+                
+                {% with StaffPickProducts|length as product_count %}
+                {% if product_count < 6 %}
+                  {% with "123456" as default_slots %}
+                    {% for i in default_slots %}
+                      {% if forloop.counter0 >= product_count %}
+                      <div class="col-md-4 col-6">
+                        <div class="gallery-img-container small-img">
+                          <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                               alt="Featured Product" 
+                               class="gallery-img">
+                          <div class="gallery-overlay">
+                            <h5>Featured Product</h5>
+                            <p class="mb-2 d-none d-lg-block">Premium collection item</p>
+                          </div>
+                        </div>
+                      </div>
+                      {% endif %}
+                    {% endfor %}
+                  {% endwith %}
+                {% endif %}
+              {% endwith %}
+              </div>
+            </div>
+            
+            <!-- Right column with large image (col-4) -->
+            <div class="col-lg-4 col-12">
+              {% with StaffPickProducts|length as product_count %}
+                {% if product_count > 6 %}
+                  {% with StaffPickProducts|slice:"6:7"|first as featured_product %}
+                  <a href="{% url 'product_detail' featured_product.id %}">
+                  <div class="gallery-img-container large-img h-100">
+                    <img src="{{ featured_product.image.url }}" alt="{{ featured_product.name }}" class="gallery-img">
+                    <div class="gallery-overlay">
+                      <h5>{{ featured_product.name|truncatechars:20 }}</h5>
+                      <p class="mb-2 d-none d-lg-block">{{ featured_product.description|truncatechars:50 }}</p>
+                      <div class="price">Ksh {{ featured_product.price }}</div>
+                    </div>
+                  </div>
+                  </a>
+                  {% endwith %}
+                {% else %}
+                  <div class="gallery-img-container large-img h-100">
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                         alt="Featured Product" 
+                         class="gallery-img">
+                    <div class="gallery-overlay">
+                      <h5>Featured Product</h5>
+                      <p class="mb-2 d-none d-lg-block">Premium collection item</p>
+                    </div>
+                  </div>
+                {% endif %}
+              {% endwith %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="my-lg-14  d-lg-none my-8">
+       <div class="container">
+         <div class="row">
+           <div class="col-12 mb-6">
+             <h3 class="mb-1 fw-bold fs-1">Staff Pick</h3>
+             <p class="mb-0">Get a wide variety from our collections</p>
+           </div>
+         </div>
+         <div class="container">
+           <div class="row g-3">
+             <!-- Left column with 3x2 grid (col-8) -->
+             <div class="col-lg-7 col-12">
+               <div class="row g-3">
+                 {% for product in StaffPickProducts|slice:":4" %}
+                 <div class="col-md-4 col-6">
+                     <a href="{% url 'product_detail' product.id %}">
+                     <div class="gallery-img-container small-img">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="gallery-img">
+                        <!-- <div class="gallery-overlay">
+                        <h5>{{ product.name|truncatechars:20 }}</h5>
+                        <div class="price">Ksh {{ product.price }}</div>
+                        </div> -->
+                     </div>
+                     </a>
+                 </div>
+                 {% endfor %}
+                 
+                 {% with StaffPickProducts|length as product_count %}
+                  {% if product_count < 4 %}
+                     {% with "1234" as default_slots %}
+                        {% for i in default_slots %}
+                        {% if forloop.counter0 >= product_count %}
+                        <div class="col-md-4 col-6">
+                           <div class="gallery-img-container small-img">
+                              <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                                 alt="Featured Product" 
+                                 class="gallery-img">
+                              <!-- <div class="gallery-overlay">
+                              <h5>Featured Product</h5>
+                              </div> -->
+                           </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                     {% endwith %}
+                  {% endif %}
+                  {% endwith %}
+               </div>
+             </div>
+             
+             <!-- Right column with large image (col-4) -->
+             <div class="col-lg-4 col-12">
+               {% with StaffPickProducts|length as product_count %}
+                 {% if product_count > 4 %}
+                   {% with StaffPickProducts|slice:"4:5"|first as featured_product %}
+                   <a href="{% url 'product_detail' featured_product.id %}">
+                     <div class="gallery-img-container large-img h-100">
+                        <img src="{{ featured_product.image.url }}" alt="{{ featured_product.name }}" class="gallery-img">
+                        <!-- <div class="gallery-overlay">
+                        <h5>{{ featured_product.name|truncatechars:20 }}</h5>
+                        <p class="mb-2 d-none d-lg-block">{{ featured_product.description|truncatechars:50 }}</p>
+                        <div class="price">Ksh {{ featured_product.price }}</div>
+                        </div> -->
+                     </div>
+                  </a>
+                   {% endwith %}
+                  {% else %}
+                     <div class="gallery-img-container large-img h-100">
+                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                           alt="Featured Product" 
+                           class="gallery-img">
+                        <!-- <div class="gallery-overlay">
+                        <h5>Featured Product</h5>
+                        <p class="mb-2 d-none d-lg-block">Premium collection item</p>
+                        </div> -->
+                     </div>
+                  {% endif %}
+                  {% endwith %}
+               </div>
+
+               <div class="col-lg-4 col-12">
+                  <div class="row g-2">  <!-- Added row wrapper -->
+                    {% with StaffPickProducts|length as product_count %}
+                      {% if product_count > 5 %}
+                        {% for product in StaffPickProducts|slice:"5:7" %}  <!-- Changed to show 2 products -->
+                        <div class="col-md-6 col-6">  <!-- Changed to take half width -->
+                           <a href="{% url 'product_detail' product.id %}">
+                              <div class="gallery-img-container small-img">
+                                 <img src="{{ product.image.url }}" alt="{{ product.name }}" class="gallery-img">
+                                 <!-- <div class="gallery-overlay">
+                                    <h5>{{ product.name|truncatechars:20 }}</h5>
+                                    <div class="price">Ksh {{ product.price }}</div>
+                                 </div> -->
+                              </div>
+                           </a>
+                        </div>
+                        {% endfor %}
+                      {% else %}
+                        {% for i in "12" %}  <!-- Show 2 default images if not enough products -->
+                        <div class="col-md-6 col-6">
+                          <div class="gallery-img-container small-img">
+                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                                 alt="Featured Product" 
+                                 class="gallery-img">
+                            <!-- <div class="gallery-overlay">
+                              <h5>Featured Product</h5>
+                              <div class="price">Ksh 0</div>
+                            </div> -->
+                          </div>
+                        </div>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+                  </div>
+                </div>
+             </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </section>
+
+   <section>
+      <div class="container mb-10">
+         <div class="row">
+            <div class="col-12 mb-6">
+               <h3 class="mb-1 fw-bold fs-1">Your Feeds</h3>
+               <p class="mb-0">Discover a wide variety of products from sellers you follow</p>
+            </div>
+         </div>
+         <!-- slider -->
+         <div class="product-slider">
+            {% for product in UserFeedsProducts %}
+               <div class="item">
+                  <!-- Wrap the entire card in an anchor tag to navigate to the product detail page -->
+                  <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                     <div class="card card-product">
+                        <div class="card-body">
+                           <!-- badge -->
+                           <div class="text-center position-relative">
+                              <div class="position-absolute top-0 start-0">
+                                 <span class="badge bg-info">Sale</span>
+                              </div>
+                              <!-- img -->
+                              <img src="{% if product.image %}{{ product.image.url }}{% else %}https://via.placeholder.com/500x500?text=No+Image{% endif %}" alt="{{ product.name }}" class="mb-3 img-fluid" />
+                           </div>
+                           <!-- title -->
+                           <div class="text-small mb-1">
+                              <a href="#!" class="text-decoration-none text-muted"><small>{{ product.category }}</small></a>
+                           </div>
+                           <h2 class="fs-6"><a href="#!" class="text-inherit text-decoration-none">{{ product.name }}</a></h2>
+                           <div>
+                              <!-- rating -->
+                              {% if product.reviews.exists %}
+                              {% for i in "12345" %}
+                                 {% if forloop.counter <= product.average_rating %}
+                                 <small class="text-warning">
+                                       <i class="bi bi-star-fill"></i>
+                                 </small>
+                                 {% else %}
+                                 <small class="text-warning">
+                                       <i class="bi bi-star"></i>
+                                 </small>
+                                 {% endif %}
+                              {% endfor %}
+                              {% else %}
+                              {% for i in "12345" %}
+                              {% if forloop.counter <= product.average_rating %}
+                                 <small class="text-warning">
+                                       <i class="bi bi-star-fill"></i>
+                                 </small>
+                              {% else %}
+                                 <small class="text-warning">
+                                       <i class="bi bi-star"></i>
+                                 </small>
+                              {% endif %}
+                              {% endfor %}
+                              {% endif %}
+                              <span class="text-muted small">{{ product.average_rating }}({{ product.reviews.count }})</span>
+                           </div>
+                           <!-- price -->
+                           <div class="d-flex justify-content-between align-items-center mt-3">
+                              <div>
+                                 <span class="text-dark">Ksh {{ product.price }}</span>
+                              </div>
+                              <!-- btn -->
+                              <div>
+                                 {% if user.is_authenticated and user != product.seller %}
+                                 <a href="{% url 'start_chat' product.id %}" class="btn btn-primary btn-sm rounded-pill px-3" data-bs-toggle="tooltip" title="Message {{ product.seller }}">
+                                       <i class="bi bi-chat-text-fill me-1"></i> DM
+                                 </a>
+                                 {% endif %}
+   
+                                 {% if not user.is_authenticated %}
+                                 <a href="{% url 'login' %}" class="btn btn-primary btn-sm rounded-pill px-3" data-bs-toggle="tooltip" title="Login to Message {{ product.seller }}">
+                                       <i class="bi bi-chat-text-fill me-1"></i> DM
+                                 </a>
+                                 {% endif %}
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </a>
+               </div>
+            {% empty %}
+               <p>No products to show.</p>
+            {% endfor %}
+         </div>
+      </div>
+   </section>
+   
+   <!-- section -->
+
+</main>
+
+    
+<style>
+   .gallery-img-container {
+     position: relative;
+     overflow: hidden;
+     border-radius: 8px;
+     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+     transition: transform 0.3s ease;
+   }
+   
+   .gallery-img-container:hover {
+     transform: translateY(-5px);
+   }
+   
+   .gallery-img {
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+     transition: transform 0.5s ease;
+   }
+   
+   .gallery-img-container:hover .gallery-img {
+     transform: scale(1.05);
+   }
+   
+   .gallery-overlay {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+     color: white;
+     padding: 20px;
+   }
+   
+   .small-img {
+     aspect-ratio: 1/1;
+   }
+   
+   .large-img {
+     aspect-ratio: 3/4;
+   }
+ </style>
+
+<!-- Your existing JavaScript remains the same -->
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+     // Your existing carousel initialization
+     const carousel = document.getElementById('directionCarousel');
+     const items = carousel.querySelectorAll('.carousel-item');
+     
+     // Set initial direction classes
+     items.forEach((item, index) => {
+       if (index === 0) {
+         item.classList.add('left-slide');
+       } else {
+         item.classList.add('right-slide');
+       }
+     });
+     
+     // Update directions when sliding
+     carousel.addEventListener('slid.bs.carousel', function() {
+       const activeIndex = [...items].findIndex(item => item.classList.contains('active'));
+       
+       items.forEach((item, index) => {
+         item.classList.remove('left-slide', 'right-slide');
+         if (index === 0) {
+           item.classList.add('left-slide');
+         } else {
+           item.classList.add('right-slide');
+         }
+       });
+     });
+ 
+     // Handle shop now buttons
+     document.querySelectorAll('.btn-shop-now').forEach(button => {
+       button.addEventListener('click', function() {
+         const productCategory = this.getAttribute('data-product');
+         // Example: Redirect to specific product category
+         window.location.href = `/shop?category=${productCategory}`;
+       });
+     });
+   });
+ </script>
+
+<style>
+   /* Your existing carousel-shop-now with enhancements */
+   .carousel-shop-now {
+     position: absolute;
+     bottom: 50px;
+     left: 15%;
+     z-index: 10;
+     background-color: rgba(0, 0, 0, 0.555); /* Slightly more opaque */
+     padding: 20px;
+     border-radius: 8px;
+     max-width: 320px;
+     animation: fadeIn 0.5s ease-out;
+     text-align: left;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Added subtle shadow */
+   }
+ 
+   /* New styles for clothing category content */
+   .carousel-shop-now .category-title {
+     font-size: 1.4rem;
+     font-weight: 700;
+     color: #ffffff;
+     margin-bottom: 8px;
+   }
+ 
+   .carousel-shop-now .category-description {
+     font-size: 0.95rem;
+     color: #e0e0e0;
+     line-height: 1.4;
+     margin-bottom: 15px;
+   }
+ 
+   .carousel-shop-now .btn-shop-now {
+     background-color: #dc3545;
+     color: white;
+     border: none;
+     padding: 8px 20px;
+     border-radius: 20px;
+     font-weight: 600;
+     transition: all 0.3s ease;
+     display: inline-flex;
+     align-items: center;
+   }
+ 
+   .carousel-shop-now .btn-shop-now:hover {
+     background-color: #bb2d3b;
+     transform: translateY(-2px);
+     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+   }
+ 
+   @keyframes fadeIn {
+     from { opacity: 0; transform: translateY(10px); }
+     to { opacity: 1; transform: translateY(0); }
+   }
+ 
+   /* Responsive adjustments - Enhanced */
+   @media (max-width: 768px) {
+     .carousel-shop-now {
+       bottom: 60px;
+       left: 10%;
+       /* transform: translateX(-50%); */
+       width: 80%;
+       max-width: none;
+       padding: 15px;
+     }
+     
+     .carousel-shop-now .category-title {
+       font-size: 1.2rem;
+     }
+     
+     .carousel-shop-now .category-description {
+       font-size: 0.85rem;
+       margin-bottom: 10px;
+     }
+   }
+ 
+   /* Your existing carousel styles - UNCHANGED */
+   .carousel-container {
+     width: 100vw;
+     position: relative;
+     left: 50%;
+     transform: translateX(-50%);
+   }
+   
+   .carousel-inner {
+     width: 100%;
+   }
+   
+   .carousel-item {
+     transition: transform 0.2s ease-in-out;
+   }
+   
+   .left-slide:not(.active) {
+     transform: translateX(-100%);
+   }
+   
+   .right-slide:not(.active) {
+     transform: translateX(100%);
+   }
+   
+   .carousel-item.active {
+     transform: translateX(0);
+   }
+   
+   .carousel-item img {
+     width: 100%;
+     height: 300px;
+     border-radius: 16px;
+     object-fit: cover;
+   }
+   
+   @media (max-width: 768px) {
+     .carousel-item img {
+       height: 300px;
+       border-radius: 10px;
+     }
+   }
+ 
+   /* Your existing navigation buttons - UNCHANGED */
+   .carousel-control-prev,
+   .carousel-control-next {
+     width: 50px;
+     height: 50px;
+     background-color: rgba(255, 255, 255, 0.9);
+     border-radius: 50%;
+     top: 50%;
+     transform: translateY(-50%);
+     opacity: 1;
+     transition: all 0.3s ease;
+     border: 2px solid #fff;
+     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+   }
+   
+   .carousel-control-prev {
+     left: 20px;
+   }
+   
+   .carousel-control-next {
+     right: 20px;
+   }
+   
+   .carousel-control-prev:hover,
+   .carousel-control-next:hover {
+     background-color: rgba(255, 255, 255, 1);
+     transform: translateY(-50%) scale(1.05);
+   }
+   
+   .carousel-control-prev-icon,
+   .carousel-control-next-icon {
+     width: 1.5rem;
+     height: 1.5rem;
+     background-size: 100% 100%;
+     filter: brightness(0) saturate(100%) invert(20%) sepia(13%) saturate(1564%) hue-rotate(335deg) brightness(95%) contrast(89%);
+   }
+   
+   @media (max-width: 768px) {
+     .carousel-control-prev,
+     .carousel-control-next {
+       width: 40px;
+       height: 40px;
+     }
+     
+     .carousel-control-prev-icon,
+     .carousel-control-next-icon {
+       width: 1.2rem;
+       height: 1.2rem;
+     }
+   }
+
+   :root {
+  --card_width: 310px;
+  --row_increment: 10px;
+  --card_small: 16;   /* 240px (1:1 ratio) */
+  --card_medium: 20;  /* 300px (1:1.25 ratio) */
+  --card_large: 24;   /* 360px (1:1.5 ratio) */
+  --image-ratio-small: 0.8;        /* 1:1 */
+  --image-ratio-medium: 0.6;    /* 1:1.25 */ 
+  --image-ratio-large: 0.5;      /* 1:1.5 */
+}
+
+
+.image-grid-section {
+  padding: 10px 0;
+}
+
+.pin_container {
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--card_width));
+  grid-auto-rows: var(--row_increment);
+  justify-content: center;
+  gap: 15px;
+}
+
+.grid-item {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.image-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Aspect ratio containers */
+.image-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* Default 1:1 ratio */
+  overflow: hidden;
+}
+
+.item-small .image-container {
+  padding-bottom: calc(100% / var(--image-ratio-small));
+}
+
+.item-medium .image-container {
+  padding-bottom: calc(100% / var(--image-ratio-medium));
+}
+
+.item-large .image-container {
+  padding-bottom: calc(100% / var(--image-ratio-large));
+}
+
+.product-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.grid-item:hover {
+  transform: scale(1.02);
+}
+
+.grid-item:hover .product-image {
+  transform: scale(1.05);
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+  color: white;
+  padding: 20px 15px 15px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.grid-item:hover .image-overlay {
+  opacity: 1;
+}
+
+.product-name {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.product-price {
+  font-weight: bold;
+  color: #ffdd40;
+}
+
+/* Size classes */
+.item-small {
+  grid-row-end: span var(--card_small);
+}
+
+.item-medium {
+  grid-row-end: span var(--card_medium);
+}
+
+.item-large {
+  grid-row-end: span var(--card_large);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --card_width: 200px;
+    --card_small: 10;
+    --card_medium: 14;
+    --card_large: 16;
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --card_width: 150px;
+    --card_small: 8;
+    --card_medium: 10;
+    --card_large: 12;
+  }
+}
+
+
+ </style>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,144 @@
+
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}Your Feeds{% endblock %}
+
+{% block content %}
+
+
+<main>
+    <!-- section -->
+    <section>
+       <!-- container -->
+       <div class="container">
+          <!-- row -->
+          <div class="row">
+             <!-- col -->
+             <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center d-md-none py-4">
+                   <!-- heading -->
+                   <h3 class="fs-5 mb-0">Account Setting</h3>
+                   <!-- button -->
+                   <button
+                      class="btn btn-outline-gray-400 text-muted d-md-none btn-icon btn-sm ms-3"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasAccount"
+                      aria-controls="offcanvasAccount">
+                      <i class="bi bi-text-indent-left fs-3"></i>
+                   </button>
+                </div>
+             </div>
+             <!-- col -->
+             {% include 'shared/admin_nav.html' %}
+
+
+             
+             <div class="col-lg-9 col-md-8 col-12">
+                <div class="py-6 p-md-6 p-lg-10">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-md-6 text-center">
+                                <div class="seller-details text-center">
+                                    <!-- Profile Picture -->
+
+                                    {% if user.profile_picture %}
+                                    <a href="#"><img src="{{ seller.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;"></a>
+                                    {% else %}
+                                    <a href="#"><img src="{% static 'assets/images/added/user-profile.png' %}" class="img-fluid rounded-circle mb-3" alt="Profile Picture" style="max-width: 150px;"></a>
+                                    {% endif %}
+                                    <br>
+                                
+                                    <!-- Seller Details -->
+                                    <h3>Username: {{ seller.username }}</h3>
+                                    <p>Bio: {{ seller.bio }}</p>
+                                    <p>Location: {{ seller.location }}</p>
+                                
+                                    <!-- Buttons for Follow and Message -->
+                                    <div class="d-flex justify-content-center gap-3 mb-10"> 
+                                        <a href="#" class="btn btn-outline-info" onclick="window.history.back();">
+                                            ← Back
+                                        </a>
+                                        {% if user.is_authenticated %}
+                                            <form method="POST" action="{% url 'follow_seller_toggle' seller.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                {% if is_following %}
+                                                    <button class="btn btn-primary" type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Unfollow Seller">Unfollow Seller</button>
+                                                {% else %}
+                                                    <button class="btn btn-primary" type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Follow Seller for new posts">Follow Seller</button>
+                                                {% endif %}
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- heading -->
+                    <div class="d-flex justify-content-between mb-6 align-items-center">
+                        <h2 class="mb-0">Seller's Products</h2>
+                        <!-- <a href="#" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#paymentModal">Add Payment</a> -->
+                    </div>
+                    <div class="container">
+                        <!-- Grid container -->
+                        <div class="row gx-2 gy-3"> <!-- Horizontal and vertical spacing -->
+                            {% for product in products %}
+                            <div class="col-4 col-sm-3 col-md-2"> <!-- Responsive columns -->
+                                <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                                    <div class="card h-100 border-0 product-card"> <!-- Added a custom class for the card -->
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" 
+                                             class="card-img-top img-fluid product-image" style="aspect-ratio: 1 / 1; ">
+                                        <!-- Optionally, you can also add card body with product info here if needed -->
+                                    </div>
+                                </a>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center py-5">
+                                <div class="alert alert-info">No products found</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                   </ul>
+                </div>
+             </div>
+          </div>
+       </div>
+    </section>
+ </main>
+
+
+                    
+ <style>
+    /* Styling for the product card */
+    .product-card {
+        border-radius: 5px; /* Adds border radius to card */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Adds shadow to card */
+        overflow: hidden; /* Ensures the border radius applies to the card */
+        transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition on hover */
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px); /* Slightly lift the card on hover */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+    }
+
+    /* Styling for the product image */
+    .product-image {
+        border-radius: 5px 5px 0 0; /* Adds border radius to the top of the image */
+        object-fit: cover; /* Ensures the image maintains aspect ratio */
+    }
+
+    /* Optional: Styling for the card body */
+    .card-body {
+        padding: 1rem;
+        border-radius: 0 0 5px 5px; /* Border radius for the bottom of the card */
+    }
+</style>
+{% endblock %}
+

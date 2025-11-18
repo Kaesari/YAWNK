@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FashionShop Home</title>
+</head>
+<body>
+    <h1>Welcome to FashionShop</h1>
+
+    <nav>
+        <ul>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>Done
+            <li><a href="{% url 'login' %}">Login</a></li>Done
+            <li><a href="{% url 'product_list' %}">All Products</a></li>Done
+            {% if user.is_authenticated and user.is_seller %}
+                <li><a href="{% url 'create_product' %}">Post Product</a></li>
+            {% endif %}
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'user_feed' %}">Your Feed</a></li>
+                <li><a href="{% url 'profile' %}">Your Profile</a></li>Done
+                <li><a href="{% url 'wishlist' %}">My Wishlist</a></li>Done
+                <li><a href="{% url 'my_chats' %}">Messages</a></li>Done
+                <li><a href="{% url 'seller_list' %}">View Sellers</a></li>
+                <li>
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                </li>
+    
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}!</p>
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>        
+    {% endif %}
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+
+
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+
+
+<main>
+    <!-- section -->
+    <section>
+       <!-- container -->
+       <div class="container">
+          <!-- row -->
+          <div class="row">
+             <!-- col -->
+             <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center d-md-none py-4">
+                   <!-- heading -->
+                   <h3 class="fs-5 mb-0">Account Setting</h3>
+                   <!-- button -->
+                   <button
+                      class="btn btn-outline-gray-400 text-muted d-md-none btn-icon btn-sm ms-3"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasAccount"
+                      aria-controls="offcanvasAccount">
+                      <i class="bi bi-text-indent-left fs-3"></i>
+                   </button>
+                </div>
+             </div>
+             <!-- col -->
+             {% include 'shared/admin_nav.html' %}
+             <div class="col-lg-9 col-md-8 col-12">
+                <div class="py-6 p-md-6 p-lg-10">
+                   <div class="mb-6">
+                      <!-- heading -->
+                      <h2 class="mb-0">Account Setting</h2>
+                   </div>
+                   <div>
+                      <!-- heading -->
+                      <h5 class="mb-4">Account details</h5>
+                      <div >
+
+                    <h3>Current Details:</h3>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Location:</strong> {{ user.location }}</p>
+
+                    </div>
+                   </div>                
+                   <hr class="my-10" />
+                </div>
+             </div>
+          </div>
+       </div>
+    </section>
+ </main>
+
+
+{% endblock %}
+
+
+   widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Username'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter Email'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter First Name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Last Name'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter Password'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Write something about yourself'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your location'}),
+            'profile_picture': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+        }

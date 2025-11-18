@@ -1,0 +1,44 @@
+<h2>Your Feed</h2>
+
+{% for product in products %}
+    <div style="border:1px solid #ccc; margin-bottom: 10px; padding: 10px;">
+        <h3>{{ product.name }} - Ksh {{ product.price }}</h3>
+        <img src="{{ product.image.url }}" width="200">
+        <p><strong>Size:</strong> {{ product.size }}</p>
+        <p><strong>Condition:</strong> {{ product.condition }}</p>
+        <p><strong>Posted by:</strong> {{ product.seller.username }}</p>
+        <p><strong>Seller:</strong>
+            <a href="{% url 'user_profile' product.seller.id %}">{{ product.seller.username }}</a>
+
+            {% if user.is_authenticated and product.seller != user %}
+                <form method="POST" action="{% url 'follow_toggle' product.seller.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    {% if product.seller in followed %}
+                        <button type="submit">Unfollow</button>
+                    {% else %}
+                        <button type="submit">Follow</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+
+            {% if user.is_authenticated and user != product.seller %}
+                <form method="GET" action="{% url 'start_chat' product.id %}">
+                    <button type="submit">Message Seller</button>
+                </form>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <form method="POST" action="{% url 'toggle_wishlist' product.id %}">
+                    {% csrf_token %}
+                    {% if product in user.wishlist.all %}
+                        <button type="submit">❤️ Remove from Wishlist</button>
+                    {% else %}
+                        <button type="submit">🤍 Add to Wishlist</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </p>
+    </div>
+{% empty %}
+    <p>No products to show.</p>
+{% endfor %}

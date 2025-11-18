@@ -1,0 +1,130 @@
+
+<div class="col-lg-3 col-md-4 col-12 border-end d-none d-md-block">
+    <div class="pt-10 pe-lg-10">
+       <!-- nav item -->
+       <ul class="nav flex-column nav-pills nav-pills-dark">
+         <li class="nav-item">
+           <a class="nav-link {% if request.path == '/account/settings/' %}active{% endif %}" href="{% url 'account_settings' %}">
+              <i class="feather-icon icon-settings me-2"></i>
+              Settings
+           </a>
+        </li>
+          <li class="nav-item">
+             <a class="nav-link {% if request.path == '/products/listing/' %}active{% endif %}" aria-current="page" href="{% url 'listing_settings' %}">
+                <i class="feather-icon icon-shopping-bag me-2"></i>
+                Add Listing
+             </a>
+          </li>
+         {% if user.is_superuser %}
+         <!-- nav item -->
+        <li class="nav-item">
+           <a class="nav-link {% if request.path == '/users/all' %}active{% endif %}" href="{% url 'user_list' %}">
+              <i class="feather-icon icon-map-pin me-2"></i>
+              User Management
+           </a>
+        </li>
+        {% endif %}
+          <!-- nav item -->
+          <li class="nav-item">
+             <a class="nav-link {% if request.path == '/products/feed/' %}active{% endif %}" href="{% url 'user_feed' %}">
+                <i class="feather-icon icon-credit-card me-2"></i>
+                Feeds & Follows
+             </a>
+          </li>
+          <!-- nav item -->
+          <li class="nav-item">
+             <hr />
+          </li>
+         <!-- nav item -->
+         <li class="nav-item">
+            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">
+               <i class="feather-icon icon-home me-2"></i>
+               Back to Home
+            </a>
+         </li>
+         <!-- nav item -->
+         <li class="nav-item">
+            <form method="POST" action="{% url 'logout' %}?next={% url 'home' %}">
+               {% csrf_token %}
+               <button type="submit" class="nav-link">
+                  <i class="feather-icon icon-log-out me-2"></i>
+                  Log out
+               </button>
+            </form>
+         </li>
+       </ul>
+    </div>
+ </div>
+
+
+
+       <!-- modal -->
+
+       <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasAccount" aria-labelledby="offcanvasAccountLabel">
+        <!-- offcanvas header -->
+        <div class="offcanvas-header">
+           <h5 class="offcanvas-title" id="offcanvasAccountLabel">Offcanvas</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <!-- offcanvas body -->
+        <div class="offcanvas-body">
+           <ul class="nav flex-column nav-pills nav-pills-dark">
+              
+              <!-- nav item -->
+              <li class="nav-item">
+               <a class="nav-link {% if request.path == '/account/settings/' %}active{% endif %}" href="{% url 'account_settings' %}">
+                  <i class="feather-icon icon-settings me-2"></i>
+                  Settings
+               </a>
+            </li>
+              {% if user.is_superuser or user.is_seller %}
+              <li class="nav-item">
+                 <a class="nav-link {% if request.path == '/products/listing/' %}active{% endif %}" aria-current="page" href="{% url 'listing_settings' %}">
+                    <i class="feather-icon icon-shopping-bag me-2"></i>
+                    Add Listing
+                 </a>
+              </li>
+             {% endif %}
+             {% if user.is_superuser %}
+             <!-- nav item -->
+            <li class="nav-item">
+               <a class="nav-link {% if request.path == '/users/all' %}active{% endif %}" href="{% url 'user_list' %}">
+                  <i class="feather-icon icon-map-pin me-2"></i>
+                  User Management
+               </a>
+            </li>
+            {% endif %}
+              <!-- nav item -->
+              <li class="nav-item">
+                 <a class="nav-link {% if request.path == '/products/feed/' %}active{% endif %}" href="{% url 'user_feed' %}">
+                    <i class="feather-icon icon-credit-card me-2"></i>
+                    Feeds & Follows
+                 </a>
+              </li>
+           </ul>
+           <hr class="my-6" />
+           <div>
+              <!-- nav  -->
+              <ul class="nav flex-column nav-pills nav-pills-dark">
+                 <!-- nav item -->
+                 <li class="nav-item">
+                  <form method="POST" action="{% url 'logout' %}">
+                     {% csrf_token %}
+                     <button type="submit" class="nav-link">
+                        <i class="feather-icon icon-log-out me-2"></i>
+                        Log out
+                     </button>
+                  </form>
+               </li>
+              </ul>
+           </div>
+        </div>
+     </div>
+
+
+
+
+
+ 
+
+      

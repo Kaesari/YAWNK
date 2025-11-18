@@ -1,0 +1,351 @@
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}Product List{% endblock %}
+
+{% block content %}
+
+<main>
+  <!-- section-->
+  <div class="mt-4">
+     <div class="container">
+        <!-- row -->
+        <div class="row">
+           <!-- col -->
+           <div class="col-12">
+              <!-- breadcrumb -->
+              <nav aria-label="breadcrumb">
+                 <ol class="breadcrumb mb-0">
+                    <li ><a href="/" class="text-info">Home</a></li> /
+                    <li ><a href="#" class=" text-info">Product List</a></li>
+                 </ol>
+              </nav>
+           </div>
+        </div>
+     </div>
+  </div>
+  <!-- section -->
+  <section class="mt-8 mb-lg-14 mb-8">
+     <div class="container">
+        <!-- row -->
+        <div class="row gx-10">
+           <div class="col-12">
+              <!-- filter btn -->
+              <a class="btn btn-outline-gray-400 text-muted" data-bs-toggle="collapse" href="#collapseFilter" role="button" aria-expanded="false" aria-controls="collapseFilter">
+                 <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="feather feather-filter me-2">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                 </svg>
+                 Filters
+              </a>
+              <!-- Collapse Filters -->
+              <div class="collapse mt-4" id="collapseFilter">
+                <form method="GET" action=".">
+                    <div class="row g-3">
+                        <!-- Search -->
+                        <div class="col-12 col-md-2">
+                            <input type="text" class="form-control" name="q" placeholder="Search..." value="{{ filters.query }}">
+                        </div>
+
+                        <!-- Category Filter -->
+                        <!-- <div class="col-12 col-md-1">
+                            <select name="category" class="form-select">
+                                <option value="">Category</option>
+                                <option value="Tops" {% if filters.category == 'Tops' %}selected{% endif %}>Tops</option>
+                                <option value="Bottoms" {% if filters.category == 'Bottoms' %}selected{% endif %}>Bottoms</option>
+                                <option value="Shoes" {% if filters.category == 'Shoes' %}selected{% endif %}>Shoes</option>
+                                <option value="Accessories" {% if filters.category == 'Accessories' %}selected{% endif %}>Accessories</option>
+                            </select>
+                        </div> -->
+
+                        <!-- Brand Filter -->
+                        <div class="col-12 col-md-1">
+                          <select name="brand" class="form-select">
+                              <option value="">Brand</option>
+                              <option value="Nike" {% if filters.brand == 'Nike' %}selected{% endif %}>Nike</option>
+                              <option value="Adidas" {% if filters.brand == 'Adidas' %}selected{% endif %}>Adidas</option>
+                              <option value="Puma" {% if filters.brand == 'Puma' %}selected{% endif %}>Puma</option>
+                              <option value="Reebok" {% if filters.brand == 'Reebok' %}selected{% endif %}>Reebok</option>
+                              <option value="Under Armour" {% if filters.brand == 'Under Armour' %}selected{% endif %}>Under Armour</option>
+                              <option value="Levi's" {% if filters.brand == "Levi's" %}selected{% endif %}>Levi's</option>
+                              <option value="H&M" {% if filters.brand == 'H&M' %}selected{% endif %}>H&M</option>
+                              <option value="Zara" {% if filters.brand == 'Zara' %}selected{% endif %}>Zara</option>
+                          </select>
+                      </div>                      
+                        <!-- Size Filter -->
+                        <div class="col-12 col-md-1">
+                            <select name="size" class="form-select">
+                                <option value="">Size</option>
+                                <option value="XS" {% if filters.size == 'XS' %}selected{% endif %}>XS</option>
+                                <option value="S" {% if filters.size == 'S' %}selected{% endif %}>S</option>
+                                <option value="M" {% if filters.size == 'M' %}selected{% endif %}>M</option>
+                                <option value="L" {% if filters.size == 'L' %}selected{% endif %}>L</option>
+                                <option value="XL" {% if filters.size == 'XL' %}selected{% endif %}>XL</option>
+                                <option value="XXL" {% if filters.size == 'XXL' %}selected{% endif %}>XXL</option>
+                            </select>
+                        </div>
+                        <!-- Condition Filter -->
+                        <div class="col-12 col-md-1">
+                            <select name="condition" class="form-select">
+                                <option value="">Condition</option>
+                                <option value="New with tags" {% if filters.condition == 'New with tags' %}selected{% endif %}>New with tags</option>
+                                <option value="Very good" {% if filters.condition == 'Very good' %}selected{% endif %}>Very good</option>
+                                <option value="Good" {% if filters.condition == 'Good' %}selected{% endif %}>Good</option>
+                                <option value="Fair" {% if filters.condition == 'Fair' %}selected{% endif %}>Fair</option>
+                                <option value="New" {% if filters.condition == 'New' %}selected{% endif %}>New</option>
+                                <option value="Used" {% if filters.condition == 'Used' %}selected{% endif %}>Used</option>
+                            </select>
+                        </div>
+                        <!-- Color Filter -->
+                        <div class="col-12 col-md-1">
+                            <select name="color" class="form-select">
+                                <option value="">Color</option>
+                                <option value="Black" {% if filters.color == 'Black' %}selected{% endif %}>Black</option>
+                                <option value="White" {% if filters.color == 'White' %}selected{% endif %}>White</option>
+                                <option value="Red" {% if filters.color == 'Red' %}selected{% endif %}>Red</option>
+                                <option value="Blue" {% if filters.color == 'Blue' %}selected{% endif %}>Blue</option>
+                                <option value="Green" {% if filters.color == 'Green' %}selected{% endif %}>Green</option>
+                                
+                                <option value="Yellow" {% if filters.color == 'Yellow' %}selected{% endif %}>Yellow</option>
+                                <option value="Pink" {% if filters.color == 'Pink' %}selected{% endif %}>Pink</option>
+                                <option value="Purple" {% if filters.color == 'Purple' %}selected{% endif %}>Purple</option>
+                                <option value="Orange" {% if filters.color == 'Orange' %}selected{% endif %}>Orange</option>
+                                <option value="Grey" {% if filters.color == 'Grey' %}selected{% endif %}>Grey</option>
+                            </select>
+                        </div>
+                        <!-- Price Filters -->
+                        <div class="col-12 col-md-1">
+                            <input type="number" class="form-control" name="min_price" placeholder="Min Price" value="{{ filters.min_price }}">
+                        </div>
+                        <div class="col-12 col-md-1">
+                            <input type="number" class="form-control" name="max_price" placeholder="Max Price" value="{{ filters.max_price }}">
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="col-12 col-md-4">
+                            <div class="range-values">
+                                Price: Ksh <span id="range_min_val">0</span> - <span id="range_max_val">50000</span>
+                            </div>
+                            <div class="range-wrapper">
+                                <div class="range-track"></div>
+                                <input type="range" name="min_price" class="lower" id="min_price" min="0" max="50000" step="100"
+                                      value="{{ filters.min_price|default:0 }}" oninput="updateSlider()">
+                                <input type="range" name="max_price" class="upper" id="max_price" min="0" max="50000" step="100"
+                                      value="{{ filters.max_price|default:50000 }}" oninput="updateSlider()">
+                            </div>
+                        </div>
+
+                        <!-- Filter Button -->
+                        <div class="col-6 mb-3">
+                            <button class="form-control" type="submit">Filter</button>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <div class="col-6 mb-3">
+                          <button type="reset" class="form-control btn btn-secondary">Reset Filters</button>
+                        </div>
+                    </div>
+                </form>
+              </div>
+           </div>
+           <div class="col-12 mt-10">
+              <!-- content -->
+              <div class="d-md-flex justify-content-between align-items-center">
+                 <div>
+                  {% if products %}
+                  <p class="mb-3 mb-md-0">
+                     <span class="text-dark">{{products.count}}</span>
+                     Products found
+                  </p>
+                 {% endif %}
+                 </div>
+                 <!-- list -->
+                 <div class="d-flex justify-content-between align-items-center">
+                    <!-- select -->
+                    <div>
+                       <select class="form-select">
+                        <option selected>Newest First</option>
+                          <!-- <option selected>Sort by: Featured</option>
+                          <option value="Low to High">Price: Low to High</option>
+                          <option value="High to Low">Price: High to Low</option>
+                          <option value="Release Date">Release Date</option>
+                          <option value="Avg. Rating">Avg. Rating</option> -->
+                       </select>
+                    </div>
+                 </div>
+              </div>
+              <!-- row -->
+              <div class="row g-4 row-cols-xl-5 row-cols-lg-3 row-cols-2 row-cols-md-2 mt-2">
+                {% for product in products %}
+                 <div class="col">
+                    <!-- card -->
+                  <!-- Wrap the entire card in an anchor tag to navigate to the product detail page -->
+                  <a href="{% url 'product_detail' product.id %}" class="text-decoration-none">
+                     <div class="card card-product">
+                        <div class="card-body">
+                              <!-- badge -->
+                              <div class="text-center position-relative">
+                                 <div class="position-absolute top-0 start-0">
+                                    <span class="badge bg-info">Sale</span>
+                                 </div>
+                                 <!-- img -->
+                                 <img src="{{ product.image.url }}" alt="Grocery Ecommerce Template" class="mb-3 img-fluid" />
+                              </div>
+                              <!-- title -->
+                              <div class="text-small mb-1">
+                                 <a href="#!" class="text-decoration-none text-muted"><small>{{ product.category }}</small></a>
+                              </div>
+                              <h2 class="fs-6"><a href="#!" class="text-inherit text-decoration-none">{{ product.name }}</a></h2>
+                              <div>
+                                 <!-- rating -->
+                                 {% if product.reviews.exists %}
+                                 {% for i in "12345" %}
+                                    {% if forloop.counter <= product.average_rating %}
+                                    <small class="text-warning">
+                                          <i class="bi bi-star-fill"></i>
+                                    </small>
+                                    {% else %}
+                                    <small class="text-warning">
+                                          <i class="bi bi-star"></i>
+                                    </small>
+                                    {% endif %}
+                                 {% endfor %}
+                                 {% else %}
+                                 {% for i in "12345" %}
+                                 {% if forloop.counter <= product.average_rating %}
+                                    <small class="text-warning">
+                                          <i class="bi bi-star-fill"></i>
+                                    </small>
+                                 {% else %}
+                                    <small class="text-warning">
+                                          <i class="bi bi-star"></i>
+                                    </small>
+                                 {% endif %}
+                                 {% endfor %}
+                                 {% endif %}
+                                 <span class="text-muted small">{{ product.average_rating }}({{ product.reviews.count }})</span>
+                              </div>
+                              <!-- price -->
+                              <div class="d-flex justify-content-between align-items-center mt-3">
+                                 <div>
+                                    <span class="text-dark">Ksh {{ product.price }}</span>
+                                 </div>
+                                 <!-- btn -->
+                                 <div>
+                                    {% if user.is_authenticated and user != product.seller %}
+                                    <a href="{% url 'start_chat' product.id %}" class="btn btn-primary btn-sm rounded-pill px-3" data-bs-toggle="tooltip" title="Message {{ product.seller }}">
+                                          <i class="bi bi-chat-text-fill me-1"></i> DM
+                                    </a>
+                                    {% endif %}
+            
+                                    {% if not user.is_authenticated %}
+                                    <a href="{% url 'login' %}?next={% url 'start_chat' product.id %}" class="btn btn-primary btn-sm rounded-pill px-3" data-bs-toggle="tooltip" title="Login to Message {{ product.seller }}">
+                                          <i class="bi bi-chat-text-fill me-1"></i> DM
+                                    </a>
+                                    {% endif %}
+                                 </div>
+                              </div>
+                        </div>
+                     </div>
+                  </a>
+                 </div>
+                {% empty %}
+                    <p>No products to show.</p>
+                {% endfor %}
+              </div>
+           </div>
+        </div>
+     </div>
+  </section>
+</main>
+
+
+<style>
+  .range-wrapper {
+    position: relative;
+    width: 300px;
+    height: 40px;
+  }
+  
+  /* The background line */
+  .range-track {
+    position: absolute;
+    top: 16px; /* 👈 align with thumb */
+    height: 6px;
+    background: #ddd;
+    width: 100%;
+    border-radius: 3px;
+    z-index: 1;
+  }
+  
+  /* Shared range slider styling */
+  .range-wrapper input[type=range] {
+    position: absolute;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+    -webkit-appearance: none;
+    background: none;
+    top: 18px; /* 👈 align slider path with track */
+    z-index: 2;
+  }
+  
+  /* Thumb styling */
+  .range-wrapper input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: all;
+    width: 16px;
+    height: 16px;
+    background: #007BFF;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    z-index: 4;
+  }
+  
+  /* Ensure layering order */
+  .range-wrapper input.lower {
+    z-index: 5;
+  }
+  .range-wrapper input.upper {
+    z-index: 4;
+  }
+</style>
+
+<script>
+  function updateSlider() {
+    const minSlider = document.getElementById("min_price");
+    const maxSlider = document.getElementById("max_price");
+    const minVal = parseInt(minSlider.value);
+    const maxVal = parseInt(maxSlider.value);
+  
+    if (minVal > maxVal - 100) {
+      minSlider.value = maxVal - 100;
+    }
+  
+    if (maxVal < minVal + 100) {
+      maxSlider.value = minVal + 100;
+    }
+  
+    document.getElementById("range_min_val").textContent = minSlider.value;
+    document.getElementById("range_max_val").textContent = maxSlider.value;
+  }
+  window.onload = updateSlider;
+</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+<h2>Upload New Product</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label>Name:</label><br>
+    {{ form.name }}<br><br>
+
+    <label>Description:</label><br>
+    {{ form.description }}<br><br>
+
+    <label>Price:</label><br>
+    {{ form.price }}<br><br>
+
+    <label>Category:</label><br>
+    {{ form.category }}<br><br>
+
+    <label>Size:</label><br>
+    {{ form.size }}<br><br>
+
+    <label>Condition:</label><br>
+    {{ form.condition }}<br><br>
+
+    <label><strong>Main Image:</strong></label><br>
+    {{ form.image }}<br><br>
+
+    <hr>
+    <h3>Additional Images</h3>
+    
+    {{ product_image_formset.management_form }}
+
+    {% for img_form in product_image_formset %}
+        <div style="margin-bottom: 10px;">
+            {{ img_form.image.label_tag }} {{ img_form.image }}<br>
+        </div>
+    {% endfor %}
+    
+
+    <button type="submit">Post Product</button>
+</form>
+
+{% if form.errors %}
+  <ul style="color: red;">
+    {% for field in form %}
+      {% for error in field.errors %}
+        <li>{{ field.label }}: {{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if product_image_formset.errors %}
+  <ul style="color: red;">
+    {% for form in product_image_formset %}
+      {% for error in form.errors.values %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+{% endif %}

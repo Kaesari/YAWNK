@@ -1,0 +1,150 @@
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+
+<main>
+    <!-- section -->
+    <section>
+       <!-- container -->
+       <div class="container">
+          <!-- row -->
+          <div class="row">
+             <!-- col -->
+             <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center d-md-none py-4">
+                   <!-- heading -->
+                   <h3 class="fs-5 mb-0">Account Setting</h3>
+                   <!-- button -->
+                   <button
+                      class="btn btn-outline-gray-400 text-muted d-md-none btn-icon btn-sm ms-3"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasAccount"
+                      aria-controls="offcanvasAccount">
+                      <i class="bi bi-text-indent-left fs-3"></i>
+                   </button>
+                </div>
+             </div>
+             <!-- col -->
+             {% include 'shared/admin_nav.html' %}
+             <div class="col-lg-9 col-md-8 col-12">
+                <div class="py-6 p-md-6 p-lg-10">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-md-6 text-center">
+                                <div class="seller-details text-center">
+                                    <!-- Profile Picture -->
+
+                                    {% if user.profile_picture %}
+                                    <a href="#"><img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;"></a>
+                                    {% else %}
+                                    <a href="#"><img src="{% static 'assets/images/added/user-profile.png' %}" class="img-fluid rounded-circle mb-3" alt="Profile Picture" style="max-width: 150px;"></a>
+                                    {% endif %}
+                                    <br>
+                                
+                                    <!-- Seller Details -->
+                                    <h3>Username: {{ user.username }}</h3>
+                                    <p>Bio: {{ user.bio }}</p>
+                                    <p class="mb-10">Location: {{ user.location }}</p>
+                                
+                                    <!-- Buttons for Follow and Message -->
+                                    <!-- <div class="d-flex justify-content-center gap-3 mb-10"> 
+                                        <a href="#" class="btn btn-outline-primary" onclick="window.history.back();">
+                                            ← Back
+                                        </a>
+                                    </div> -->
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                   <div class="mb-6">
+                      <!-- heading -->
+                      <h2 class="mb-0">Account Setting</h2>
+                   </div>
+                   <div>
+                      <!-- heading -->
+                      <h5 class="mb-4">Account details</h5>
+                      <div >
+                        <!-- form -->
+                        <form method="POST" enctype="multipart/form-data">
+                           {% csrf_token %}
+                           <div class="row g-3">
+                               <div class="col">
+                                   <label for="first_name" class="form-label">First Name</label>
+                                   <input type="text" class="form-control" name="first_name" id="first_name" value="{{ form.first_name.value }}" required />
+                               </div>
+                               <div class="col">
+                                   <label for="last_name" class="form-label">Last Name</label>
+                                   <input type="text" class="form-control" name="last_name" id="last_name" value="{{ form.last_name.value }}" required />
+                               </div>
+                               <div class="col-12">
+                                   <label class="form-check-label">
+                                       <input type="checkbox" name="is_seller" class="form-check-input" {% if form.is_seller.value %}checked{% endif %}>
+                                       Are you a seller?
+                                   </label>
+                               </div>
+                               <div class="col-12">
+                                   <label for="bio" class="form-label">Bio</label>
+                                   <textarea class="form-control" name="bio" id="bio" placeholder="Tell us about yourself">{{ form.bio.value }}</textarea>
+                               </div>
+                               <div class="col-12">
+                                   <label for="email" class="form-label">Email</label>
+                                   <input type="email" class="form-control" name="email" id="email" value="{{ form.email.value }}" required />
+                               </div>
+                               <div class="col-12">
+                                   <label for="location" class="form-label">Location</label>
+                                   <input type="text" class="form-control" name="location" id="location" value="{{ form.location.value }}" required />
+                               </div>
+                               <div class="col-12">
+                                   <label for="profile_picture" class="form-label">Profile Picture</label>
+                                   <input type="file" class="form-control" name="profile_picture" id="profile_picture" />
+                               </div>
+                               <div class="col-12 d-grid">
+                                   <button type="submit" class="btn btn-primary">Save Changes</button>
+                               </div>
+                           </div>
+                       </form>
+                     </div>
+                   </div>
+                   <hr class="my-10" />
+                   <div class="pe-lg-14">
+                     <!-- heading -->
+                     <h5 class="mb-4">Password</h5>
+                     <form method="POST" class="row row-cols-1 row-cols-lg-2">
+                         {% csrf_token %}
+                         <!-- input -->
+                         <div class="mb-3 col">
+                             <label class="form-label">New Password</label>
+                             <input type="password" class="form-control" name="new_password" placeholder="**********" required />
+                         </div>
+                         <!-- input -->
+                         <div class="mb-3 col">
+                             <label class="form-label">Current Password</label>
+                             <input type="password" class="form-control" name="current_password" placeholder="**********" required />
+                         </div>
+                         <!-- input -->
+                         <div class="col-12">
+                             <p class="mb-4">
+                                 Can’t remember your current password?
+                                 <a href="#">Reset your password.</a>
+                             </p>
+                             <button type="submit" class="btn btn-primary">Save Password</button>
+                         </div>
+                     </form>
+                 </div>                 
+                   <hr class="my-10" />
+                </div>
+             </div>
+          </div>
+       </div>
+    </section>
+ </main>
+
+
+{% endblock %}

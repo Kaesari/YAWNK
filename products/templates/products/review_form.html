@@ -1,0 +1,23 @@
+<!-- <div>
+    <label>Rating: </label>
+    <span>
+        {% for i in "12345" %}
+            <input type="radio" name="rating" value="{{ i }}" 
+                   id="star{{ i }}" {% if i == review_form.rating.value %}checked{% endif %} />
+            <label for="star{{ i }}">&#9733;</label>
+        {% endfor %}
+    </span>
+</div> -->
+
+
+<div>
+    <label>Rating: </label>
+    <span class="star-rating">
+        {% for i in "12345" %}
+            <input type="radio" name="rating" value="{{ i }}" 
+                   id="star{{ i }}" {% if i == review_form.rating.value %}checked{% endif %} />
+            <label for="star{{ i }}">&#9733;</label>
+        {% endfor %}
+    </span>
+</div>
+

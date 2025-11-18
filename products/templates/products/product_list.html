@@ -1,0 +1,211 @@
+<h2>All Products</h2>
+
+<form method="GET" action=".">
+  <input type="text" name="q" placeholder="Search..." value="{{ filters.query }}">
+
+  <!-- Category Filter -->
+  <select name="category">
+      <option value="">Category</option>
+      <option value="tops" {% if filters.category == 'tops' %}selected{% endif %}>Tops</option>
+      <option value="bottoms" {% if filters.category == 'bottoms' %}selected{% endif %}>Bottoms</option>
+      <option value="shoes" {% if filters.category == 'shoes' %}selected{% endif %}>Shoes</option>
+      <option value="accessories" {% if filters.category == 'accessories' %}selected{% endif %}>Accessories</option>
+  </select>
+
+  <!-- Brand Filter -->
+  <select name="brand">
+      <option value="">Brand</option>
+      <option value="Nike" {% if filters.brand == 'Nike' %}selected{% endif %}>Nike</option>
+      <option value="Adidas" {% if filters.brand == 'Adidas' %}selected{% endif %}>Adidas</option>
+      <option value="Puma" {% if filters.brand == 'Puma' %}selected{% endif %}>Puma</option>
+      <option value="Reebok" {% if filters.brand == 'Reebok' %}selected{% endif %}>Reebok</option>
+      <option value="Under Armour" {% if filters.brand == 'Under Armour' %}selected{% endif %}>Under Armour</option>
+      <!-- Add more brands as needed -->
+  </select>
+
+  <!-- Size Filter -->
+  <select name="size">
+      <option value="">Size</option>
+      <option value="XS" {% if filters.size == 'XS' %}selected{% endif %}>XS</option>
+      <option value="S" {% if filters.size == 'S' %}selected{% endif %}>S</option>
+      <option value="M" {% if filters.size == 'M' %}selected{% endif %}>M</option>
+      <option value="L" {% if filters.size == 'L' %}selected{% endif %}>L</option>
+      <option value="XL" {% if filters.size == 'XL' %}selected{% endif %}>XL</option>
+  </select>
+
+  <!-- Condition Filter -->
+  <select name="condition">
+      <option value="">Condition</option>
+      <option value="new" {% if filters.condition == 'new' %}selected{% endif %}>New</option>
+      <option value="used" {% if filters.condition == 'used' %}selected{% endif %}>Used</option>
+  </select>
+
+  <!-- Color Filter -->
+  <select name="color">
+      <option value="">Color</option>
+      <option value="Black" {% if filters.color == 'Black' %}selected{% endif %}>Black</option>
+      <option value="White" {% if filters.color == 'White' %}selected{% endif %}>White</option>
+      <option value="Red" {% if filters.color == 'Red' %}selected{% endif %}>Red</option>
+      <option value="Blue" {% if filters.color == 'Blue' %}selected{% endif %}>Blue</option>
+      <option value="Green" {% if filters.color == 'Green' %}selected{% endif %}>Green</option>
+      <!-- Add more colors as needed -->
+  </select>
+
+  <!-- Price Filters -->
+  <input type="number" name="min_price" placeholder="Min Price" value="{{ filters.min_price }}">
+  <input type="number" name="max_price" placeholder="Max Price" value="{{ filters.max_price }}">
+
+  <div class="range-values">
+      Price: Ksh <span id="range_min_val">0</span> - <span id="range_max_val">10000</span>
+  </div>
+
+  <div class="range-wrapper">
+      <div class="range-track"></div>
+
+      <input type="range" name="min_price" class="lower" id="min_price" min="0" max="10000" step="100"
+             value="{{ filters.min_price|default:0 }}"
+             oninput="updateSlider()">
+
+      <input type="range" name="max_price" class="upper" id="max_price" min="0" max="10000" step="100"
+             value="{{ filters.max_price|default:10000 }}"
+             oninput="updateSlider()">
+  </div>
+
+  <br>
+
+  <button type="submit">Filter</button>
+</form>
+
+{% for product in products %}
+    <div style="border:1px solid #ccc; margin-bottom: 10px; padding: 10px;">
+        <h3>{{ product.name }} - Ksh {{ product.price }}</h3>
+        <img src="{{ product.image.url }}" width="200">
+        <p><strong>Size:</strong> {{ product.size }}</p>
+        <p><strong>Condition:</strong> {{ product.condition }}</p>
+        <p><strong>Brand:</strong> {{ product.brand }}</p> <!-- Display Brand -->
+        <p><strong>Color:</strong> {{ product.color }}</p> <!-- Display Color -->
+        <p><strong>Posted by:</strong> {{ product.seller.username }}</p>
+        <p><strong>Seller:</strong>
+            <a href="{% url 'user_profile' product.seller.id %}">{{ product.seller.username }}</a>
+
+            {% if user.is_authenticated and product.seller != user %}
+                <form method="POST" action="{% url 'follow_toggle' product.seller.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    {% if product.seller in followed %}
+                        <button type="submit">Unfollow</button>
+                    {% else %}
+                        <button type="submit">Follow</button>
+                    {% endif %}
+                </form>
+            {% endif %}
+        </p>
+        {% if user.is_authenticated and user != product.seller %}
+            <form method="GET" action="{% url 'start_chat' product.id %}">
+                <button type="submit">Message Seller</button>
+            </form>
+        {% endif %}
+        {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'toggle_wishlist' product.id %}">
+                {% csrf_token %}
+                {% if product in user.wishlist.all %}
+                    <button type="submit">❤️ Remove from Wishlist</button>
+                {% else %}
+                    <button type="submit">🤍 Add to Wishlist</button>
+                {% endif %}
+            </form>
+        {% endif %}
+        {% if product.reviews.exists %}
+            <p>Average Rating: 
+                {% for i in "12345" %}
+                    {% if forloop.counter <= product.average_rating %}
+                        &#9733;  <!-- Filled star -->
+                    {% else %}
+                        &#9734;  <!-- Empty star -->
+                    {% endif %}
+                {% endfor %}
+            </p>
+        {% else %}
+            <p>No ratings yet</p>
+        {% endif %}
+
+        <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+
+    </div>
+{% empty %}
+    <p>No products to show.</p>
+{% endfor %}
+
+<style>
+    .range-wrapper {
+      position: relative;
+      width: 300px;
+      height: 40px;
+    }
+    
+    /* The background line */
+    .range-track {
+      position: absolute;
+      top: 16px; /* 👈 align with thumb */
+      height: 6px;
+      background: #ddd;
+      width: 100%;
+      border-radius: 3px;
+      z-index: 1;
+    }
+    
+    /* Shared range slider styling */
+    .range-wrapper input[type=range] {
+      position: absolute;
+      width: 100%;
+      height: 0;
+      margin: 0;
+      padding: 0;
+      pointer-events: none;
+      -webkit-appearance: none;
+      background: none;
+      top: 18px; /* 👈 align slider path with track */
+      z-index: 2;
+    }
+    
+    /* Thumb styling */
+    .range-wrapper input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      pointer-events: all;
+      width: 16px;
+      height: 16px;
+      background: #007BFF;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      z-index: 4;
+    }
+    
+    /* Ensure layering order */
+    .range-wrapper input.lower {
+      z-index: 5;
+    }
+    .range-wrapper input.upper {
+      z-index: 4;
+    }
+</style>
+
+<script>
+    function updateSlider() {
+      const minSlider = document.getElementById("min_price");
+      const maxSlider = document.getElementById("max_price");
+      const minVal = parseInt(minSlider.value);
+      const maxVal = parseInt(maxSlider.value);
+    
+      if (minVal > maxVal - 100) {
+        minSlider.value = maxVal - 100;
+      }
+    
+      if (maxVal < minVal + 100) {
+        maxSlider.value = minVal + 100;
+      }
+    
+      document.getElementById("range_min_val").textContent = minSlider.value;
+      document.getElementById("range_max_val").textContent = maxSlider.value;
+    }
+    window.onload = updateSlider;
+</script>

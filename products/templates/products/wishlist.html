@@ -1,0 +1,20 @@
+<h2>My Wishlist</h2>
+
+{% if products %}
+    {% for product in products %}
+        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+            <h3>{{ product.name }} - Ksh {{ product.price }}</h3>
+            <img src="{{ product.image.url }}" width="200"><br>
+            <a href="{% url 'user_profile' product.seller.id %}">Seller: {{ product.seller.username }}</a><br>
+
+            <form method="POST" action="{% url 'toggle_wishlist' product.id %}">
+                {% csrf_token %}
+                <button type="submit">Remove from Wishlist</button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>You haven't added any products to your wishlist yet.</p>
+{% endif %}
+
+<a href="{% url 'home' %}">← Back to Home</a>

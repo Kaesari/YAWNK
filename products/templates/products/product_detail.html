@@ -1,0 +1,70 @@
+<h2>{{ product.name }}</h2>
+<p>Ksh {{ product.price }}</p>
+<p>Category: {{ product.category }}</p>
+<p>Size: {{ product.size }}</p>
+<p>Condition: {{ product.condition }}</p>
+<p>Seller: <a href="{% url 'user_profile' product.seller.id %}">{{ product.seller.username }}</a></p>
+<img src="{{ product.image.url }}" width="300"><br>
+
+{% for image in product.images.all %}
+    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" width="150">
+{% empty %}
+    <p>No extra images</p>
+{% endfor %}
+
+
+<hr>
+<h3>Reviews ({{ reviews.count }})</h3>
+
+{% for review in reviews %}
+    <p><strong>{{ review.reviewer.username }}</strong> — {{ review.rating }}★</p>
+    <p>{{ review.comment }}</p>
+
+    {% if review.seller_response %}
+        <p><strong>Seller's Response:</strong> {{ review.seller_response }}</p>
+    {% endif %}
+    
+    {% if user.is_authenticated and user == product.seller %}
+        <h4>Respond to this Review</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {{ seller_response_form.as_p }}
+            <button type="submit">Respond</button>
+        </form>
+    {% endif %}
+    <hr>
+{% empty %}
+    <p>No reviews yet.</p>    
+{% endfor %}
+
+{% if user.is_authenticated and user != product.seller %}
+    {% if review_form %}
+        <h4>{% if review_form.instance.pk %}Edit{% else %}Leave{% endif %} a Review</h4>
+        <form method="POST">
+            {% csrf_token %}
+            {{ review_form.as_p }}
+            <button type="submit">{% if review_form.instance.pk %}Update{% else %}Submit{% endif %}</button>
+        </form>
+
+        <br>
+        {% if review_form.instance.pk %}
+            <form method="POST" action="{% url 'delete_review' product.id %}">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Delete your review?');">🗑️ Delete Review</button>
+            </form>
+        {% endif %}
+    {% else %}
+        <p><em>Only verified buyers who’ve chatted with the seller can leave a review.</em></p>
+    {% endif %}
+{% endif %}
+
+
+<!-- {% if review_form.instance.pk %}
+    <form method="POST" action="{% url 'delete_review' product.id %}" style="margin-top: 10px;">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('Delete your review?');">🗑️ Delete Review</button>
+    </form>
+{% endif %} -->
+
+
+<a href="{% url 'product_list' %}">← Back to All Products</a>

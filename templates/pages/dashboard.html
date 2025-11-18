@@ -1,0 +1,33 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h2 class="mb-4">Admin Dashboard</h2>
+
+    <!-- Display the summary counts -->
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Total Users</h3>
+            <p>{{ total_users }}</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Total Products</h3>
+            <p>{{ total_products }}</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Total Categories</h3>
+            <p>{{ total_categories }}</p>
+        </div>
+    </div>
+
+    <!-- Display the chart -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <h4>Product, User & Category Summary</h4>
+            <img src="data:image/png;base64,{{ image_data }}" alt="Dashboard Chart" />
+        </div>
+    </div>
+  </div>
+{% endblock %}

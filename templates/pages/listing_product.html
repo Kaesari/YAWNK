@@ -1,0 +1,140 @@
+{% extends 'shared/base.html' %}
+
+{% load static %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+
+
+<main>
+    <!-- section -->
+    <section>
+       <!-- container -->
+       <div class="container">
+          <!-- row -->
+          <div class="row">
+             <!-- col -->
+             <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center d-md-none py-4">
+                   <!-- heading -->
+                   <h3 class="fs-5 mb-0">Account Setting</h3>
+                   <!-- button -->
+                   <button
+                      class="btn btn-outline-gray-400 text-muted d-md-none btn-icon btn-sm ms-3"
+                      type="button"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasAccount"
+                      aria-controls="offcanvasAccount">
+                      <i class="bi bi-text-indent-left fs-3"></i>
+                   </button>
+                </div>
+             </div>
+             <!-- col -->
+             {% include 'shared/admin_nav.html' %}
+             <div class="col-lg-9 col-md-8 col-12">
+                <div class="py-6 p-md-6 p-lg-10">
+                   <!-- heading -->
+                   <div class="row mb-6">
+                    <div class="col d-flex justify-content-between">
+                        {% if not user.is_superuser %}
+                           <h2 class="mb-0">Your Products</h2>
+                        {% else %}
+                            <h2 class="mb-0">Products</h2>
+                        {% endif %}
+                
+                        <a href="{% url 'create_product' %}" class="btn btn-primary" data-bs-toggle="tooltip" title="Click to add a product">
+                           <i class="bi bi-plus-circle me-2"></i>
+                           Add Product
+                        </a>                          
+                
+                    </div>
+                </div>
+                
+
+                   <div class="table-responsive-xxl border-0">
+                      <!-- Table -->
+                      <table class="table mb-0 text-nowrap table-centered">
+                         <!-- Table Head -->
+                         <thead class="bg-light">
+                            <tr>
+                               <th>&nbsp;</th>
+                               <th>Product</th>
+                               <!-- <th>Category</th> -->
+                               <th>Size</th>
+                               <th>Seller</th>
+                               <th>Status</th>
+                               <th>Price</th>
+
+                               <th></th>
+                            </tr>
+                         </thead>
+                         <tbody>
+                            <!-- Table body -->
+                            
+                            {% for product in allProducts %}
+                            <tr>
+                               <td class="align-middle border-top-0 w-0">
+                                  <a href="#"><img src="{{ product.image.url }}" alt="Ecommerce" class="icon-shape icon-xl rounded" />
+                                  </a>
+                               </td>
+                               <td class="align-middle border-top-0">
+                                  <a href="#" class="fw-semibold text-inherit">
+                                     <h6 class="mb-0">{{ product.name }}</h6>
+                                  </a>
+                                  <!-- <span><small class="text-muted">400g</small></span> -->
+                               </td>
+                               <!-- <td class="align-middle border-top-0">
+                                  <a href="#" class="text-inherit">{{ product.category }}</a>
+                               </td> -->
+                               <td class="align-middle border-top-0">{{ product.size }}</td>
+                               <td class="align-middle border-top-0">{{ product.seller }}</td>
+                               {% if user.is_superuser %}
+                               <td class="align-middle border-top-0">
+                                 <form method="POST" action="{% url 'update_product_status' product.id %}" id="status-form-{{ product.id }}">
+                                     {% csrf_token %}
+                                     <select name="status" class="form-select" onchange="submitForm({{ product.id }})">
+                                         <option value="Pending" {% if product.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                         <option value="Approved" {% if product.status == 'Approved' %}selected{% endif %}>Approved</option>
+                                         <option value="Rejected" {% if product.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                     </select>
+                                 </form>
+                              </td>
+                              {%else%}
+                              <td class="align-middle border-top-0">{{ product.status }}</td>
+                              {%endif%}
+                               <td class="align-middle border-top-0">{{ product.price }}</td>
+                               <td class="text-muted align-middle border-top-0">
+                                 <!-- View Button -->
+                                 <a href="{% url 'product_detail' product.id %}" class="text-inherit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View">
+                                     <i class="feather-icon icon-eye"></i>
+                                 </a>
+                                 <!-- Gap between View and Edit -->
+                                 <a href="{% url 'update_product' product.id %}" class="text-inherit ms-2" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                                     <i class="feather-icon icon-edit"></i>
+                                 </a>
+                             </td>                             
+                            </tr>
+                            {% empty %}
+                                <p>No Product to show.</p>
+                            {% endfor %}
+                            
+                         </tbody>
+                      </table>
+                   </div>
+                </div>
+             </div>
+          </div>
+       </div>
+    </section>
+ </main>
+
+ <script>
+   function submitForm(productId) {
+       document.getElementById('status-form-' + productId).submit();
+   }
+</script>
+
+
+
+{% endblock %}

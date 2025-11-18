@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+</head>
+<body>
+    <h1>{{ user.username }}'s Profile</h1>
+
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Location:</strong> {{ user.location }}</p>
+    <p><strong>Bio:</strong> {{ user.bio }}</p>
+    <p><strong>Role:</strong> {% if user.is_seller %}Seller{% else %}Buyer{% endif %}</p>
+
+    {% if user.profile_picture %}
+        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="150">
+    {% else %}
+        <p>No profile picture uploaded.</p>
+    {% endif %}
+
+    <br><br>
+    <a href="{% url 'home' %}">← Back to Home</a>
+</body>
+</html>
