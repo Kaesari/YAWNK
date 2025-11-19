@@ -1,0 +1,118 @@
+{% extends 'contests/base.html' %}
+
+{% load static %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Page Title -->
+    <h2 class="fw-bold mb-4">Statistics</h2>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label for="view_filter" class="form-label fw-bold">View</label>
+            <select id="view_filter" class="form-select form-select-lg border-0 shadow-sm">
+                <option value="all" selected>All players</option>
+                <option value="4">Forwards</option>
+                <option value="3">Midfielders</option>
+                <option value="2">Defenders</option>
+                <option value="1">Goalkeepers</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="sort_filter" class="form-label fw-bold">Sorted by</label>
+            <select id="sort_filter" class="form-select form-select-lg border-0 shadow-sm">
+                <option value="total_points" selected>Total points</option>
+                <option value="form">Form</option>
+                <option value="price">Price</option>
+                <option value="selection_percentage">Selection percentage</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Subtitle -->
+    <div class="bg-dark text-white text-center py-2 mb-4 rounded">
+        <p class="mb-0">Total points earned this season.</p>
+    </div>
+
+    <!-- Statistics Table -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="statistics_table">
+            <thead>
+                <tr>
+                    <th scope="col">Player</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Sel.</th>
+                    <th scope="col">Form</th>
+                    <th scope="col">Pts.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in player_stats %}
+                <tr data-position="{{ player.position }}" 
+                    data-price="{{ player.price|floatformat:1 }}" 
+                    data-selection_percentage="{{ player.selection_percentage|floatformat:1 }}" 
+                    data-form="{{ player.form|floatformat:1 }}" 
+                    data-total_points="{{ player.total_points }}">
+                    <td>
+                        <div style="display: flex; align-items: center;">
+                            <img src="{{ player.team_jersey }}" alt="{{ player.name }}" style="height: 40px; width: 40px; object-fit: cover; margin-right: 10px;">
+                            <div>
+                                <span class="fw-bold">{{ player.name }}</span><br>
+                                <small class="text-muted">{{ player.team }} {{ player.position }}</small>
+                            </div>
+                        </div>                        
+                    </td>
+                    <td>{{ player.price }}</td>
+                    <td>{{ player.selection_percentage }}</td>
+                    <td>{{ player.form }}</td>
+                    <td>{{ player.total_points }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const viewFilter = document.getElementById("view_filter");
+        const sortFilter = document.getElementById("sort_filter");
+        const tableBody = document.querySelector("#statistics_table tbody");
+
+        // Filter rows based on position
+        viewFilter.addEventListener("change", function () {
+            const selectedPosition = this.value;
+            const rows = tableBody.querySelectorAll("tr");
+
+            rows.forEach(row => {
+                const position = row.getAttribute("data-position");
+                if (selectedPosition === "all" || position === selectedPosition) {
+                    row.style.display = ""; // Show row
+                } else {
+                    row.style.display = "none"; // Hide row
+                }
+            });
+        });
+
+        // Sort rows based on selected criteria
+        sortFilter.addEventListener("change", function () {
+            const sortBy = this.value;
+            const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+            rows.sort((a, b) => {
+                const aValue = parseFloat(a.getAttribute(`data-${sortBy}`)) || 0;
+                const bValue = parseFloat(b.getAttribute(`data-${sortBy}`)) || 0;
+
+                // Sort in descending order
+                return bValue - aValue;
+            });
+
+            // Re-append rows in sorted order
+            rows.forEach(row => tableBody.appendChild(row));
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,7 @@
+:root{
+    /* --theme-color: #e41b23; */
+    --theme-color: red;
+}
+.table-hover > tbody > tr:hover {
+    --bs-table-accent-bg: none;
+  }

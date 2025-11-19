@@ -1,0 +1,1229 @@
+{% extends 'contests/base.html' %}
+
+{% load static %}
+
+{% block title %}Team Selection{% endblock %}
+
+
+{% load custom_filters %}
+
+{% block content %}
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;" id="toastContainer">
+    </div>
+
+    <!-- Modal -->
+    <div id="leagueOptionsModal" class="modal fade" tabindex="-1" aria-labelledby="leagueOptionsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"> <!-- Centered modal -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="leagueOptionsModalLabel">What would you like to do next?</h5>
+                    <button type="button" class="btn-close" id="dismissButton" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>You can either create a new league and invite your friends or join an existing league to compete.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="/api/create-league/" class="btn btn-primary"
+                        style="background: linear-gradient(to right, red, #007bff); color: white;">Create League</a>
+                    <a href="/api/league/" class="btn btn-secondary">Join League</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <!-- Navigation Buttons -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <!-- <a href="{% url 'manage_team_user_gameweek' current_game_week.id %}" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Previous</a> -->
+            <a href="{% url 'manage_team_user_gameweek' gameweek|add:"-1" %}" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Previous</a>
+
+            {% if current_game_week %}
+                <h4 class="fw-bold text-center mb-2 mb-md-0">Gameweek {{ gameweek }}</h4>
+            {% else %}
+                <h3 class="fw-bold text-center mb-2 mb-md-0">Gameweek not available</h3>
+            {% endif %}
+            
+            {% if current_game_week and current_game_week.id == gameweek %}
+                <a href="{% url 'manage_team' %}" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Next</a>
+                {% else %}
+                <a href="{% url 'manage_team_user_gameweek' gameweek|add:"+1" %}" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Next</a>
+            {% endif %}
+        </div>        
+
+
+        <!-- Card Container (to right, red, #007bff)-->
+        <div class="p-4 rounded shadow-sm" style="background: linear-gradient(to right, red, #007bff); color: white;">
+            <!-- Card Content -->
+            <div class="row row-cols-1 row-cols-md-2 g-4"> <!-- Bootstrap responsive classes for gaps -->
+                <!-- Left Section -->
+                <div class="col">
+                    <div class="rounded p-4 d-flex flex-column h-100"
+                        style="background: linear-gradient(to left, red, #007bff); min-height: 200px;">
+
+                        <!-- Image and Text -->
+                        <div class="d-flex align-items-center flex-nowrap">
+                            <img src="{% static 'images/gaolpost-1.png' %}" alt="Goal Post" class="me-3"
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                            <div>
+                                <h3 class="fw-bold mb-1 text-dark">{{ user_team.name }}</h3>
+                                <!-- <h3 class="fw-bold mb-1 text-dark" id="teamName" style="display: none;">{{ user_team.name }}#{{ user_team.id }}</h3> -->
+                                <!-- <h3 class="fw-bold mb-1 text-dark" id="teamName" style="display: none;">{{ user_team.name }}</h3> -->
+                                <h3 class="fw-bold mb-1 text-dark" id="teamName" style="display: none;">{{ user_team.name }}</h3>
+                                <h3 class="fw-bold mb-1 text-dark" id="teamId" style="display: none;">{{ user_team.id }}</h3>
+                                <p class="fw-bold mb-2 text-dark" style="font-size: 0.8rem;">{{ user_team.user.username }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Points and Global Ranking -->
+                        <div class="bg-dark text-white rounded p-3 mt-auto"> <!-- Added mt-auto to push content down -->
+                            <div class="row d-flex align-items-center">
+                                <!-- Points Section -->
+                                <div class="col-4 text-center d-flex flex-column align-items-center justify-content-center">
+                                    <h1 class="fw-bold mb-0" style="color: white;">{{ team_score }}</h1>
+                                    <!-- Added mb-0 for tighter spacing -->
+                                    <p class="text-muted" style="color: white;">Points</p>
+                                </div>
+                                <!-- Global Rank and Highest Points Section -->
+                                <div class="col-8">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span style="color: white;">Global rank</span>
+                                        <span style="color: white;">{{user_position}}</span>
+                                    </div>
+                                    <hr class="fade-hr my-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span style="color: white;">Highest points</span>
+                                        <span style="color: white;">{{leading_team_points}}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Section -->
+                <div class="col">
+                    <div class="rounded p-4 d-flex flex-column h-100"
+                        style="background: linear-gradient(to left, red, #007bff); min-height: 200px;">
+                        <h4 class="fw-bold  text-dark" style="font-size: 1.0rem;">Gameweek {{ gameweek }} Challenge</h4>
+                        <h5 class="fw-bold  text-dark">Legends</h5>
+                        <p class="text-dark">⚡ Players who have been at their club for 5+ seasons earn double points</p>
+                        <div class="d-flex justify-content-between mt-auto"> <!-- Added mt-auto to align inner boxes -->
+                            <div class="p-3 rounded shadow-sm d-flex justify-content-between align-items-center"
+                                style="background-color: #e8fff4; width: 100%; opacity: 0.8;">
+                                <span class="text-dark" style="font-size: 0.8rem;">Players selected</span>
+                                <div>
+                                    <span class="fw-bold text-dark">
+                                        <span id="budgetDisplay">£100.0m</span>
+                                        <span class="text-dark" style="font-size: 0.8rem;">Remaining budget</span>
+                                    </span>
+                                </div>
+
+                                <span class="fw-bold text-dark">Unlimited</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <!-- Player Info Modal -->
+            <div id="playerModal" class="modal" 
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+                <div class="modal-content"
+                    style="background: white; width: 95%; max-width: 600px; margin: 5% auto; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+
+                    <!-- Modal Header with Player Info -->
+                    <div style="background: linear-gradient(to right, #00A878, #0068B6); padding: 20px; color: white; text-align: left; position: relative; display: flex; justify-content: space-between; align-items: center;">
+                        <!-- Player Image (Moved to Right) -->
+                        <img src="{% static 'images/logoblack.png' %}" alt="Logo" style="position: absolute; top: 10px; left: 10px; height: 30px; width: auto;">
+
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+
+                                <div id="captainBadge" style="display: none;">
+                                    <img src="{% static 'images/caption.png' %}" alt="Captain" style="height: 50px; width: auto; display: block;">
+                                </div>
+
+                                <div id="vicecaptainBadge" style="display: none;">
+                                    <img src="{% static 'images/vcaption.png' %}" alt="VCaptain" style="height: 50px; width: auto; display: block;">
+                                </div>
+                                
+                                <!-- Corrected vertical alignment -->
+                                <div style="display: flex; flex-direction: column; justify-content: center;">
+                                    <h3 id="modalPlayerName" 
+                                        style="margin: 0; font-size: 1.8rem; font-weight: bold; line-height: 1;">Player Name</h3>
+                                    <p id="modalPlayerPosition" 
+                                        style="margin: 0; font-size: 1.0rem; color: white;">Position</p>
+                                </div>
+                            </div>                                               
+                        
+                            <div class="d-flex align-items-center" style="margin-top: 5px;">
+                                <img id="modalTeamLogo" src="" width="24" height="24" alt="Team Logo"
+                                    style="margin-right: 5px;">
+                                <span id="modalTeamName" class="text-white" style="font-size: 1.2rem;">Team Name</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Player Image (Moved to Right) -->
+                        <img id="modalPlayerImage" src="{% static 'images/default3.png' %}" width="100" height="130" alt="Player"
+                            style="margin-right: 50px; margin-top: 50px; object-fit: cover;"> <!-- Removed border-radius -->
+
+                        <!-- Close Button -->
+                        <button id="closeModalButton"
+                            style="position: absolute; top: 10px; right: 10px; background: black; color: white; border: none; font-size: 0.8rem; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                            ✖ Close
+                        </button>
+
+                    <!-- Floating Stats Section with Perfect Centering -->
+                    <div class="w-100" style="position: absolute; bottom: 10px; left: 0; right: 0; margin: 0 auto; max-width: 95%; background: #dfffd68e; padding: 5px; display: flex; justify-content: space-around; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0,0,0,0.2);">
+                        <div style="text-align: center;">
+                            <p style="margin: 0; font-size: 0.5rem; font-weight: bold; color: #000;">Price</p>
+                            <h4 id="modalPlayerPrice" style="margin: 5px 0; font-size: 0.9rem; font-weight: bold;">£7.3m</h4>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="margin: 0; font-size: 0.5rem; font-weight: bold; color: #000;">Form</p>
+                            <h4 id="modalPlayerForm" style="margin: 5px 0; font-size: 0.9rem; font-weight: bold;">9.0</h4>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="margin: 0; font-size: 0.5rem; font-weight: bold; color: #000;">TSB%</p>
+                            <h4 id="modalPlayerTSB" style="margin: 5px 0; font-size: 0.9rem; font-weight: bold;">37.9%</h4>
+                        </div>
+                    </div>
+
+                    
+
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; justify-content: center; gap: 10px; padding: 15px;">
+                        <button id="makeCaptainButton" class="btn"
+                            style="padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; background: white; border: 2px solid black; width: 48%;">
+                            Make Captain
+                        </button>
+                        <button id="makeViceCaptainButton" class="btn"
+                            style="padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; background: #7B3FA4; color: white; border: none; width: 48%;">
+                            Make Vice Captain
+                        </button>
+                        <button id="transferOutButton" class="btn"
+                            style="padding: 5px 10px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; background: linear-gradient(to right, #00A878, #0068B6); color: white; border: none; width: 100%;">
+                            Replace
+                        </button>
+                    </div>
+
+                    <!-- Fixtures Section -->
+                    <div style="padding: 15px;">
+                        <h6 style="font-weight: bold; margin-bottom: 5px;text-align: center;">Gameweek {{ current_game_week.id }} Fixtures</h6>
+                        <p id="fixtureDate" style="color: #666; font-size: 0.9rem;">Saturday 15 February</p>
+                        <div style="padding: 15px; border-radius: 10px; background: #F9F9F9; display: flex; align-items: center; justify-content: space-between;">
+                            <div class="d-flex align-items-center">
+                                <img id="fixtureTeam1Logo" src="{% static 'images/default3.png' %}" width="24" height="24" alt="Team 1">
+                                <span id="fixtureTeam1Name" style="margin-left: 5px; font-weight: bold;">Crystal Palace</span>
+                            </div>
+                            <span id="fixtureTime" style="font-weight: bold;">20:30</span>
+                            <div class="d-flex align-items-center">
+                                <span id="fixtureTeam2Name" style="margin-right: 5px; font-weight: bold;">Everton</span>
+                                <img id="fixtureTeam2Logo" src="{% static 'images/default3.png' %}" width="24" height="24" alt="Team 2">
+                            </div>
+                        </div>
+                        <!-- <div style="text-align: center; margin-top: 10px;">
+                            <span class="badge" style="background: green; color: white; padding: 5px 10px; border-radius: 5px;">Easy</span>
+                        </div> -->
+                    </div>
+
+                </div>
+            </div>
+
+            {% if has_joined_league %}
+                <!-- Pitch Area -->
+                <div class="col-md-8 position-relative" id="targetDiv">
+                            <div class="rounded position-relative">
+                                <img src="{% static 'images/pitch.png' %}" alt="Pitch" class="img-fluid w-100 rounded pitch-size">
+                                <div id="pitch-formation">
+                                <!-- Formation players will be dynamically injected here -->
+                                </div>
+                            
+                                <!-- Substitute Slots Section (Overlay at Bottom Center) -->
+                                <div id="subs-container" class="position-absolute" style="top: 90%; left: 50%; transform: translateX(-50%); width: 100%; display:none;">
+                                <!-- This inner container will hold the clickable substitute slots -->
+                                <div class="d-flex flex-nowrap justify-content-center gap-2 p-2 rounded overflow-x-auto">
+                                    <!-- The slots will be injected dynamically via JavaScript 
+                                    style="background: linear-gradient(to bottom, rgba(0,255,198,0.7), rgba(0,123,255,0.7));" -->
+                                </div>
+                                </div>
+
+                                
+                            </div>
+                            <!-- Button Section -->
+                            <div class="container"  style="margin-top: 120px;">
+                                <div class="row g-3 justify-content-center align-items-center">
+
+
+                                </div>
+                            </div>
+
+
+                            <!-- Fixtures Section -->
+                            <div class="mt-4 bg-light rounded p-3" style="margin-top: 120px;">
+                                <h4 class="text-center fw-bold text-uppercase mb-3">Gameweek Fixtures</h4>
+                                <!-- <p class="text-center text-muted">Real-Time Matches </p> -->
+                                <div class="text-center mb-3">
+                                    <button class="btn btn-primary">Real-Time Matches</button>
+                                </div>
+
+                                <!-- Fixture List -->
+                                <div id="fixtureContainer">
+                                    {% for day in matches %}
+                                    <h5 class="fw-bold text-dark mt-4">{{ day.date }}</h5>
+                                    <div class="timeline mt-3">
+                                        {% for match in day.matches %}
+                                        <div class="d-flex align-items-center mb-3 bg-white rounded p-2 shadow-sm">
+                                            <!-- Match Time -->
+                                            <div class="me-2 text-center">
+                                                <span class="fw-bold">{{ match.formatted_time }}</span>
+                                                <p class="text-muted small">Next deadline</p>
+                                            </div>
+
+                                            <!-- Match Teams -->
+                                            <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+                                                <div class="d-flex align-items-centper me-2">
+                                                    <img src="{{ match.home_team.logo }}" alt="{{ match.home_team.name }}"
+                                                        class="img-fluid" style="height: 18px; width: 18px; margin-right: 6px;">
+                                                    <span style="font-size: 0.6rem !important;">{{ match.home_team.name }}</span>
+                                                </div>
+                                                <span class="fw-bold mx-2" style="font-size: 0.7rem;">vs</span>
+                                                <div class="d-flex align-items-center ms-2">
+                                                    <span style="font-size: 0.6rem !important;">{{ match.away_team.name }}</span>
+                                                    <img src="{{ match.away_team.logo }}" alt="{{ match.away_team.name }}"
+                                                        class="img-fluid" style="height: 18px; width: 18px; margin-left: 6px;">
+                                                </div>
+                                            </div>
+                                            
+
+                                            <!-- Sponsor Logo -->
+                                            <img src="{% static 'images/sponsor-logo.png' %}" alt="Sponsor" class="ms-3"
+                                                style="height: 24px;">
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Pagination Controls -->
+                                <!-- <div class="d-flex justify-content-between align-items-center mt-4">
+                                    <button id="fixtures-prev-button" class="btn btn-light" disabled>&laquo; Previous</button>
+                                    <span>Page <span id="fixtures-current-page">1</span> of <span
+                                            id="fixtures-total-pages">1</span></span>
+                                    <button id="fixtures-next-button" class="btn btn-light">&raquo; Next</button>
+                                </div> -->
+                            </div>
+
+                            <!-- Team Selection -->
+                            <select class="form-select mb-3" id="teamSelect" style="display: none;">
+                                <option value="">Select a team...</option>
+                            </select>
+                </div>
+                <!-- Player Selection -->
+                <div class="col-md-4">
+                    <!-- <div class="bg-white p-4 rounded shadow-sm">
+                        <h5 class="fw-bold">Player Selection</h5>
+                        
+                    </div> -->
+                        <!-- Global Leagues Section -->
+                    <h4 class="fw-bold">Global Leagues</h4>
+                    <p class="text-muted">Join the Leagues to take on the best managers in the world.</p>
+    
+                    {% if public_leagues %}
+                    {% for league in public_leagues %}
+                    <div class="p-3 bg-light rounded shadow-sm mb-3">
+                        <div class="col align-items-center">
+                            <div class="col-12">
+                                <p class="fw-bold mb-1"  style="font-size: 0.75rem;">{{ league.name }}</p>
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-users me-2"  style="font-size: 0.75rem;"></i>{{ league.users.count }} players |
+                                    <span class="text-dark"  style="font-size: 0.75rem;">League Code: <span class="fw-bold">{{ league.league_code }}</span></span>
+                                </p>
+                            </div>
+                            <div class="col-12 texgt-md-end">
+                                <p class="fw-bold mb-1"  style="font-size: 0.75rem;">Prize Pool: Ksh {{ league.prize_pool }}</p>
+                                <p class="text-muted mb-0"  style="font-size: 0.75rem;">Start Date: {{ league.start_date|date:"M d, Y" }} | Entry Fee: <span
+                                        class="fw-bold"  style="font-size: 0.75rem;">Ksh {{ league.entry_fee }}</span></p>
+                                <!-- {% if user in league.users.all %}
+                                <button class="btn btn-success px-4 mt-2" disabled>Joined</button>
+                                {% else %}
+                                <a href="{% url 'entry-payment' league.league_code %}" class="btn btn-primary px-4 mt-2"
+                                    style="background: linear-gradient(to right, red, #007bff); border: none;">Join</a>
+                                {% endif %} -->
+                            </div>
+    
+                            
+                        </div>
+    
+                        <div class="col-12 d-flex justify-content-between align-items-center">
+                            {% if user in league.users.all %}
+                                <!-- <button class="btn btn-success px-4 mt-2" disabled>Joined</button> -->
+                                <!-- <div class="col-12 col-md-1 text-md-end">
+                                    <a href="{% url 'league-teams' league.league_code %}" class="text-primary" title="View Teams">
+                                        <i class="fas fa-angle-right fa-2x"></i>
+                                    </a>
+                                </div>  -->
+                                <button class="btn btn-success px-4 mt-2" disabled>Joined</button>
+                                <div class="col-12 col-md-1 text-md-end">
+                                    <!-- Add button with arrow icon -->
+                                    <button 
+                                        class="btn btn-link text-primary" 
+                                        title="View Teams"
+                                        onclick="window.location.href='{% url 'league-teams' league.league_code %}'">
+                                        <i class="fas fa-angle-right fa-2x"></i>
+                                    </button>
+                                </div>
+
+                            <!--
+                                <a href="{% url 'entry-payment' league.league_code %}" 
+                                class="btn btn-primary px-4 mt-2"
+                                style="background: linear-gradient(to right, red, #007bff); border: none;">
+                                    Join
+                                </a> -->
+                            {% endif %}
+                        
+                            <!-- Angle arrow icon aligned to the right -->
+                            <!-- <a href="{% url 'league-teams' league.league_code %}" class="text-primary" title="View Teams">
+                                <i class="fas fa-angle-right fa-2x"></i>
+                            </a> -->
+                        </div>
+                        
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted">No public leagues available at the moment.</p>
+                    {% endif %}
+                </div> 
+            {% else %}
+                <!-- Alert for Non-Participation -->
+                <div class="col-md-12 mx-auto">
+                    <div class="alert alert-warning text-center shadow-sm p-4 rounded" role="alert">
+                        <i class="fas fa-exclamation-circle fa-2x mb-3 text-warning"></i>
+                        <h4 class="alert-heading fw-bold">You did not participate in this gameweek!</h4>
+                        <!-- <p class="mb-0">Join a league to start competing and earning points.</p> -->
+                    </div>
+                    <!-- Fixtures Section -->
+                    <div class="mt-4 bg-light rounded p-3" style="margin-top: 120px;">
+                        <h4 class="text-center fw-bold text-uppercase mb-3">Gameweek  {{ gameweek }} Fixtures</h4>
+                        <!-- <p class="text-center text-muted">Real-Time Matches </p> -->
+                        <div class="text-center mb-3">
+                            <button class="btn btn-primary">Real-Time Matches</button>
+                        </div>
+
+                        <!-- Fixture List -->
+                        <div id="fixtureContainer">
+                            {% for day in matches %}
+                            <h5 class="fw-bold text-dark mt-4">{{ day.date }}</h5>
+                            <div class="timeline mt-3">
+                                {% for match in day.matches %}
+                                <div class="d-flex align-items-center mb-3 bg-white rounded p-2 shadow-sm">
+                                    <!-- Match Time -->
+                                    <div class="me-2 text-center">
+                                        <span class="fw-bold">{{ match.formatted_time }}</span>
+                                        <p class="text-muted small">Next deadline</p>
+                                    </div>
+
+                                    <!-- Match Teams -->
+                                    <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+                                        <div class="d-flex align-items-centper me-2">
+                                            <img src="{{ match.home_team.logo }}" alt="{{ match.home_team.name }}"
+                                                class="img-fluid" style="height: 18px; width: 18px; margin-right: 6px;">
+                                            <span style="font-size: 0.6rem !important;">{{ match.home_team.name }}</span>
+                                        </div>
+                                        <span class="fw-bold mx-2" style="font-size: 0.7rem;">vs</span>
+                                        <div class="d-flex align-items-center ms-2">
+                                            <span style="font-size: 0.6rem !important;">{{ match.away_team.name }}</span>
+                                            <img src="{{ match.away_team.logo }}" alt="{{ match.away_team.name }}"
+                                                class="img-fluid" style="height: 18px; width: 18px; margin-left: 6px;">
+                                        </div>
+                                    </div>
+                                    
+
+                                    <!-- Sponsor Logo -->
+                                    <img src="{% static 'images/sponsor-logo.png' %}" alt="Sponsor" class="ms-3"
+                                        style="height: 24px;">
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Pagination Controls -->
+                        <!-- <div class="d-flex justify-content-between align-items-center mt-4">
+                            <button id="fixtures-prev-button" class="btn btn-light" disabled>&laquo; Previous</button>
+                            <span>Page <span id="fixtures-current-page">1</span> of <span
+                                    id="fixtures-total-pages">1</span></span>
+                            <button id="fixtures-next-button" class="btn btn-light">&raquo; Next</button>
+                        </div> -->
+                    </div>
+
+                </div>
+            {% endif %}
+               
+        </div>
+    </div>
+
+    <!-- Get the saved players -->
+    <script> 
+        // let saved_player_repo;
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchSavedPlayers();
+        });
+
+            function fetchSavedPlayers() {
+            function getUserIdFromUrl() {
+                const urlParts = window.location.pathname.split('/');
+                
+                // Check if the URL contains '/api/gameweek/'
+                if (window.location.pathname.includes('/api/gameweek/')) {
+                    const potentialUserId = urlParts[urlParts.length - 2]; // Get second-to-last part of the URL
+                    
+                    // Ensure it's a valid numeric ID
+                    return /^\d+$/.test(potentialUserId) ? potentialUserId : null;
+                }
+                return null; // Return null if the URL doesn't contain '/api/gameweek/'
+            }
+
+            function getUserIdFromUrl_userId() {
+                const urlParts = window.location.pathname.split('/');
+                
+                // Check if the URL contains '/api/gameweek/'
+                if (window.location.pathname.includes('/api/team_selection/')) {
+                    const potentialUserId = urlParts[urlParts.length - 2]; // Get second-to-last part of the URL
+                    
+                    // Ensure it's a valid numeric ID
+                    return /^\d+$/.test(potentialUserId) ? potentialUserId : null;
+                }
+                return null; // Return null if the URL doesn't contain '/api/gameweek/'
+            }
+
+
+            const prev_gameweek = getUserIdFromUrl(); // Fetch the user_id from the URL (if any)
+            const userId = getUserIdFromUrl_userId(); // Fetch the user_id from the URL (if any)
+
+            const currentGameWeek = {{ current_game_week.id|default:"null" }};
+
+            // Construct URL based on user_id
+            let url = "/api/get-saved-team/";
+            if (userId) {
+                url = `/api/get-saved-team/${userId}/`; // Use the user-specific endpoint if user_id is present
+            }
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then((response) => {
+                if (response.ok) return response.json();
+                throw new Error("Failed to fetch saved team.");
+            })
+            .then((data) => {
+                // console.log("Fetched data:", data);
+
+                // Filter the players where gameweek is 27
+                // const playersInGameweek = data.team.filter(player => player.gameweek === parseInt(prev_gameweek,0));
+                const playersInGameweek = data.team.filter(player => player.gameweek === parseInt(prev_gameweek || currentGameWeek-1, 0));
+
+
+                // Check if there are any players for the specific gameweek
+                if (playersInGameweek.length > 0) {
+                    const hidesubscontainer = document.getElementById("subs-container");
+                    hidesubscontainer.style.display = "block";
+                    renderSavedPlayers(playersInGameweek);  // Render only players with gameweek 27
+                }
+            })
+            .catch((error) => {
+                console.error("Error loading saved team:", error);
+            });
+        }
+
+        // Convert kickoff time string into a Date object safely
+        function parseKickoffTime(kickoffTime) {
+            return kickoffTime !== "TBD" ? new Date(kickoffTime) : null;
+        }
+
+        // Find the earliest kickoff time
+        function getEarliestKickoff(times) {
+            const now = new Date();
+
+            // Convert valid times to Date objects and filter out "TBD"
+            let validTimes = times
+                .map(time => parseKickoffTime(time))
+                .filter(time => time !== null)  // Remove invalid times
+                .sort((a, b) => a - b);  // Sort by earliest first
+
+            return validTimes.length > 0 ? validTimes[0] : null;  // Return the earliest, or null if none
+        }
+
+
+        function renderSavedPlayers(savedTeam) {
+            const pitchFormation = document.getElementById("pitch-formation");
+            const budgetDisplay = document.getElementById("budgetDisplay");
+            const totalBudget = 100.0; // Initial budget
+            const subsContainerInner = document.querySelector("#subs-container > div");
+
+            pitchFormation.innerHTML = ""; // Clear the pitch
+            subsContainerInner.innerHTML = ""; // Clear the sub slots
+
+            let totalPlayerPrice = 0;
+
+            // ✅ Check if any player's match has started
+            let isAnyKickoffStarted = savedTeam.some(player => {
+                const kickoffTimes = Array.isArray(player.kickoff) ? player.kickoff : [player.kickoff];
+                const earliestKickoff = getEarliestKickoff(kickoffTimes);
+                return earliestKickoff && earliestKickoff < new Date();
+            });
+
+            // console.log("⚽ Any Match Started?:", isAnyKickoffStarted);
+
+            savedTeam.forEach((player, index) => {
+
+
+                const positionMapping = {
+                    "Goalkeepers": "GKP",
+                    "Defenders": "DEF",
+                    "Midfielders": "MID",
+                    "Forwards": "FWD"
+                };
+
+                // Parse position coordinates
+                const coordinates = JSON.parse(player.position_coordinates || "{}");
+
+                // Extracting the kickoff time(s) from the player fixture data
+                const kickoffTimes = Array.isArray(player.kickoff) ? player.kickoff : [player.kickoff];
+                    // const earliestKickoff = getEarliestKickoff(kickoffTimes);
+                    // const testKickoffTimes = [
+                    //     "2025-02-27T15:00:00Z",
+                    //     "2025-02-27T19:30:00Z",  // The earliest one
+                    //     "2025-03-01T12:00:00Z"
+                    // ];
+
+                const earliestKickoff = getEarliestKickoff(kickoffTimes);
+
+                    // console.log("Earliest Kickoff:", earliestKickoff);
+
+                    // Determine whether to show price or score
+                const displayValue = isAnyKickoffStarted ? `${player.score} pts` : `£${player.price}`;
+
+
+
+                // If the player's position is GKP, DEF, or MID (or coordinates are empty)
+                if (["GKP", "DEF", "FWD", "MID"].includes(player.position) || coordinates.top === "" || coordinates.left === "") {
+                    // Create sub slot for this player
+                    const slot = document.createElement("div");
+                    slot.className = "sub-slot text-center";
+                    slot.style.width = "120px";
+                    slot.style.padding = "10px";
+                    slot.style.border = "1px dashed #ccc";
+                    slot.style.cursor = "pointer";
+                    slot.style.position = "relative";
+
+                    // Adjust the label and the placement
+                    const label = positionMapping[player.position] || player.position; // Use the mapped label, fall back to full if not found
+
+                    slot.innerHTML = `<div>${label}</div>`;
+
+                    // Add the player card to the slot
+
+                    slot.innerHTML += `
+                        <div class="rounded text-center shadow-sm position-relative player-card-save" 
+                            style="font-family: Arial, sans-serif; cursor: pointer;"  
+                            data-name="${player.name}" 
+                            data-playerid="${player.player_id}"
+                            data-image="${player.team_shirt}" 
+                            data-team_shirt="${player.team_shirt}"
+                            data-position="${player.position}"  
+                            data-price="${player.price}"
+                            data-fixture="${player.fixture}"
+                            data-form="${player.form || 'N/A'}"
+                            data-tsb="${player.tsb || '0%'}"
+                            data-team="${player.team}" 
+                            data-captain="${player.is_captain}"
+                            data-vicecaptain="${player.is_vicecaptain}"
+                            data-teamlogo="${player.teamLogo}" 
+                            data-fixture-team1="${player.fixture_data.team1}"
+                            data-fixture-team1logo="${player.fixture_data.team1Logo}"
+                            data-fixture-team2="${player.fixture_data.team2}"
+                            data-fixture-team2logo="${player.fixture_data.team2Logo}"
+                            data-fixture-time="${player.fixture_data.time}">
+
+                            <!-- Image as Background -->
+                            <div class="position-relative">
+                            <div class="price-tag">
+                                <!-- Captain Badge (Conditionally Shown) -->
+                                ${Boolean(player.is_captain) ? `<img src="{% static 'images/caption.png' %}" alt="Captain" style="height: 20px; width: auto; display: block; position: absolute; top: 5px; left: 5px;" />` : ''}
+                                <!-- Vice-Captain Badge (Conditionally Shown) -->
+                                ${Boolean(player.is_vicecaptain) ? `<img src="{% static 'images/vcaption.png' %}" alt="VCaptain" style="height: 20px; width: auto; display: block; position: absolute; top: 5px; right: 5px;" />` : ''}
+                            
+                               £${player.price}
+
+                            </div>
+                                <img src="${player.image}" 
+                                    alt="${player.name.split(' ')[0]}" 
+                                    onerror="this.onerror=null; this.src='{% static 'images/default2.png' %}'; this.parentElement.parentElement.setAttribute('data-image', this.src);" 
+                                    class="player-image">
+                                
+                                <!-- First Overlayed Text (Positioned at Bottom) -->
+                                <div class="bg-white position-absolute w-100 text-center" 
+                                    style="bottom: 18px; left: 0; font-size: 0.7rem; font-weight: bold; color: #4A4A4A; padding: 3px; z-index: 2; background: rgba(255, 255, 255, 0.8);">
+                                    ${player.name.split(" ")[0]}
+                                </div>
+
+                                <!-- Second Overlayed Text (Directly Below the First) -->
+                                <div class="position-absolute w-100 text-center" 
+                                    style="bottom: 0px; left: 0; font-size: 0.7rem; font-weight: bold; color: #000033; padding: 3px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; z-index: 3; background: rgb(184,184,184);">
+                                    ${player.score} pts
+                                </div>
+                            </div>
+                        </div>
+
+                    `;
+
+                    // Attach event listener to show modal on click
+                    slot.querySelector(".player-card-save").addEventListener("click", function () {
+                        
+                        showPlayerModal(
+
+                            'No',
+
+                            this.getAttribute("data-captain"),
+                            this.getAttribute("data-vicecaptain"),
+
+                            this.getAttribute("data-name"), 
+                            this.getAttribute("data-playerid"),
+                            this.getAttribute("data-image"),
+                            this.getAttribute("data-position"),
+                            this.getAttribute("data-price") || "£0.0m",
+                            this.getAttribute("data-form") || "N/A",
+                            this.getAttribute("data-tsb") || "0%",
+                            this.getAttribute("data-team") || "Unknown Team",
+                            this.getAttribute("data-teamlogo"),
+                            {
+                                team1: this.getAttribute("data-fixture-team1") || "Team A",
+                                team1Logo: this.getAttribute("data-fixture-team1logo"),
+                                team2: this.getAttribute("data-fixture-team2") || "Team B",
+                                team2Logo: this.getAttribute("data-fixture-team2logo"),
+                                time: this.getAttribute("data-fixture-time") || "TBD"
+                            }
+                        );
+                    });
+
+                    subsContainerInner.appendChild(slot); // Append to the subs section
+                } else {
+
+                    const positionDiv = document.createElement("div");
+                    positionDiv.className = "position-absolute text-center";
+                    positionDiv.style.transform = "translate(-50%, -50%)";
+                    positionDiv.setAttribute("data-index", index);
+                    positionDiv.setAttribute("data-position", player.position);
+
+                    // console.log(player.team_shirt);
+                    // Otherwise, render in the pitch formation
+                    positionDiv.style.top = coordinates.top;
+                    positionDiv.style.left = coordinates.left;
+                    positionDiv.innerHTML = `
+                        <div class="rounded text-center shadow-sm position-relative player-card-save" 
+                            style="font-family: Arial, sans-serif; cursor: pointer;"  
+                            data-name="${player.name}" 
+                            data-playerid="${player.player_id}"
+                            data-image="${player.team_shirt}" 
+                            data-team_shirt="${player.team_shirt}"
+                            data-position="${player.position}"  
+                            data-price="${player.price}"
+                            data-fixture="${player.fixture}"
+                            data-form="${player.form || 'N/A'}"
+                            data-tsb="${player.tsb || '0%'}"
+                            data-team="${player.team}" 
+                            data-captain="${player.is_captain}"
+                            data-vicecaptain="${player.is_vicecaptain}"
+                            data-teamlogo="${player.teamLogo}" 
+                            data-fixture-team1="${player.fixture_data.team1}"
+                            data-fixture-team1logo="${player.fixture_data.team1Logo}"
+                            data-fixture-team2="${player.fixture_data.team2}"
+                            data-fixture-team2logo="${player.fixture_data.team2Logo}"
+                            data-fixture-time="${player.fixture_data.time}">
+
+                            <!-- Image as Background -->
+                            <div class="position-relative">
+                            <div class="price-tag">
+                                <!-- Captain Badge (Conditionally Shown) -->
+                                ${Boolean(player.is_captain) ? `<img src="{% static 'images/caption.png' %}" alt="Captain" style="height: 20px; width: auto; display: block; position: absolute; top: 5px; left: 5px;" />` : ''}
+                                <!-- Vice-Captain Badge (Conditionally Shown) -->
+                                ${Boolean(player.is_vicecaptain) ? `<img src="{% static 'images/vcaption.png' %}" alt="VCaptain" style="height: 20px; width: auto; display: block; position: absolute; top: 5px; right: 5px;" />` : ''}
+                               £${player.price}
+                            </div>
+                                <img src="${player.team_shirt}" 
+                                    alt="${player.name.split(' ')[0]}" 
+                                    onerror="this.onerror=null; this.src='{% static 'images/default1.png' %}'; this.parentElement.parentElement.setAttribute('data-image', this.src);" 
+                                    class="player-image">
+                                
+                                <!-- First Overlayed Text (Positioned at Bottom) -->
+                                <div class="bg-white position-absolute w-100 text-center" 
+                                    style="bottom: 18px; left: 0; font-size: 0.7rem; font-weight: bold; color: #4A4A4A; padding: 3px; z-index: 2; background: rgba(255, 255, 255, 0.8);">
+                                    ${player.name.split(" ")[0]}
+                                </div>
+
+                                <!-- Second Overlayed Text (Directly Below the First) -->
+                                <div class="position-absolute w-100 text-center" 
+                                    style="bottom: 0px; left: 0; font-size: 0.7rem; font-weight: bold; color: #000033; padding: 3px; border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; z-index: 3; background: rgb(184,184,184);">
+                                    ${player.score} pts
+                                </div>
+                            </div>
+                        </div>
+
+                    `;
+
+
+                    // Attach event listener to show modal on click
+                    positionDiv.querySelector(".player-card-save").addEventListener("click", function () {
+                        showPlayerModal(
+
+                            'Yes',
+
+                            this.getAttribute("data-captain"),
+                            this.getAttribute("data-vicecaptain"),
+
+                            this.getAttribute("data-name"), 
+                            this.getAttribute("data-playerid"),
+                            this.getAttribute("data-image"),
+                            this.getAttribute("data-position"),
+                            this.getAttribute("data-price") || "£0.0m",
+                            this.getAttribute("data-form") || "N/A",
+                            this.getAttribute("data-tsb") || "0%",
+                            this.getAttribute("data-team") || "Unknown Team",
+                            this.getAttribute("data-teamlogo"),
+                            {
+                                team1: this.getAttribute("data-fixture-team1") || "Team A",
+                                team1Logo: this.getAttribute("data-fixture-team1logo"),
+                                team2: this.getAttribute("data-fixture-team2") || "Team B",
+                                team2Logo: this.getAttribute("data-fixture-team2logo"),
+                                time: this.getAttribute("data-fixture-time") || "TBD"
+                            }
+                        );
+                    });
+
+                    pitchFormation.appendChild(positionDiv); // Append to the pitch formation
+                }
+
+                totalPlayerPrice += parseFloat(player.price) || 0;
+            });
+
+            // Update budget
+            const remainingBudget = totalBudget - totalPlayerPrice;
+            budgetDisplay.textContent = `£${remainingBudget.toFixed(1)}m`;
+        }
+
+        // Function to show modal with player details
+        function showPlayerModal(show,is_captain,is_vicecaptain,name, playerId, image, position, price, form, tsb, team, teamLogo, fixture) {
+            const modal = document.getElementById("playerModal");
+            const captainBadge = document.getElementById("captainBadge");
+            const vicecaptainBadge = document.getElementById("vicecaptainBadge");
+
+            const makeCaptainButton = document.getElementById("makeCaptainButton");
+            const makeViceCaptainButton = document.getElementById("makeViceCaptainButton");
+            const transferOutButton = document.getElementById("transferOutButton");
+
+            if (show==='Yes'){
+                makeCaptainButton.style.display = "block";  // Hide Make Captain button
+                makeViceCaptainButton.style.display = "block";  // Hide Make Vice Captain button
+            } else{
+                makeCaptainButton.style.display = "none";  // Hide Make Captain button
+                makeViceCaptainButton.style.display = "none";  // Hide Make Vice Captain button                    
+            }
+
+            // Get the current URL
+            const currentUrl = window.location.href;
+
+            // Check if the URL contains an ID (e.g., 'https://pangasquadii.digitlogic.co.ke/api/team_selection/1/')
+            const hasIdInUrl = currentUrl.match(/\/\d+\/$/); // This checks if there is an ID at the end of the URL
+
+
+            if (hasIdInUrl) {
+                // Disable the formation select if ID is present in the URL
+                makeCaptainButton.style.display = "none";  // Hide Make Captain button
+                makeViceCaptainButton.style.display = "none";  // Hide Make Vice Captain button 
+            } 
+
+            // Convert is_captain to boolean if it's a string
+            const isCaptainBoolean = (is_captain === true || is_captain === "true" || is_captain === 1);
+
+            // Convert is_captain to boolean if it's a string
+            const isVcaptainBoolean = (is_vicecaptain === true || is_vicecaptain === "true" || is_vicecaptain === 1);
+
+            // Initially hide the captain badge when the modal opens
+            captainBadge.style.display = "none";  // Hide by default
+
+            // Initially hide the captain badge when the modal opens
+            vicecaptainBadge.style.display = "none";  // Hide by default
+            transferOutButton.style.display = "none";  // Hide by default
+
+            // Show the captain badge only if the player is the captain
+            if (isCaptainBoolean) {
+                captainBadge.style.display = "block";  // Show the badge if the player is the captain
+                makeViceCaptainButton.disabled = true;
+            }else{
+                captainBadge.style.display = "none";  // Hide Captain Badge
+                makeViceCaptainButton.disabled = false;  // Enable Make Captain button
+            }
+
+            // Show the captain badge only if the player is the captain
+            if (isVcaptainBoolean) {
+                vicecaptainBadge.style.display = "block";  // Show the badge if the player is the captain
+                makeCaptainButton.disabled = true;
+            }else{
+                vicecaptainBadge.style.display = "none";  // Hide Vice-Captain Badge
+                makeCaptainButton.disabled = false;  // Enable Make Vice-Captain button
+            }
+            
+            // Check if modal exists
+            if (!modal) {
+                console.error("Modal element not found!");
+                return;
+            }
+
+            // Set player details
+            document.getElementById("modalPlayerName").textContent = name;
+            document.getElementById("modalPlayerImage").src = image;
+            document.getElementById("modalPlayerImage").onerror = function () {
+                this.onerror = null;
+                this.src = "https://via.placeholder.com/80"; // Fallback image
+            };
+            document.getElementById("modalPlayerPosition").textContent = position;
+            document.getElementById("modalPlayerPrice").textContent = "£" + price + "m";
+            document.getElementById("modalPlayerForm").textContent = form;
+            document.getElementById("modalPlayerTSB").textContent = tsb;
+            document.getElementById("modalTeamName").textContent = team;
+            document.getElementById("modalTeamLogo").src = teamLogo;
+            document.getElementById("modalPlayerImage").setAttribute("data-playerid", playerId);
+            document.getElementById("modalTeamLogo").onerror = function () {
+                this.onerror = null;
+                this.src = "{% static 'images/default3.png' %}"; // Fallback team logo
+            };
+
+            // **Convert fixture.time to a formatted date**
+            let fixtureDate = "TBD"; // Default if no date is provided
+            if (fixture.time && fixture.time !== "TBD") {
+                try {
+                    let dateObj = new Date(fixture.time);
+                    let options = { weekday: "long", day: "numeric", month: "long" };
+                    fixtureDate = dateObj.toLocaleDateString("en-GB", options); // Example: "Saturday 15 February"
+                } catch (error) {
+                    console.error("Error parsing fixture time:", error);
+                }
+            }
+
+            // Set fixture details
+            document.getElementById("fixtureTeam1Name").textContent = fixture.team1 || "Team A";
+            document.getElementById("fixtureTeam1Logo").src = fixture.team1Logo;
+            document.getElementById("fixtureTeam1Logo").onerror = function () {
+                this.onerror = null;
+                this.src = "{% static 'images/default3.png' %}"; // Fallback team1 logo
+            };
+
+            document.getElementById("fixtureTeam2Name").textContent = fixture.team2 || "Team B";
+            document.getElementById("fixtureTeam2Logo").src = fixture.team2Logo;
+            document.getElementById("fixtureTeam2Logo").onerror = function () {
+                this.onerror = null;
+                this.src = "{% static 'images/default3.png' %}"; // Fallback team2 logo
+            };
+
+                // Hide team2Logo if the team name is "Unknown"
+            if (fixture.team2 === "Unknown" || fixture.team2 === "None") {
+                document.getElementById("fixtureTeam2Logo").style.display = "none";  // Hide logo
+            } else {
+                document.getElementById("fixtureTeam2Logo").style.display = "inline"; // Show logo
+            }
+            
+            document.getElementById("fixtureTime").textContent = fixtureDate; // Now dynamically formatted
+            document.getElementById("fixtureDate").textContent = fixtureDate;
+
+            // Show modal
+            modal.style.display = "block";
+        }
+
+
+
+        // Close the modal
+        document.getElementById("closeModalButton").addEventListener("click", function () {
+            document.getElementById("playerModal").style.display = "none";
+        });
+
+        // Close modal when clicking outside of it
+        document.getElementById("playerModal").addEventListener("click", function (e) {
+            if (e.target === this) {
+                this.style.display = "none";
+            }
+        });
+
+        // If using HTMX, listen for page updates
+        document.body.addEventListener("htmx:afterSwap", function () {
+            fetchSavedPlayers();
+        });
+
+    </script>
+
+    <!-- fixtures-list pagenation -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fixtureContainer = document.getElementById("fixtureContainer");
+            const prevButton = document.getElementById("fixtures-prev-button");
+            const nextButton = document.getElementById("fixtures-next-button");
+            const currentPageSpan = document.getElementById("fixtures-current-page");
+            const totalPagesSpan = document.getElementById("fixtures-total-pages");
+
+            // Ensure TEAM_SHIRTS is available in JavaScript
+            const TEAM_SHIRTS = {
+                "Arsenal": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t3.png" },
+                "Aston Villa": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t7.png" },
+                "Bournemouth": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t91.png" },
+                "Brentford": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t94.png" },
+                "Brighton": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t36.png" },
+                "Chelsea": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t8.png" },
+                "Crystal Palace": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t31.png" },
+                "Everton": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t11.png" },
+                "Fulham": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t54.png" },
+                "Ipswich": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t40.png" },
+                "Leicester": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t13.png" },
+                "Liverpool": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t14.png" },
+                "Man City": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t43.png" },
+                "Man Utd": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t1.png" },
+                "Newcastle": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t4.png" },
+                "Nott'm Forest": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t17.png" },
+                "Southampton": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t20.png" },
+                "Spurs": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t6.png" },
+                "West Ham": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t21.png" },
+                "Wolves": { "logo": "https://resources.premierleague.com/premierleague/badges/70/t39.png" }
+            };
+
+            // Function to update fixtures dynamically
+            const updateFixtures = (page) => {
+                fetch(`/api/teamselection/?page=${page}`, {
+                    headers: { "X-Requested-With": "XMLHttpRequest" },
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // console.log(data);
+                        // Update fixtures content
+                        let html = "";
+                        for (const day of data.matches) {
+                            html += `<h5 class="fw-bold text-dark mt-4">${day.date}</h5>`;
+                            html += '<div class="timeline mt-3">';
+                            for (const match of day.matches) {
+                                // Get team names
+                                const homeTeamName = match.home_team.name;
+                                const awayTeamName = match.away_team.name;
+
+                                // Get logos from TEAM_SHIRTS dictionary
+                                const homeTeamLogo = TEAM_SHIRTS[homeTeamName]?.logo || "default_logo.png";
+                                const awayTeamLogo = TEAM_SHIRTS[awayTeamName]?.logo || "default_logo.png";
+
+                                html += `
+                                <div class="d-flex align-items-center mb-3 bg-white rounded p-2 shadow-sm">
+                                    <div class="me-2 text-center">
+                                        <span class="fw-bold">${match.formatted_time}</span>
+                                        <p class="text-muted small">${match.formatted_date}</p>
+                                    </div>
+                                    <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+                                        <div class="d-flex align-items-center me-3">
+                                            <img src="${homeTeamLogo}" 
+                                                alt="${match.home_team.name}" 
+                                                class="img-fluid"
+                                                style="height: 24px; width: 24px; margin-right: 8px;">
+                                            <span>${match.home_team.name}</span>
+                                        </div>
+                                        <span class="fw-bold mx-3">vs</span>
+                                        <div class="d-flex align-items-center ms-3">
+                                            <span>${match.away_team.name}</span>
+                                            <img src="${awayTeamLogo}" 
+                                                alt="${match.away_team.name}" 
+                                                class="img-fluid"
+                                                style="height: 24px; width: 24px; margin-left: 8px;">
+                                        </div>
+                                    </div>
+                                </div>`;
+                            }
+                            html += "</div>";
+                        }
+                        fixtureContainer.innerHTML = html;
+
+                        // Update pagination
+                        currentPageSpan.textContent = data.current_page;
+                        totalPagesSpan.textContent = data.total_pages;
+                        prevButton.disabled = !data.has_previous;
+                        nextButton.disabled = !data.has_next;
+                    })
+                    .catch((error) => console.error("Error fetching fixtures:", error));
+            };
+
+            // Event listeners for pagination buttons
+            prevButton.addEventListener("click", () => {
+                const currentPage = parseInt(currentPageSpan.textContent);
+                if (currentPage > 1) updateFixtures(currentPage - 1);
+            });
+
+            nextButton.addEventListener("click", () => {
+                const currentPage = parseInt(currentPageSpan.textContent);
+                const totalPages = parseInt(totalPagesSpan.textContent);
+                if (currentPage < totalPages) updateFixtures(currentPage + 1);
+            });
+
+            // Initial fetch for the first page
+            updateFixtures(1);
+        });
+
+    </script>
+
+    <!-- Captain $ Vice Image -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const makeCaptainButton = document.getElementById("makeCaptainButton");
+        const makeViceCaptainButton = document.getElementById("makeViceCaptainButton");
+
+        if (!makeCaptainButton || !makeViceCaptainButton) {
+            console.error("Captain or Vice Captain button not found.");
+            return;
+        }
+
+        makeCaptainButton.addEventListener("click", function () {
+            updateCaptainOrViceCaptain("captain");
+        });
+
+        makeViceCaptainButton.addEventListener("click", function () {
+            updateCaptainOrViceCaptain("vice_captain");
+        });
+
+        function updateCaptainOrViceCaptain(role) {
+            const playerId = document.getElementById("modalPlayerImage").getAttribute("data-playerid");
+
+            if (!playerId) {
+                console.error("Player ID not found!");
+                return;
+            }
+
+            fetch("/api/update-captain/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCSRFToken()
+                },
+                body: JSON.stringify({
+                    role: role,
+                    player_id: playerId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log("Server Response:", data);
+                // alert(`${role.replace("_", " ")} updated successfully!`);
+
+                showToast(data.message || `${role.replace("_", " ")} updated successfully!`, "success");
+
+                // console.log(role);
+
+                
+                // Dynamically show the captain image if player is updated as captain
+                if (data.captain === playerId) {
+                    document.getElementById("captainBadge").style.display = "block";  // Show the badge
+                }
+
+                if (role === 'captain') {
+                    document.getElementById("captainBadge").style.display = "block";  // Show the badge
+                }
+
+                if (role === 'vice_captain') {
+                    document.getElementById("vicecaptainBadge").style.display = "block";  // Show the badge
+                }
+
+                // Refresh the page to reflect the updated data
+                location.reload();  // Reloads the page
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+                    // Helper function to show toast messages
+                    function showToast(message, type) {
+                    const toastContainer = document.getElementById("toastContainer");
+                    if (!toastContainer) {
+                        console.error("Toast container not found.");
+                        return;
+                    }
+
+                    const toast = document.createElement("div");
+                    toast.className = `toast align-items-center text-white bg-${type} border-0`;
+                    toast.role = "alert";
+                    toast.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                    toastContainer.appendChild(toast);
+
+                    const bootstrapToast = new bootstrap.Toast(toast);
+                    bootstrapToast.show();
+
+                    toast.addEventListener("hidden.bs.toast", () => {
+                        toastContainer.removeChild(toast);
+                    });
+                }
+
+        function getCSRFToken() {
+            let csrfToken = document.cookie
+                .split("; ")
+                .find(row => row.startsWith("csrftoken="))
+                ?.split("=")[1];
+
+            return csrfToken || "";
+        }
+    });
+
+    </script>
+
+    <!-- Pitch Players Hide -->
+    <style>
+        /* Initially hide the button */
+        #hideDivLink {
+            display: none;
+        } 
+
+        /* By default, show the button */
+        #showDivLink {
+            display: block;
+        }
+
+        /* On large screens (768px or more), hide the button */
+        @media screen and (min-width: 768px) {
+            #showDivLink {
+                display: none !important;
+            }
+        }
+
+        /* Show the button only on small screens (max-width: 768px) */
+        @media screen and (max-width: 768px) {
+            #hideDivLink {
+                display: block; /* Make it visible on small screens */
+            }
+        }
+
+        /* Show the divs on larger screens (min-width: 768px), and ensure they are always visible */
+        @media screen and (min-width: 768px) {
+            #targetDiv, #targetDiv1 {
+                display: block !important; /* Force the divs to show on large screens */
+            }
+        }
+
+
+    </style>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Contests{% endblock %}
+
+{% block content %}
+<h2>Available Contests</h2>
+<ul>
+    {% for contest in contests %}
+        <li>
+            <a href="{% url 'contest_detail' contest.id %}">{{ contest.name }}</a>
+            - Entry Fee: {{ contest.entry_fee }} | Prize Pool: {{ contest.prize_pool }}
+        </li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}

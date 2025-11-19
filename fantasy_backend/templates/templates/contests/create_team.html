@@ -1,0 +1,16 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Create Team{% endblock %}
+
+{% block content %}
+<h2>Create a Team for {{ contest.name }}</h2>
+<form method="post" action="">
+    {% csrf_token %}
+    <h3>Select Players</h3>
+    {% for player in players %}
+        <input type="checkbox" name="players" value="{{ player.id }}">
+        {{ player.name }} ({{ player.position }})<br>
+    {% endfor %}
+    <button type="submit">Submit Team</button>
+</form>
+{% endblock %}

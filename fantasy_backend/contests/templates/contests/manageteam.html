@@ -1,0 +1,99 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Manage Team{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Form Card -->
+    <div class="p-5 bg-light rounded shadow-sm">
+        <!-- Title -->
+        <h2 class="fw-bold text-dark mb-3">Create your team name</h2>
+        <p class="text-muted mb-4">You need to give your team a name.</p>
+
+        <!-- Team Name Form -->
+        <form method="post" action="{% url 'manage_team' %}">
+            {% csrf_token %}
+
+            <!-- Team Name Field -->
+            <div class="mb-4">
+                <label for="team_name" class="form-label fw-bold">Team name</label>
+                <input type="text" id="team_name" name="team_name" maxlength="20"
+                    class="form-control form-control-lg border-0 shadow-sm" placeholder="Maximum 20 characters">
+            </div>
+
+            <!-- Favorite Club Field -->
+            <div class="mb-4">
+                <label for="favorite_club" class="form-label fw-bold">Favourite club</label>
+                <select id="favorite_club" name="favorite_club" class="form-select form-select-lg border-0 shadow-sm">
+                    <option selected disabled>Choose a club...</option>
+                </select>
+                <!-- Hidden field to store the favorite club ID -->
+                <input type="hidden" id="favorite_club_id" name="favorite_club_id" value="">
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="mb-4 form-check">
+                <input type="checkbox" id="terms" name="terms" class="form-check-input">
+                <label for="terms" class="form-check-label text-muted">
+                    I agree to the Fantasy Premier League Challenge
+                    <a href="#" class="text-primary fw-bold">terms and conditions</a>,
+                    which include free entry into a prize draw for eligible participants (as set out in the terms and
+                    conditions).
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg px-5 shadow">Create team</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const favoriteClubSelect = document.getElementById("favorite_club");
+        const favoriteClubIdInput = document.getElementById("favorite_club_id");
+
+        // Fetch and populate teams for favorite club dropdown
+        fetch("/api/get-teams/")
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.teams && data.teams.length > 0) {
+                    data.teams.forEach((team) => {
+                        const option = document.createElement("option");
+                        option.value = team.name; // Use team name as the value
+                        option.setAttribute("data-id", team.id); // Store team ID in a data attribute
+                        option.textContent = team.name; // Display team name
+                        favoriteClubSelect.appendChild(option);
+                    });
+                    // console.log(data.teams);
+                } else {
+                    // Handle empty teams
+                    const option = document.createElement("option");
+                    option.textContent = "No clubs available";
+                    option.disabled = true;
+                    option.selected = true;
+                    favoriteClubSelect.appendChild(option);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching teams:", error);
+                // Add an error message to the dropdown in case of failure
+                const option = document.createElement("option");
+                option.textContent = "Failed to load clubs";
+                option.disabled = true;
+                option.selected = true;
+                favoriteClubSelect.appendChild(option);
+            });
+
+        // Update hidden input when the favorite club is selected
+        favoriteClubSelect.addEventListener("change", function () {
+            const selectedOption = favoriteClubSelect.options[favoriteClubSelect.selectedIndex];
+            favoriteClubIdInput.value = selectedOption.getAttribute("data-id"); // Set the team ID
+        });
+    });
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% load static %}
+
+
+
+<div class="rts-match-result-section rts-match-result-section2 rts-match-schedule-section section-gap">
+    <div class="container">
+        <div class="section-title-area section-title-area1 text-center mb--50">
+            <h1 class="section-title"
+                style="color: white; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">
+                <span class="pretitle"></span>POPULAR LEAGUES
+            </h1>
+            <p>Explore thrilling leagues where players compete, connect, and climb to greatness. Choose your league,
+                showcase your skills, and be a part of the action!</p>
+        </div>
+        <div class="row justify-content-center">
+
+            {% for leagues in public_leagues %}
+            <div class="col-xl-4 col-md-6">
+                <div class="match-single">
+                    <div class="match-single-content">
+                        <div class="match-scores">
+                            <div class="club club1">
+                                <!-- <div class="club-logo mr--20"><img src="{% static 'assets/images/clubs/1.png' %}" alt="club-logo">
+                                </div> -->
+                                <div class="block">
+                                    <h2 class="score-number">{{ leagues.start_date|time:"H" }} : {{ leagues.start_date|time:"i" }}</h2>
+                                    <!-- <span class="club-name">REAL M.</span> -->
+                                </div>
+                            </div>
+                            <!-- <div class="colon">:</div> -->
+                            <!-- <div class="club club2">
+                                <div class="block">
+                                    <h2 class="score-number">{{ leagues.start_date|time:"i" }}</h2>
+                                    <span class="club-name">HEMILTON H.</span>
+                                </div>
+                                <div class="club-logo ml--20"><img src="{% static 'assets/images/clubs/6.png' %}" alt="club-logo">
+                                 </div>
+                            </div> -->
+                        </div>
+                        <div class="block-wrap">
+                            <span class="match-date">KICKOFF, {{ leagues.start_date|date:"M. d" }}</span>
+                            <span class="stadium-name">{{leagues.name}}</span>
+                            <span class="stadium-name">Win up to {{leagues.prize_pool}} KES</span>
+                        </div>
+                    </div>
+                    <div class="match-bottom-action">
+                        <a class="action-item first-child">Entry: {{leagues.entry_fee}} KES</a>
+                        
+                        {% if user.is_authenticated %}
+                        <!-- Fixtures Section -->
+                        <a href="{% url 'league' %}" class="action-item">Join Now</a>
+                        {% else %}
+                        <!-- Login Section -->
+                        <a href="{% url 'login' %}" class="action-item">Join Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!--===

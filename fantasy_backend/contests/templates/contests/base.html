@@ -1,0 +1,533 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Fantasy Challenge{% endblock %}</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!--================= Bootstrap V5 CSS =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <!--================= Font Awesome 5 CSS =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/all.min.css' %}">
+    <!--================= RT Icons CSS =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/rt-icons.css' %}">
+    <!--================= Animate css =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/animate.min.css' %}">
+    <!--================= Magnific popup Plugin =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/magnific-popup.css' %}">
+    <!--================= Animate css =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/magnific.css' %}">
+    <!--================= Animate css =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/animate.min.css' %}">
+    <!--================= Swiper Slider Plugin =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/swiper-bundle.min.css' %}">
+    <!--================= Mobile Menu CSS =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/metisMenu.css' %}">
+    <!--================= Main Menu CSS =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/rtsmenu.css' %}">
+    <!--================= Main Stylesheet =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/variables/variable1.css' %}">
+    <!--================= Main Stylesheet =================-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+<style>
+
+/* Hover effect */
+.player-card-save:hover {
+  border: 1px solid white; /* Brighter green */
+  box-shadow: 0 0 10px rgb(255, 255, 255); /* Glow effect */
+  transform: scale(1.05);
+}
+
+
+@media (max-width: 567px) { /* Mobile Screens */
+  .pitch-size {
+    height: 60vh; width: auto;
+  }
+}
+
+/* .pitch-size {
+    height: 100vh; width: auto;
+  } */
+
+
+
+/* Player Card Styling */
+.player-card-save {
+  /* background: #029F4F;  */
+  background: linear-gradient(to right, #0D9557, #0FB569);
+  width: 12vw !important; /* Reduce size & force apply */ 
+  height: 15vh; width: auto;
+  max-width: 100px !important; /* Ensure limit */
+  min-width: 50px; /* Prevent being too small */
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out;
+  position: relative;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) { /* Tablets & Small Screens */
+  .player-card-save {
+    width: 10vw !important;
+    max-width: 90px !important;
+  }
+}
+
+@media (max-width: 480px) { /* Mobile Screens */
+  .player-card-save {
+    width: 10vw !important;
+    height: 10vh; width: auto;
+    max-width: 80px !important;
+  }
+}
+
+.price-tag {
+    font-size: 0.9vw; /* Increase font size for small screens */
+    font-weight: bold;
+    color: white;
+  }
+
+
+/* Responsive Price Tag */
+@media (max-width: 480px) {
+  .price-tag {
+    font-size: 3.5vw; /* Increase font size for small screens */
+    font-weight: bold;
+  }
+}
+
+/* Player Image */
+.player-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #029F4F;
+}
+
+.player-image {
+  width: 100%; /* Make image responsive */
+  max-width: 80px; /* Prevents oversized images */
+  height: auto;
+}
+
+/* Player Name (White Section) */
+.player-name {
+  background: white;
+  color: #000;
+  font-size: 1.2vw;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+/* Responsive Player Name */
+@media (max-width: 480px) {
+  .player-name {
+    font-size: 2.5vw;
+    font-weight: bold;
+  }
+}
+
+/* Player Fixture (Gray Section) */
+.player-fixture {
+  background: rgb(184, 184, 184);
+  color: #000033;
+  font-size: 1vw;
+  font-weight: bold;
+}
+
+/* Responsive Fixture Info */
+@media (max-width: 480px) {
+  .player-fixture {
+    font-size: 2vw;
+  }
+}
+
+/* Hover Effect */
+.player-card-save:hover {
+  transform: scale(1.05);
+}
+
+
+
+
+
+
+
+
+
+
+/* Responsive Position Card */
+.position-card {
+    width: 9vw; /* Scales with screen */
+    max-width: 90px; /* Restricts max size */
+    height: 12vh; /* Scales height */
+    max-height: 110px;
+    /*background-color: red;  #029F4F;Green */
+    background-color: #029F4F;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid transparent;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    position: relative;
+    transition: border 0.3s ease-in-out;
+}
+
+/* Smaller screens (up to 576px) */
+@media (max-width: 576px) {
+    .position-card {
+        width: 12vw; /* Wider for better visibility */
+        max-width: 70px;
+        height: 8vh;
+        max-height: 50px;
+    }
+    /* Adjust icon and text size for responsiveness */
+    .position-content i {
+        font-size: 10vw; /* Larger icon */
+        margin-bottom: 5px; /* More spacing */
+    }
+
+    .position-content span {
+        font-size: 24px; /* Increase text size */
+        font-weight: bold; /* Make it stand out */
+        color: white;
+    }
+
+}
+
+/* Hover effect */
+.position-card:hover {
+    border: 1px solid white;
+}
+
+/* Center content */
+.position-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Adjust icon and text size for responsiveness */
+.position-content i {
+    font-size: 0.7vw; /* Adjusts with screen size */
+    margin-bottom: 3px;
+}
+
+.position-content span {
+    font-size: 1vw; /* Scales text */
+    font-weight: normal;
+    color: white;
+}
+
+.position-content span {
+    font-size: 0.6vw; /* Adjust font size */
+    font-weight: normal; /* Make text less bold if needed */
+    color: white;
+}
+
+
+
+</style>
+
+</head>
+
+<body>
+  <header class="header large-header">
+    <div class="container header-container">
+      <div class="full-height">
+        <div class="d-flex align-items-center">
+          <img src="{% static 'images/logo-GQ.png' %}" alt="Logo" class="me-3" style="height: 190px; width: auto;">
+          <div>
+            <div class="logo-title">PangaSquadii</div>
+            <h1>Fantasy Challenge</h1>
+          </div>
+        </div>
+        <div>
+          <h3 class="fw-bold text-center mb-2 mb-md-0"  id="current_gameweek" style="display: none;">{{ current_game_week.id }}</h3>
+          <nav class="nav-container d-flex justify-content-center">
+            <ul class="nav nav-tabs mb-0">
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                  href="/">Home</a>
+              </li>
+
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'manage_team' or request.resolver_match.url_name == 'team_selection' %}active{% endif %}"
+                  href="{% url 'manage_team' %}">Manage Team</a>
+              </li>
+              {% if not has_started or has_ended %}
+              <li id="leagueButton" class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'league' or request.resolver_match.url_name == 'join-league' or request.resolver_match.url_name == 'create-league' %}active{% endif %}"
+                  href="{% url 'league' %}">Leagues</a>
+              </li>
+            {% endif %}
+            
+
+              {% endif %}
+
+              <!-- <li class="nav-item menu-nav-tab-2a">
+                <a class="nav-link {% if request.resolver_match.url_name == 'statistics' %}active{% endif %}"
+                  href="{% url 'statistics' %}">Statistics</a>
+              </li> -->
+
+              {% if user.is_authenticated %}
+              {% if user.is_superuser %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'admin_dashboard_view' %}">Admin</a>
+              </li>
+              {% endif %}
+              
+              <!-- <li class="nav-item menu-nav-tab-1a">
+                <a class="nav-link" href="#">Prize</a>
+              </li> -->
+              <li class="nav-item dropdown more-nav-tab">
+                <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">More</a>
+                <ul class="dropdown-menu" aria-labelledby="moreDropdown">
+                  <!-- <li>
+                    <a class="dropdown-item menu-nav-tab-2b {% if request.resolver_match.url_name == 'statistics' %}active{% endif %}"
+                      href="{% url 'statistics' %}">Statistics</a>
+                  </li> -->
+                  {% if user.is_superuser %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'admin_dashboard_view' %}">Admin</a>
+                  </li>
+                  {% endif %}
+                  
+                  <li><a class="dropdown-item menu-nav-tab-1b" href="#">Prize</a></li>
+                  <li>
+                    <form method="post" action="{% url 'logout' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-link nav-link">Sign Out</button>
+                    </form>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item menu-nav-tab">
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link nav-link">Sign Out</button>
+                </form>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <img src="{% static 'images/players1.png' %}" alt="Players">
+    </div>
+  </header>
+
+  <header class="header small-header">
+    <div class="container">
+      <div class="row align-items-center justify-content-between">
+        <div class="col d-flex align-items-center mt-4">
+          <img src="{% static 'images/logo-GQ.png' %}" alt="Logo" class="me-2 img-fluid" style="max-height: 50px;">
+          <div>
+            <div class="logo-title">PangaSquadii</div>
+            <h1>Fantasy Challenge</h1>
+          </div>
+        </div>
+        <div class="col-auto mt-4">
+          <button class="navbar-toggler menu-icon" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+      <div class="collapse mt-3" id="navMenu">
+        <ul class="nav nav-tabs flex-column">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="/">Home</a>
+          </li>
+
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'manage_team'  or request.resolver_match.url_name == 'team_selection' %}active{% endif %}"
+              href="{% url 'manage_team' %}">Manage Team</a>
+          </li>
+          {% if not has_started or has_ended %}
+          <li id="leagueButton1" class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'league' or request.resolver_match.url_name == 'join-league' or request.resolver_match.url_name == 'create-league' %}active{% endif %}"
+              href="{% url 'league' %}">Leagues</a>
+          </li>
+          {% endif %}
+
+          {% endif %}
+
+          <!-- <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'statistics' %}active{% endif %}"
+              href="{% url 'statistics' %}">Statistics</a>
+          </li> -->
+
+          {% if user.is_authenticated %}
+          {% if user.is_superuser %}
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin_dashboard_view' %}">Admin</a>
+          </li>
+          {% endif %}
+          
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="#">Prize</a>
+          </li> -->
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link">Sign Out</button>
+            </form>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12">
+          <img src="{% static 'images/players1.png' %}" alt="Players" class="player-image-banner img-fluid w-100">
+        </div>
+      </div>
+    </div>
+  </header>
+  {% if messages %}
+  <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+    {% for message in messages %}
+    <div class="toast align-items-center text-white bg-{{ message.tags }} border-0" role="alert" aria-live="assertive"
+      aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+      <div class="d-flex">
+        <div class="toast-body">
+          {{ message }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+          aria-label="Close"></button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <div class="sponsors-section">
+    <div class="sponsors-container">
+      <div class="sponsor-item">
+        <img src="{% static 'images/ea-sports.png' %}" alt="EA Sports">
+        <p>Lead Partner</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/barclays.png' %}" alt="Barclays">
+        <p>Official Bank</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/guinness.png' %}" alt="Guinness">
+        <p>Official Beer</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/hublot.png' %}" alt="Hublot">
+        <p>Official Timekeeper</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/nike.png' %}" alt="Nike">
+        <p>Official Ball</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/oracle.png' %}" alt="Oracle">
+        <p>Official Cloud Partner</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/panini.png' %}" alt="Panini">
+        <p>Official Licensee</p>
+      </div>
+      <div class="sponsor-item">
+        <img src="{% static 'images/sorare.png' %}" alt="Sorare">
+        <p>Official Licensee</p>
+      </div>
+    </div>
+  </div>
+
+  <!--================= Footer Start Here =================-->
+  {% include 'contests/footer.html' %}
+  <!--================= Footer End Here =================-->
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const toastElements = document.querySelectorAll(".toast");
+      toastElements.forEach((toastEl) => {
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+      });
+    });
+  </script>
+
+  <!-- Hide link -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Fetch team status on page load
+      fetch("/api/check-team-status/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error("Failed to fetch team status.");
+        })
+        .then((data) => {
+          // console.log(data)
+          const leagueButton = document.getElementById("leagueButton");
+          const leagueButton1 = document.getElementById("leagueButton1");
+          // Construct URL based on user_id
+                        let url = "/api/get-saved-team/";
+                        fetch(url, {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                        .then((response) => {
+                            if (response.ok) return response.json();
+                            throw new Error("Failed to fetch saved team.");
+                        })
+                        .then((data) => {
+                            // console.log("Fetched data:", data);
+                            const current_gameweek= document.getElementById("current_gameweek").textContent.trim();
+
+                            // Filter the players where gameweek is 27
+                            const playersInGameweek = data.team.filter(player => player.gameweek === parseInt(current_gameweek,0));
+
+                            // Check if there are any players for the specific gameweek
+                            if (!playersInGameweek.length > 0) {
+                              leagueButton.style.display = "none";
+                              leagueButton1.style.display = "none";
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error loading saved team:", error);
+                        });
+          
+        })
+        .catch((error) => {
+          console.error("Error fetching team status:", error);
+        });
+    });
+  </script>
+
+
+</body>
+
+</html>

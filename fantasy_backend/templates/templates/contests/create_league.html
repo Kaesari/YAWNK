@@ -1,0 +1,58 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Create League{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="p-4 rounded shadow-sm" style="background-color: #f7f6f8;">
+        <h2 class="fw-bold text-dark mb-4">Create Invitational League</h2>
+        <form action="/api/create-league/" method="post">
+            {% csrf_token %}
+
+            <!-- League Name Field -->
+            <div class="mb-3">
+                <label for="leagueName" class="form-label fw-bold text-dark">League name</label>
+                <small class="form-text text-muted d-block mb-2">Maximum 30 characters</small>
+                <input type="text" class="form-control border border-dark" id="leagueName" name="leagueName" placeholder="Enter league name" maxlength="30" required>
+            </div>
+
+            <!-- Start Date Field -->
+            <div class="mb-3">
+                <label for="startDate" class="form-label fw-bold text-dark">Start Date</label>
+                <small class="form-text text-muted d-block mb-2">Pick a future date and time.</small>
+                <input type="datetime-local" class="form-control border border-dark" id="startDate" name="startDate" required>
+            </div>
+            
+            <!-- Entry Fee Field -->
+            <div class="mb-3">
+                <label for="entryFee" class="form-label fw-bold text-dark">Entry Fee</label>
+                <small class="form-text text-muted d-block mb-2">Enter the entry fee amount in Ksh.</small>
+                <input type="number" class="form-control border border-dark" id="entryFee" name="entryFee" placeholder="Enter entry fee" min="0" step="0.01" required>
+            </div>
+
+            <!-- Public/Private Field -->
+            <div class="mb-3">
+                <label class="form-label fw-bold text-dark">League Type</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="leagueType" id="publicLeague" value="Public" checked>
+                    <label class="form-check-label" for="publicLeague">
+                        Public - Anyone can join
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="leagueType" id="privateLeague" value="Private">
+                    <label class="form-check-label" for="privateLeague">
+                        Private - Only users with the league code can join
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4 text-muted" style="font-size: 0.9rem;">
+                <p>Please think carefully before entering your league name. Leagues with names that are deemed inappropriate or offensive may result in your account being deleted. Please refer to the Terms & Conditions of entry for more information.</p>
+                <p>In a league with classic scoring, teams are ranked based on their total points in the game. You can join or leave a league with classic scoring at any point during the season.</p>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2" style="background: linear-gradient(to right, #00ffc6, #007bff); border: none;">Create</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

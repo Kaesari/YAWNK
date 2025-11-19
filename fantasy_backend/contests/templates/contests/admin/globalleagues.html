@@ -1,0 +1,94 @@
+
+{% extends 'contests/admin/base.html' %}
+
+{% block title %}Global League{% endblock %}
+
+{% load static %} 
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="d-flex flex-wrap flex-wrap align-items-center justify-content-between mb-4">
+                <div>
+                    <h4 class="mb-3">Global League Details</h4>
+                    <p class="mb-0">
+                        Global leagues let you create exclusive contests with custom settings. Compete with friends or a select group for exciting prizes in a controlled environment.
+                    </p>                    
+                </div>
+                <a href="{% url 'admin_private_leagues' %}" class="btn btn-primary add-list"><i class="ri-eye-line mr-0"></i>  View Private Leagues</a>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="table-responsive rounded mb-3">
+            <table class="data-tables table mb-0 tbl-server-info">
+                <thead class="bg-white text-uppercase">
+                    <tr class="ligth ligth-data">
+                        <th>
+                            <div class="checkbox d-inline-block">
+                                <input type="checkbox" class="checkbox-input" id="checkbox1">
+                                <label for="checkbox1" class="mb-0"></label>
+                            </div>
+                        </th>
+                        <th>Name</th>
+                        <th>Sport</th>
+                        <th>Entry Fee</th>
+                        <th>Prize Pool</th>
+                        <th>Created At</th>
+                        <th>Start Date</th>
+                        <th>League Code</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="ligth-body">
+                    {% for league in public_leagues %}
+                    <tr>
+                        <td>
+                            <div class="checkbox d-inline-block">
+                                <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                <label for="checkbox2" class="mb-0"></label>
+                            </div>
+                        </td>
+                        <!-- <td>
+                            <div class="d-flex align-items-center">
+                                <img src="../assets/images/table/product/01.jpg" class="img-fluid rounded avatar-50 mr-3" alt="image">
+                                <div>
+                                    Organic Cream
+                                    <p class="mb-0"><small>This is test Product</small></p>
+                                </div>
+                            </div>
+                        </td> -->
+                        <td>{{ league.name }}</td>
+                        <td>{{ league.sport }}</td>
+                        <td>Ksh {{ league.entry_fee }}</td>
+                        <td>Ksh {{ league.prize_pool }}</td>
+                        <td>{{ league.created_at }}</td>
+                        <td>{{ league.start_date }}</td>
+                        <td>{{ league.league_code }}</td>
+                        <td>
+                            <div class="d-flex align-items-center list-action">
+                                <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"
+                                    href="{% url 'admin_view_league' league.id %}"><i class="ri-eye-line mr-0"></i>
+                                </a>
+                                <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit"
+                                    href="{% url 'admin_edit_league' league.id %}"><i class="ri-pencil-line mr-0"></i></a>
+                                <!-- <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete"
+                                    href="#"><i class="ri-delete-bin-line mr-0"></i></a> -->
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No global leagues found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    <!-- Page end  -->
+</div>
+
+
+{% endblock %}

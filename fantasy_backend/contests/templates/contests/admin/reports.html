@@ -1,0 +1,75 @@
+{% extends 'contests/admin/base.html' %}
+
+{% block title %}Admin Reports{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-header">
+                    <h4 class="card-title">Public vs Private Leagues</h4>
+                </div>                    
+                <div class="card-body text-center">
+                    <img src="{{ chart1 }}" alt="Public vs Private Leagues" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-header">
+                    <h4 class="card-title">Contests by Sport</h4>
+                </div>   
+                <div class="card-body text-center">
+                    <img src="{{ chart2 }}" alt="Contests by Sport" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-header">
+                    <h4 class="card-title">Growth of Leagues Over Time</h4>
+                </div>                    
+                <div class="card-body text-center">
+                    <img src="{{ chart3 }}" alt="Leagues Growth" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-header">
+                    <h4 class="card-title">Prize Pool Distribution</h4>
+                </div>   
+                <div class="card-body text-center">
+                    <img src="{{ chart4 }}" alt="Prize Pool Distribution" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-header">
+                    <h4 class="card-title">Favorite Clubs in Teams</h4>
+                </div>   
+                <div class="card-body text-center">
+                    <img src="{{ chart5 }}" alt="Favorite Clubs Distribution" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block card-stretch card-height">
+                <div class="card-header">
+                    <h4 class="card-title">Entry Fee Distribution</h4>
+                </div>   
+                <div class="card-body text-center">
+                    <img src="{{ chart6 }}" alt="Entry Fee Distribution" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

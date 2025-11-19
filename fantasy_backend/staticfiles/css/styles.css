@@ -1,0 +1,540 @@
+
+@media (max-width: 1000.99px) {
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .header {
+    background: linear-gradient(to right, #ff009d, #007bff);
+    color: white;
+  }
+
+  .header-banner{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 10px; /* Keeps the rounded corners */
+  }
+
+
+  .logo-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    color: black;
+  }
+
+  .header h1 {
+    font-size: 1.2rem;
+    margin: 0;
+    line-height: 1.2;
+    color: black;
+  }
+
+  .header img {
+    height: auto;
+    max-height: 150px;
+    width: auto;
+  }
+
+  .menu-icon {
+    font-size: 1.5rem;
+    color: black;
+    cursor: pointer;
+  }
+
+  .player-image-banner {
+    object-fit: contain;
+  }
+
+  .header .player-image-banner {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+  }
+
+  .small-header {
+    display: block;
+  }
+
+  .large-header {
+    display: none;
+  }
+
+}
+
+@media (min-width: 1001px) {
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .header {
+    background: linear-gradient(to right, #ff009d, #007bff);
+    color: white;
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 250px;
+  }
+
+  .full-height {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+    margin-top: 0;
+    line-height: 1.0;
+    color: black;
+  }
+
+  .header .logo-title {
+    font-size: 3rem;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 0px;
+    color: black;
+    line-height: 1;
+  }
+
+  .header img {
+    height: 250px;
+  }
+
+  .nav-container {
+    padding: 0;
+  }
+
+  .nav-tabs {
+    margin-bottom: 0;
+  }
+
+  .nav-tabs .nav-link {
+    color: white;
+    background-color: #28a745;
+    margin-right: 10px;
+    border-radius: 5px 5px 0 0;
+    transition: background-color 0.3s ease;
+  }
+
+  .nav-tabs .nav-link:hover {
+    background-color: #218838;
+  }
+
+  .content {
+    padding: 20px;
+  }
+
+  .btn-report {
+    background-color: #6f42c1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .btn-report:hover {
+    background-color: #5a3399;
+  }
+
+  .table thead th {
+    font-weight: bold;
+  }
+
+  .header .player-image-banner {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+  }
+
+  .large-header {
+    display: block;
+  }
+
+  .small-header {
+    display: none;
+  }
+}
+
+.menu-nav-tab {
+  display: block;
+}
+
+.menu-nav-tab-1a {
+  display: block;
+}
+
+.menu-nav-tab-1b {
+  display: none;
+}
+
+.menu-nav-tab-2a {
+  display: block;
+}
+
+.menu-nav-tab-2b {
+  display: none;
+}
+
+.more-nav-tab {
+  display: none;
+}
+
+@media (max-width: 1400px) {
+  .menu-nav-tab {
+    display: none;
+  }
+
+  .more-nav-tab {
+    display: block;
+  }
+}
+
+@media (max-width: 1200px) {
+  .menu-nav-tab-1a {
+    display: none;
+  }
+
+  .menu-nav-tab-1b {
+    display: block;
+  }
+}
+
+@media (max-width: 1100px) {
+  .menu-nav-tab-2a {
+    display: none;
+  }
+
+  .menu-nav-tab-2b {
+    display: block;
+  }
+}
+
+/* Login Section Styling */
+.bg-light {
+background-color: #F8F9FA !important;
+}
+.shadow {
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.shadow-sm {
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.border-0 {
+border: none !important;
+}
+.text-muted {
+color: #6c757d !important;
+}
+
+/* Divider Line */
+hr {
+height: 1px;
+border: none;
+background-color: #ddd;
+}
+
+/* Button Styling */
+.btn-create-account {
+background-color: #ff009d;
+color: #000;
+border: none;
+}
+.btn-create-account:hover {
+background-color: #ff009d;
+}
+
+.btn-facebook {
+background-color: #1877F2;
+color: white;
+border: none;
+}
+.btn-facebook:hover {
+background-color: #155BC2;
+}
+
+.btn-twitter {
+background-color: #000;
+color: white;
+border: none;
+}
+.btn-twitter:hover {
+background-color: #333333;
+}
+
+.btn-google {
+background-color: #EA4335;
+color: white;
+border: none;
+}
+.btn-google:hover {
+background-color: #C93028;
+}
+
+.btn-apple {
+background-color: #000;
+color: white;
+border: none;
+}
+.btn-apple:hover {
+background-color: #333333;
+}
+
+.btn-success {
+background-color: #ff009d !important;
+border: none;
+color: black !important;
+}
+.btn-success:hover {
+background-color: #ff009d !important;
+}
+
+/* Input Styling */
+.form-control-lg {
+background-color: #F8F9FA;
+font-size: 1.2rem;
+color: #495057;
+}
+.form-control-lg:focus {
+background-color: #E9ECEF;
+border: 1px solid #ddd;
+box-shadow: none;
+}
+
+.row .d-flex > div {
+padding: 0 10px; /* Add some padding between elements */
+}
+
+@media (max-width: 768px) {
+.d-flex {
+    flex-wrap: wrap; /* Ensure elements stack on smaller screens */
+}
+
+.d-flex > div {
+    margin-bottom: 10px; /* Add spacing when stacked */
+}
+}
+
+.form-control {
+border-radius: 0.5rem;
+border: 1px solid #ced4da;
+}
+
+.form-label {
+font-weight: bold;
+}
+
+.radio {
+margin-right: 1rem;
+}
+
+button {
+border-radius: 0.5rem;
+padding: 0.75rem 2rem;
+}
+
+.fade-hr {
+border: none; /* Remove default border */
+height: 1px; /* Set the height of the line */
+background: linear-gradient(to right, transparent, white, transparent); /* Create a fade effect */
+}
+
+.hidden {
+        display: none;
+    }
+
+.footer {
+  background-color: #000;
+  color: #fff;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-section {
+  flex: 1 1 200px;
+  margin: 10px;
+}
+
+.footer-section h6 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.footer-section p {
+  margin: 5px 0;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin: 5px 0;
+}
+
+.footer-section ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+  color: #ff009d;
+}
+
+.footer-social {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.footer-social a {
+  margin: 0 10px;
+  font-size: 20px;
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-social a:hover {
+  color: #ff009d;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+.footer-bottom p {
+  margin: 5px 0;
+}
+
+.sponsors-section {
+  padding: 20px 0;
+  border-top: 4px solid #ff009d; /* Top border line with gradient-like color */
+  background-color: #fff;
+}
+
+.sponsors-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px; /* Space between sponsor items */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sponsor-item {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+}
+
+.sponsor-item img {
+  max-width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.sponsor-item p {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0;
+}
+
+
+
+
+.player-card {
+  width: 70px;
+  /* padding: 1px; */
+  font-family: Arial, sans-serif;
+}
+
+.player-card-image img {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  object-fit: cover;
+  margin-bottom: 5px;
+}
+
+.player-card-name {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #4A4A4A;
+  margin-bottom: 2px;
+}
+
+.player-card-opponent {
+  font-size: 0.7rem;
+  color: #7A7A7A;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .player-card {
+      width: 60px;
+  }
+
+  .player-card-image img {
+      width: 40px;
+      height: 40px;
+  }
+
+  .player-card-name {
+      font-size: 0.7rem;
+  }
+
+  .player-card-opponent {
+      font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .player-card {
+      width: 50px;
+  }
+
+  .player-card-image img {
+      width: 30px;
+      height: 30px;
+  }
+
+  .player-card-name {
+      font-size: 0.6rem;
+  }
+
+  .player-card-opponent {
+      font-size: 0.5rem;
+  }
+}
+
+
+
+
+
+

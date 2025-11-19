@@ -1,0 +1,40 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Join League{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="p-4 rounded shadow-sm" style="background-color: #f7f6f8;">
+        <h2 class="fw-bold text-dark mb-4">Join League</h2>
+        <form method="post" id="joinLeagueForm">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="leagueCode" class="form-label fw-bold text-dark">League Code</label>
+                <input type="text" class="form-control border border-dark" id="leagueCode" name="leagueCode" placeholder="Enter league code" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2" style="background: linear-gradient(to right, #00ffc6, #007bff); border: none;">Proceed to Payment</button>
+        </form>
+    </div>
+</div>
+<script>
+    const form = document.getElementById('joinLeagueForm');
+    const leagueCodeInput = document.getElementById('leagueCode');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const leagueCode = leagueCodeInput.value.trim();
+        if (!leagueCode) {
+            alert('Please enter a league code.');
+            return;
+        }
+
+        // Dynamically set the form's action URL with the league code
+        const actionUrl = `{% url 'entry-payment' 'dummy_code' %}`.replace('dummy_code', leagueCode);
+        form.action = actionUrl;
+
+        // Submit the form
+        form.submit();
+    });
+</script>
+{% endblock %}

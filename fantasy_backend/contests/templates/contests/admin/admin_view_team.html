@@ -1,0 +1,93 @@
+{% extends 'contests/admin/base.html' %}
+
+{% block title %}Team Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4>Team: {{ team.name }}</h4>
+                    <p class="mb-0">User: {{ team.user.username }}</p>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <tr>
+                            <th>Team Name</th>
+                            <td>{{ team.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>User</th>
+                            <td>{{ team.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Favorite Club</th>
+                            <td>{{ team.favorite_club }}</td>
+                        </tr>
+                        <tr>
+                            <th>Score</th>
+                            <td>{{ team.score }}</td>
+                        </tr>
+                    </table>
+
+                    <h5 class="mt-4">Players in Team</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Image</th>
+                                    <th>Player Name</th>
+                                    <th>Position</th>
+                                    <th>Score</th>
+                                    <th>Gameweek</th>
+                                    <th>Captain</th>
+                                    <th>Vice Captain</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for player in players %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        {% if player.image_url %}
+                                            <img src="{{ player.image_url }}" alt="{{ player.name }}" style="width:40px; height:40px; object-fit:cover; border-radius:50%;">
+                                        {% else %}
+                                            <span class="text-muted">No Image</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ player.name }}</td>
+                                    <td>{{ player.position }}</td>
+                                    <td>{{ player.score }}</td>
+                                    <td>{{ player.gameweek }}</td>
+                                    <td>
+                                        {% if team.captain and player.player_id == team.captain.player_id %}
+                                            <span class="badge badge-success">Captain</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if team.vice_captain and player.player_id == team.vice_captain.player_id %}
+                                            <span class="badge badge-info">Vice</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">No players in this team.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if league %}
+                        <a href="{% url 'admin_view_league' league.id %}" class="btn btn-secondary mt-3">Back to League</a>
+                    {% else %}
+                        <a href="{% url 'admin_global_leagues' %}" class="btn btn-secondary mt-3">Back to Leagues</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'contests/base.html' %}
+
+{% load static %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Page Title -->
+    <h2 class="fw-bold mb-4">Statistics</h2>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label for="view_filter" class="form-label fw-bold">View</label>
+            <select id="view_filter" class="form-select form-select-lg border-0 shadow-sm">
+                <option selected>All players</option>
+                <option>Forwards</option>
+                <option>Midfielders</option>
+                <option>Defenders</option>
+                <option>Goalkeepers</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="sort_filter" class="form-label fw-bold">Sorted by</label>
+            <select id="sort_filter" class="form-select form-select-lg border-0 shadow-sm">
+                <option selected>Total points</option>
+                <option>Form</option>
+                <option>Price</option>
+                <option>Selection percentage</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Subtitle -->
+    <div class="bg-dark text-white text-center py-2 mb-4 rounded">
+        <p class="mb-0">Total points earned this season.</p>
+    </div>
+
+    <!-- Statistics Table -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Player</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Sel.</th>
+                    <th scope="col">Form</th>
+                    <th scope="col">Pts.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/m_salah.png' %}" alt="M. Salah" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">M. Salah</span><br>
+                        <small class="text-muted">LIV MID</small>
+                    </td>
+                    <td>Ksh 13.6m</td>
+                    <td>92.14%</td>
+                    <td>11.6</td>
+                    <td>209</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/palmer.png' %}" alt="Palmer" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">Palmer</span><br>
+                        <small class="text-muted">CHE MID</small>
+                    </td>
+                    <td>Ksh 11.4m</td>
+                    <td>59.65%</td>
+                    <td>7.7</td>
+                    <td>153</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/mbeumo.png' %}" alt="Mbeumo" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">Mbeumo</span><br>
+                        <small class="text-muted">BRE MID</small>
+                    </td>
+                    <td>Ksh 7.8m</td>
+                    <td>32.66%</td>
+                    <td>8.8</td>
+                    <td>136</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/haaland.png' %}" alt="Haaland" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">Haaland</span><br>
+                        <small class="text-muted">MCI FWD</small>
+                    </td>
+                    <td>Ksh 14.8m</td>
+                    <td>41.96%</td>
+                    <td>5.3</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/isak.png' %}" alt="Isak" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">Isak</span><br>
+                        <small class="text-muted">NEW FWD</small>
+                    </td>
+                    <td>Ksh 9.3m</td>
+                    <td>54.8%</td>
+                    <td>9.7</td>
+                    <td>119</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/cunha.png' %}" alt="Cunha" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">Cunha</span><br>
+                        <small class="text-muted">WOL FWD</small>
+                    </td>
+                    <td>Ksh 7.0m</td>
+                    <td>4.81%</td>
+                    <td>5.3</td>
+                    <td>111</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{% static 'images/saka.png' %}" alt="Saka" class="me-2" style="height: 40px;">
+                        <span class="fw-bold">Saka</span><br>
+                        <small class="text-muted">ARS MID</small>
+                    </td>
+                    <td>Ksh 10.3m</td>
+                    <td>0.02%</td>
+                    <td>1.0</td>
+                    <td>107</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

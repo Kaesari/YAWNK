@@ -1,0 +1,67 @@
+{% extends 'contests/admin/base.html' %}
+
+{% block title %}View League{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h4>League Details: {{ league.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-4">
+                        <tr><th>Name</th><td>{{ league.name }}</td></tr>
+                        <tr><th>Sport</th><td>{{ league.sport }}</td></tr>
+                        <tr><th>Entry Fee</th><td>Ksh {{ league.entry_fee }}</td></tr>
+                        <tr><th>Prize Pool</th><td>Ksh {{ league.prize_pool }}</td></tr>
+                        <tr><th>Created At</th><td>{{ league.created_at }}</td></tr>
+                        <tr><th>Start Date</th><td>{{ league.start_date }}</td></tr>
+                        <tr><th>League Code</th><td>{{ league.league_code }}</td></tr>
+                        <tr><th>Type</th><td>{{ league.league_type }}</td></tr>
+                    </table>
+
+                    <h5 class="mt-4">Teams Joined</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Team Name</th>
+                                    <th>User</th>
+                                    <th>Score</th>
+                                    <th>Favorite Club</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team in teams %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ team.name }}</td>
+                                    <td>{{ team.user.username }}</td>
+                                    <td>{{ team.score }}</td>
+                                    <td>{{ team.favorite_club }}</td>
+                                    <td>
+                                        <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="" data-original-title="View"
+                                        href="{% url 'admin_view_team' team.id %}">
+                                            <i class="ri-eye-line mr-0"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center">No teams have joined this league yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{% url 'admin_global_leagues' %}" class="btn btn-secondary mt-3">Back to Leagues</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

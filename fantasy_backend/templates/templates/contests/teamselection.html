@@ -1,0 +1,1244 @@
+{% extends 'contests/base.html' %}
+
+{% load static %}
+
+{% block title %}Team Selection{% endblock %}
+
+{% block content %}
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;" id="toastContainer">
+</div>
+
+<!-- Modal -->
+<div id="leagueOptionsModal" class="modal fade" tabindex="-1" aria-labelledby="leagueOptionsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"> <!-- Centered modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="leagueOptionsModalLabel">What would you like to do next?</h5>
+                <button type="button" class="btn-close" id="dismissButton" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You can either create a new league and invite your friends or join an existing league to compete.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="/api/create-league/" class="btn btn-primary"
+                    style="background: linear-gradient(to right, #00ffc6, #007bff); color: white;">Create League</a>
+                <a href="/api/league/" class="btn btn-secondary">Join League</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <!-- Card Container -->
+    <div class="p-4 rounded shadow-sm" style="background: linear-gradient(to right, #00ffc6, #007bff); color: white;">
+        <!-- Card Content -->
+        <div class="row row-cols-1 row-cols-md-2 g-4"> <!-- Bootstrap responsive classes for gaps -->
+            <!-- Left Section -->
+            <div class="col">
+                <div class="rounded p-4 d-flex flex-column h-100"
+                    style="background: linear-gradient(to left, #00ffc6, #007bff); min-height: 200px;">
+
+                    <!-- Image and Text -->
+                    <div class="d-flex align-items-center flex-nowrap">
+                        <img src="{% static 'images/gaolpost-1.png' %}" alt="Goal Post" class="me-3"
+                            style="width: 60px; height: 60px; border-radius: 50%;">
+                        <div>
+                            <h3 class="fw-bold mb-1 text-dark">{{ user_team.name }}</h3>
+                            <h3 class="fw-bold mb-1 text-dark" id="teamName" style="display: none;">{{ user_team.name
+                                }}#{{ user_team.id }}</h3>
+                            <p class="fw-bold mb-2 text-dark" style="font-size: 0.8rem;">{{ user_team.user.username }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Points and Global Ranking -->
+                    <div class="bg-dark text-white rounded p-3 mt-auto"> <!-- Added mt-auto to push content down -->
+                        <div class="row d-flex align-items-center">
+                            <!-- Points Section -->
+                            <div class="col-4 text-center d-flex flex-column align-items-center justify-content-center">
+                                <h1 class="fw-bold mb-0">0</h1> <!-- Added mb-0 for tighter spacing -->
+                                <p class="text-muted">Points</p>
+                            </div>
+                            <!-- Global Rank and Highest Points Section -->
+                            <div class="col-8">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Global rank</span>
+                                    <span>-</span>
+                                </div>
+                                <hr class="fade-hr my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>Highest points</span>
+                                    <span>-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="col">
+                <div class="rounded p-4 d-flex flex-column h-100"
+                    style="background: linear-gradient(to left, #00ffc6, #007bff); min-height: 200px;">
+                    <h4 class="fw-bold  text-dark" style="font-size: 1.0rem;">Gameweek 21 Challenge</h4>
+                    <h5 class="fw-bold  text-dark">Legends</h5>
+                    <p class="text-dark">⚡ Players who have been at their club for 5+ seasons earn double points</p>
+                    <div class="d-flex justify-content-between mt-auto"> <!-- Added mt-auto to align inner boxes -->
+                        <div class="p-3 rounded shadow-sm d-flex justify-content-between align-items-center"
+                            style="background-color: #e8fff4; width: 100%; opacity: 0.8;">
+                            <span class="text-dark" style="font-size: 0.8rem;">Players selected</span>
+                            <div>
+                                <span class="fw-bold text-dark">
+                                    <span id="budgetDisplay">100.0m</span>
+                                    <span class="text-dark" style="font-size: 0.8rem;">Remaining budget</span>
+                                </span>
+                            </div>
+
+                            <span class="fw-bold text-dark">Unlimited</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div id="playerModal" class="modal"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+            <div class="modal-content"
+                style="background: linear-gradient(to right, #00ffc6, #007bff); width: 90%; max-width: 600px; margin: 10% auto; padding: 20px; border-radius: 15px; color: white; text-align: center; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+
+                <!-- Close Button -->
+                <button id="closeModalButton"
+                    style="position: absolute; top: 10px; right: 20px; background: transparent; color: white; border: none; font-size: 1.5rem; cursor: pointer;">
+                    X
+                </button>
+
+                <!-- Player Information -->
+                <div class="d-flex align-items-center" style="flex-direction: column;">
+                    <!-- Player Image -->
+                    <img id="modalPlayerImage" src="" alt=""
+                        style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 20px;">
+                    <!-- Player Name and Position -->
+                    <h3 id="modalPlayerName" style="margin: 0; font-size: 1.5rem;"></h3>
+                    <p id="modalPlayerPosition" style="margin: 0; font-size: 1rem;">Midfielder</p>
+                    <!-- Player Team -->
+                    <p id="modalPlayerTeam" style="font-size: 1rem; color: #f9e000;">Brentford</p>
+                </div>
+
+                <!-- Stats Section -->
+                <div class="d-flex justify-content-between align-items-center"
+                    style="margin: 20px 0; padding: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
+                    <div style="flex: 1; text-align: center;">
+                        <p style="margin: 0; font-size: 0.9rem;">Price</p>
+                        <h4 id="modalPlayerPrice" style="margin: 5px 0;">7.8m</h4>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <p style="margin: 0; font-size: 0.9rem;">Form</p>
+                        <h4 id="modalPlayerForm" style="margin: 5px 0;">8.0</h4>
+                    </div>
+                    <div style="flex: 1; text-align: center;">
+                        <p style="margin: 0; font-size: 0.9rem;">TSB%</p>
+                        <h4 id="modalPlayerTSB" style="margin: 5px 0;">5.43%</h4>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-around">
+                    <button class="btn btn-light"
+                        style="padding: 10px 20px; border-radius: 20px; font-weight: bold; background: #1dcdfd; color: white; border: none;">
+                        Make Captain
+                    </button>
+                    <button class="btn btn-light"
+                        style="padding: 10px 20px; border-radius: 20px; font-weight: bold; background: #8e44ad; color: white; border: none;">
+                        Transfer Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Pitch Area bg-success -->
+        <div class="col-md-8">
+            <div class="position-relative rounded">
+                <img src="{% static 'images/pitch.png' %}" alt="Pitch" class="img-fluid w-100 rounded">
+                <div id="pitch-formation">
+                    <!-- Formation players will be dynamically injected here -->
+                </div>
+            </div>
+            <!-- Button Section -->
+            <div class="container mt-3">
+                <div class="row g-3 justify-content-center align-items-center">
+                    <!-- Formation Dropdown -->
+                    <div class="col-12 col-md-auto d-flex align-items-center bg-light border rounded p-3">
+                        <label for="formation-select" style="font-size: 16px; margin-right: 8px;">Choose
+                            formation</label>
+                        <select id="formation-select" class="form-select form-select-lg" style="width: 150px;">
+                            <option value="1-1-2">1-1-2</option>
+                            <option value="4-4-2">4-4-2</option>
+                            <option value="4-3-3">4-3-3</option>
+                            <option value="3-5-2">3-5-2</option>
+                            <option value="5-3-2">5-3-2</option>
+                        </select>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="col-12 col-md-auto">
+                        <button id="resetButton" class="btn btn-outline-secondary btn-lg w-100 mb-2 mb-md-0"
+                            style="padding: 10px 20px;">Reset</button>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        <button class="btn btn-outline-secondary btn-lg w-100 mb-2 mb-md-0" id="autoPickButton"
+                            style="padding: 10px 20px;">
+                            Auto pick
+                        </button>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        <button id="saveTeamButton" class="btn btn-primary btn-lg w-100"
+                            style="background: linear-gradient(to right, #00ffc6, #007bff); color: rgb(255, 255, 255); padding: 10px 30px;">Save
+                            team</button>
+                    </div>
+
+                </div>
+            </div>
+            
+
+            <!-- Fixtures Section -->
+            <div class="mt-4 bg-light rounded p-3">
+                <h4 class="text-center fw-bold text-uppercase mb-3">Gameweek Fixtures</h4>
+                <p class="text-center text-muted">Real-Time Matches</p>
+                <div class="timeline mt-3">
+                    {% for match in matches %}
+                    <div class="d-flex align-items-center mb-3 bg-white rounded p-2 shadow-sm">
+                        <div class="me-2 text-center">
+                            <span class="fw-bold">{{ match.formatted_time }}</span>
+                            <p class="text-muted small">{{ match.formatted_date }}</p>
+                        </div>
+                        <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+                            <div class="d-flex align-items-center me-3">
+                                <img src="{{ match.homeTeam.logo }}" alt="{{ match.homeTeam.name }}" class="img-fluid"
+                                    style="height: 24px; width: 24px; margin-right: 8px;">
+                                <span>{{ match.homeTeam.name }}</span>
+                            </div>
+                            <span class="fw-bold mx-3">vs</span>
+                            <div class="d-flex align-items-center ms-3">
+                                <span>{{ match.awayTeam.name }}</span>
+                                <img src="{{ match.awayTeam.logo }}" alt="{{ match.awayTeam.name }}" class="img-fluid"
+                                    style="height: 24px; width: 24px; margin-left: 8px;">
+                            </div>
+                        </div>
+                        <img src="{% static 'images/sponsor-logo.png' %}" alt="Sponsor" class="ms-3"
+                            style="height: 24px;">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Team Selection -->
+            <select class="form-select mb-3" id="teamSelect"  style="display: none;">
+                <option value="">Select a team...</option>
+            </select>
+
+
+
+
+
+        </div>
+
+        <!-- Player Selection -->
+        <div class="col-md-4">
+            <div class="bg-white p-4 rounded shadow-sm">
+                <h5 class="fw-bold">Player Selection</h5>
+                <!-- <input type="text" class="form-control mb-3" placeholder="Search for player...">
+                <select class="form-select mb-3">
+                    <option>View</option>
+                    <option>Defenders</option>
+                    <option>Midfielders</option>
+                </select>
+                <select class="form-select mb-3">
+                    <option>Sorted by</option>
+                    <option>Total points</option>
+                    <option>Price</option>
+                </select>
+                <p class="fw-bold mb-1">Max cost: Between 3.9 and 7.2</p>
+                <div class="d-flex justify-content-between">
+                    <span>7.2</span>
+                    <input type="range" class="form-range">
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="fiveSeasons">
+                    <label class="form-check-label" for="fiveSeasons">
+                        Show Players who have been at their club for 5+ seasons
+                    </label>
+                </div> -->
+                <button id="playerCountButton" class="btn btn-primary w-100 mt-3">0 players shown</button>
+
+                <!-- Goalkeepers Section -->
+                <h5 class="fw-bold text-dark mt-4">Goalkeepers</h5>
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Player</th>
+                            <!-- <th>Position</th> -->
+                            <th>Points</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="goalkeepersTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center">Select a team to view players.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Defenders Section -->
+                <h5 class="fw-bold text-dark mt-4">Defenders</h5>
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Player</th>
+                            <!-- <th>Position</th> -->
+                            <th>Points</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="defendersTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center">Select a team to view players.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Midfielders Section -->
+                <h5 class="fw-bold text-dark mt-4">Midfielders</h5>
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Player</th>
+                            <!-- <th>Position</th> -->
+                            <th>Points</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="midfieldersTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center">Select a team to view players.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Forwards Section -->
+                <h5 class="fw-bold text-dark mt-4">Forwards</h5>
+                <table class="table table-striped table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Player</th>
+                            <!-- <th>Position</th> -->
+                            <th>Points</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="forwardsTableBody">
+                        <tr>
+                            <td colspan="4" class="text-center">Select a team to view players.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+ <!-- Auto Selections -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Define formations and their respective positions
+            const formations = {
+                "1-1-2": [
+                    { position: "Goalkeepers", top: "10%", left: "50%" },
+                    { position: "Defenders", top: "45%", left: "50%" },
+                    { position: "Midfielders", top: "77%", left: "32%" },
+                    { position: "Midfielders", top: "77%", left: "67%" },
+                ],
+                "4-4-2": [
+                    { position: "Goalkeepers", top: "10%", left: "50%" },
+                    { position: "Defenders", top: "25%", left: "20%" },
+                    { position: "Defenders", top: "25%", left: "40%" },
+                    { position: "Defenders", top: "25%", left: "60%" },
+                    { position: "Defenders", top: "25%", left: "80%" },
+                    { position: "Midfielders", top: "50%", left: "20%" },
+                    { position: "Midfielders", top: "50%", left: "40%" },
+                    { position: "Midfielders", top: "50%", left: "60%" },
+                    { position: "Midfielders", top: "50%", left: "80%" },
+                    { position: "Forwards", top: "77%", left: "32%" },
+                    { position: "Forwards", top: "77%", left: "67%" },
+                ],
+                "4-3-3": [
+                    { position: "Goalkeepers", top: "10%", left: "50%" },
+                    { position: "Defenders", top: "25%", left: "20%" },
+                    { position: "Defenders", top: "25%", left: "40%" },
+                    { position: "Defenders", top: "25%", left: "60%" },
+                    { position: "Defenders", top: "25%", left: "80%" },
+                    { position: "Midfielders", top: "50%", left: "33%" },
+                    { position: "Midfielders", top: "50%", left: "67%" },
+                    { position: "Midfielders", top: "50%", left: "50%" },
+                    { position: "Forwards", top: "77%", left: "20%" },
+                    { position: "Forwards", top: "77%", left: "50%" },
+                    { position: "Forwards", top: "77%", left: "80%" },
+                ],
+                "3-5-2": [
+                    { position: "Goalkeepers", top: "10%", left: "50%" },
+                    { position: "Defenders", top: "25%", left: "33%" },
+                    { position: "Defenders", top: "25%", left: "67%" },
+                    { position: "Defenders", top: "25%", left: "50%" },
+                    { position: "Midfielders", top: "50%", left: "20%" },
+                    { position: "Midfielders", top: "50%", left: "40%" },
+                    { position: "Midfielders", top: "50%", left: "60%" },
+                    { position: "Midfielders", top: "50%", left: "80%" },
+                    { position: "Midfielders", top: "50%", left: "50%" },
+                    { position: "Forwards", top: "77%", left: "32%" },
+                    { position: "Forwards", top: "77%", left: "67%" },
+                ],
+                "5-3-2": [
+                    { position: "Goalkeepers", top: "10%", left: "50%" },
+                    { position: "Defenders", top: "25%", left: "15%" },
+                    { position: "Defenders", top: "25%", left: "30%" },
+                    { position: "Defenders", top: "25%", left: "50%" },
+                    { position: "Defenders", top: "25%", left: "70%" },
+                    { position: "Defenders", top: "25%", left: "85%" },
+                    { position: "Midfielders", top: "50%", left: "33%" },
+                    { position: "Midfielders", top: "50%", left: "67%" },
+                    { position: "Midfielders", top: "50%", left: "50%" },
+                    { position: "Forwards", top: "77%", left: "32%" },
+                    { position: "Forwards", top: "77%", left: "67%" },
+                ],
+            };
+
+            const formationSelect = document.getElementById("formation-select");
+            const pitchFormation = document.getElementById("pitch-formation");
+            const autoPickButton = document.getElementById("autoPickButton");
+            const budgetDisplay = document.getElementById("budgetDisplay");
+            const favoriteClubId = "{{ favorite_club_id }}"; // Pass from backend
+
+            let totalBudget = 100.0; // Total available budget
+            let remainingBudget = totalBudget; // Remaining budget
+            let players = []; // Players will be dynamically populated
+
+            // Fetch players dynamically based on teamId
+            async function fetchPlayersByTeam(teamId) {
+                try {
+                    const response = await fetch(`/api/get-players-by-team/?team_id=${teamId}`);
+                    const data = await response.json();
+                    console.log("Players fetched from API:", data.players);
+                    if (data && data.players) {
+                        players = data.players.map((player) => ({
+                            name: player.name,
+                            position: player.position,
+                            price: player.price,
+                            image: player.image || "https://resources.premierleague.com/premierleague/photos/players/110x140/p204716.png", // Fallback image
+                        }));
+                    } else {
+                        console.error("No players found for the selected team.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching players:", error);
+                }
+            }
+
+            // Update the budget display
+            function updateBudgetDisplay() {
+                budgetDisplay.textContent = `${remainingBudget.toFixed(1)}m`;
+            }
+
+            // Function to render a formation
+            function renderFormation(formationKey) {
+                pitchFormation.innerHTML = ""; // Clear the pitch
+                const formation = formations[formationKey];
+
+                if (formation) {
+                    formation.forEach((slot) => {
+                        const positionDiv = document.createElement("div");
+                        positionDiv.className = "position-absolute text-center";
+                        positionDiv.style.top = slot.top;
+                        positionDiv.style.left = slot.left;
+                        positionDiv.style.transform = "translate(-50%, -50%)";
+                        positionDiv.innerHTML = `
+                            <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center" 
+                                style="width: 50px; height: 50px;">
+                                ${slot.position}
+                            </div>
+                        `;
+                        pitchFormation.appendChild(positionDiv);
+                    });
+                }
+            }
+
+            // Auto-pick players while considering the budget
+            function autoPickPlayers(formationKey) {
+                const formation = formations[formationKey];
+                if (!formation) {
+                    console.error("Formation not found:", formationKey);
+                    return;
+                }
+
+                const shuffledPlayers = [...players].sort(() => 0.5 - Math.random());
+                remainingBudget = totalBudget; // Reset budget
+                updateBudgetDisplay(); // Update budget display
+                pitchFormation.innerHTML = ""; // Clear the pitch
+
+                formation.forEach((slot) => {
+                    console.log("Looking for player for position:", slot.position);
+                    const player = shuffledPlayers.find(
+                        (p) => p.position === slot.position && p.price <= remainingBudget
+                    );
+
+                    if (player) {
+                        console.log("Player assigned:", player);
+
+                        const playerDiv = document.createElement("div");
+                        playerDiv.className = "position-absolute text-center";
+                        playerDiv.style.top = slot.top;
+                        playerDiv.style.left = slot.left;
+                        playerDiv.style.transform = "translate(-50%, -50%)";
+
+                        playerDiv.innerHTML = `
+                            <div class="rounded text-center shadow-sm player-card" 
+                                style="width: 50px; font-family: Arial, sans-serif; cursor: pointer;"  
+                                data-name="${player.name}" 
+                                data-image="${player.image}" 
+                                data-position="${player.position}" 
+                                data-price="${player.price}">
+    
+                                <div class="bg-success d-flex justify-content-center align-items-center" style="padding-top: 5px;border-top-left-radius: 10px; border-top-right-radius: 10px; padding: 5px;">
+                                    <img src="${player.image}" alt="${player.name.split(" ")[0]}" 
+                                        style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover;">
+                                </div>
+    
+                                <div class="bg-light" 
+                                    style="font-size: 0.6rem; font-weight: bold; color: #4A4A4A; margin-bottom: 2px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; padding: 5px;">
+                                    ${player.name.split(" ")[0]}
+                                </div>
+    
+                            </div>
+                        `;
+
+                        pitchFormation.appendChild(playerDiv);
+
+                        // Deduct the player's price from the budget
+                        remainingBudget -= player.price;
+                        updateBudgetDisplay();
+                    } else {
+                        console.warn("No player available for position:", slot.position);
+                    }
+                });
+            }
+
+            // Initialize the page
+            formationSelect.addEventListener("change", function () {
+                renderFormation(this.value);
+            });
+
+            autoPickButton.addEventListener("click", function () {
+                autoPickPlayers(formationSelect.value); // Trigger auto-pick based on the current formation
+            });
+
+            fetchPlayersByTeam(favoriteClubId).then(() => {
+                renderFormation("1-1-2"); // Render the default formation
+                updateBudgetDisplay(); // Initialize budget display
+            });
+        });
+    </script>
+
+    <!-- Manual Selections -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pitchFormation = document.getElementById("pitch-formation");
+            const tableBodies = {
+                Goalkeepers: document.getElementById("goalkeepersTableBody"),
+                Defenders: document.getElementById("defendersTableBody"),
+                Midfielders: document.getElementById("midfieldersTableBody"),
+                Forwards: document.getElementById("forwardsTableBody"),
+            };
+            const budgetDisplay = document.getElementById("budgetDisplay");
+            const formationSelect = document.getElementById("formation-select");
+            const resetButton = document.getElementById("resetButton");
+            const autoPickButton = document.getElementById("autoPickButton");
+    
+            let selectedPositionElement = null; // Currently selected pitch position
+            let remainingBudget = 100; // Total budget in millions
+    
+            // Update budget display
+            const updateBudgetDisplay = () => {
+                budgetDisplay.textContent = `${remainingBudget.toFixed(1)}m`;
+            };
+    
+            // Highlight selected pitch position
+            const highlightPosition = (positionDiv) => {
+                document.querySelectorAll(".pitch-position").forEach((div) => {
+                    div.style.border = ""; // Reset border for all positions
+                });
+                if (positionDiv) {
+                    positionDiv.style.border = "2px dashed green"; // Highlight selected position
+                    selectedPositionElement = positionDiv;
+                }
+            };
+    
+            // Render formation on the pitch
+            const renderFormation = (formationKey) => {
+                pitchFormation.innerHTML = ""; // Clear the pitch
+    
+                const formations = {
+            "1-1-2": [
+                { position: "Goalkeeper", top: "10%", left: "50%" },
+                { position: "Defender", top: "45%", left: "50%" },
+                { position: "Midfielder", top: "77%", left: "32%" },
+                { position: "Midfielder", top: "77%", left: "67%" },
+            ],
+            "4-4-2": [
+                { position: "Goalkeeper", top: "10%", left: "50%" },
+                { position: "Defender", top: "25%", left: "20%" },
+                { position: "Defender", top: "25%", left: "40%" },
+                { position: "Defender", top: "25%", left: "60%" },
+                { position: "Defender", top: "25%", left: "80%" },
+                { position: "Midfielder", top: "50%", left: "20%" },
+                { position: "Midfielder", top: "50%", left: "40%" },
+                { position: "Midfielder", top: "50%", left: "60%" },
+                { position: "Midfielder", top: "50%", left: "80%" },
+                { position: "Forward", top: "77%", left: "32%" },
+                { position: "Forward", top: "77%", left: "67%" },
+            ],
+            "4-3-3": [
+                { position: "Goalkeeper", top: "10%", left: "50%" },
+                { position: "Defender", top: "25%", left: "20%" },
+                { position: "Defender", top: "25%", left: "40%" },
+                { position: "Defender", top: "25%", left: "60%" },
+                { position: "Defender", top: "25%", left: "80%" },
+                { position: "Midfielder", top: "50%", left: "33%" },
+                { position: "Midfielder", top: "50%", left: "67%" },
+                { position: "Midfielder", top: "50%", left: "50%" },
+                { position: "Forward", top: "77%", left: "20%" },
+                { position: "Forward", top: "77%", left: "50%" },
+                { position: "Forward", top: "77%", left: "80%" },
+            ],
+            "3-5-2": [
+                { position: "Goalkeeper", top: "10%", left: "50%" },
+                { position: "Defender", top: "25%", left: "33%" },
+                { position: "Defender", top: "25%", left: "67%" },
+                { position: "Defender", top: "25%", left: "50%" },
+                { position: "Midfielder", top: "50%", left: "20%" },
+                { position: "Midfielder", top: "50%", left: "40%" },
+                { position: "Midfielder", top: "50%", left: "60%" },
+                { position: "Midfielder", top: "50%", left: "80%" },
+                { position: "Midfielder", top: "50%", left: "50%" },
+                { position: "Forward", top: "77%", left: "32%" },
+                { position: "Forward", top: "77%", left: "67%" },
+            ],
+            "5-3-2": [
+                { position: "Goalkeeper", top: "10%", left: "50%" },
+                { position: "Defender", top: "25%", left: "15%" },
+                { position: "Defender", top: "25%", left: "30%" },
+                { position: "Defender", top: "25%", left: "50%" },
+                { position: "Defender", top: "25%", left: "70%" },
+                { position: "Defender", top: "25%", left: "85%" },
+                { position: "Midfielder", top: "50%", left: "33%" },
+                { position: "Midfielder", top: "50%", left: "67%" },
+                { position: "Midfielder", top: "50%", left: "50%" },
+                { position: "Forward", top: "77%", left: "32%" },
+                { position: "Forward", top: "77%", left: "67%" },
+            ],
+        };
+    
+                const formation = formations[formationKey];
+                if (formation) {
+                    formation.forEach((slot, index) => {
+                        const positionDiv = document.createElement("div");
+                        positionDiv.className = "pitch-position position-absolute text-center";
+                        positionDiv.style.top = slot.top;
+                        positionDiv.style.left = slot.left;
+                        positionDiv.style.transform = "translate(-50%, -50%)";
+                        positionDiv.setAttribute("data-index", index);
+                        positionDiv.setAttribute("data-position", slot.position);
+                        positionDiv.innerHTML = `
+                            <div class="bg-secondary text-white rounded-circle d-flex justify-content-center align-items-center"
+                                style="width: 50px; height: 50px; cursor: pointer;">
+                                ${slot.position}
+                            </div>
+                        `;
+    
+                        // Add click event to highlight the position
+                        positionDiv.addEventListener("click", () => {
+                            highlightPosition(positionDiv);
+                        });
+    
+                        pitchFormation.appendChild(positionDiv);
+                    });
+                }
+            };
+    
+            // Assign player to position
+            const assignPlayerToPosition = (player) => {
+                if (!selectedPositionElement) {
+                    alert("Please select a position on the pitch first!");
+                    return;
+                }
+    
+                const playerPrice = parseFloat(player.price);
+                if (remainingBudget < playerPrice) {
+                    alert("Insufficient budget to add this player!");
+                    return;
+                }
+    
+                // Deduct player price from the budget
+                remainingBudget -= playerPrice;
+                updateBudgetDisplay();
+    
+                // Assign player to the selected position
+                // selectedPositionElement.innerHTML = `
+                //     <div class="rounded text-center shadow-sm player-card" 
+                //         style="width: 50px;">
+                //         <img src="${player.image}" alt="${player.name}" class="img-fluid rounded-circle">
+                //         <span>${player.name}</span>
+                //     </div>
+                // `;
+
+                selectedPositionElement.innerHTML = `
+                    <div class="rounded text-center shadow-sm player-card" 
+                        style="width: 50px; font-family: Arial, sans-serif; cursor: pointer;"  
+                        data-name="${player.name}" 
+                        data-image="${player.image}" 
+                        data-position="${player.position}" 
+                        data-price="${player.price}">
+                        <div class="bg-success d-flex justify-content-center align-items-center" 
+                            style="padding: 5px; border-radius: 10px;">
+                            <img src="${player.image}" alt="${player.name}" 
+                                style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover;">
+                        </div>
+                        <div class="bg-light" 
+                            style="font-size: 0.6rem; font-weight: bold; color: #4A4A4A; padding: 5px;">
+                            ${player.name}
+                        </div>
+                    </div>
+                `;
+    
+
+
+                selectedPositionElement = null; // Reset selected position
+            };
+    
+            // Handle manual player selection
+            Object.values(tableBodies).forEach((tableBody) => {
+                tableBody.addEventListener("click", (event) => {
+                    const row = event.target.closest(".player-selection-row");
+                    if (!row) return;
+    
+                    const player = {
+                        name: row.getAttribute("data-name"),
+                        image: row.getAttribute("data-image"),
+                        position: row.getAttribute("data-position"),
+                        price: row.getAttribute("data-price"),
+                    };
+    
+                    assignPlayerToPosition(player);
+                });
+            });
+    
+            // Reset button functionality
+            resetButton.addEventListener("click", () => {
+                renderFormation(formationSelect.value); // Re-render formation
+                remainingBudget = 100; // Reset budget
+                updateBudgetDisplay();
+            });
+    
+            // Auto-pick functionality (placeholder)
+            // autoPickButton.addEventListener("click", () => {
+            //     alert("Auto-pick functionality is not yet implemented.");
+            // });
+    
+            // Formation dropdown change event
+            formationSelect.addEventListener("change", function () {
+                renderFormation(this.value); // Re-render formation based on dropdown selection
+            });
+    
+            // Render default formation on load
+            renderFormation(formationSelect.value);
+    
+            // Initialize budget display
+            updateBudgetDisplay();
+        });
+    </script>
+    
+    <!-- Showing Toast -->
+    <script>
+        function showToast(message, type = "danger") {
+            const toastContainer = document.getElementById("toastContainer");
+
+            // Create the toast element
+            const toast = document.createElement("div");
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute("role", "alert");
+            toast.setAttribute("aria-live", "assertive");
+            toast.setAttribute("aria-atomic", "true");
+            toast.setAttribute("data-bs-autohide", "true");
+            toast.setAttribute("data-bs-delay", "3000");
+
+            // Add the toast content
+            toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    `;
+
+            // Append the toast to the container
+            toastContainer.appendChild(toast);
+
+            // Initialize the toast using Bootstrap's JS
+            const bootstrapToast = new bootstrap.Toast(toast);
+            bootstrapToast.show();
+
+            // Remove the toast from the DOM after it hides
+            toast.addEventListener("hidden.bs.toast", () => {
+                toast.remove();
+            });
+        }
+
+    </script>
+
+    <!-- Team Saving -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const saveTeamButton = document.getElementById("saveTeamButton");
+
+            // Fetch team status on page load
+            fetch("/api/check-team-status/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("Failed to fetch team status.");
+                })
+                .then((data) => {
+                    if (data.team_exists) {
+                        // Disable the save button if the team already exists
+                        saveTeamButton.disabled = true;
+                        saveTeamButton.textContent = "Team Saved";
+                        saveTeamButton.classList.add("btn-secondary"); // Optional: Update button styling
+                        saveTeamButton.classList.remove("btn-primary");
+
+                        // Disable the Auto Pick and Reset buttons
+                        autoPickButton.disabled = true;
+                        autoPickButton.classList.add("btn-secondary"); // Optional: Update styling
+                        autoPickButton.classList.remove("btn-outline-secondary");
+
+                        resetButton.disabled = true;
+                        resetButton.classList.add("btn-secondary"); // Optional: Update styling
+                        resetButton.classList.remove("btn-outline-secondary");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching team status:", error);
+                });
+
+            // Save Team Button Event Listener
+            saveTeamButton.addEventListener("click", function () {
+                const pitchPositions = document.querySelectorAll(".position-absolute .player-card");
+                const teamData = [];
+                const teamName = document.getElementById("teamName").textContent.trim();
+
+                pitchPositions.forEach((playerCard) => {
+                    if (playerCard) {
+                        const positionContainer = playerCard.parentElement; // Get parent container (position-absolute)
+                        const positionCoordinates = {
+                            top: positionContainer.style.top,
+                            left: positionContainer.style.left,
+                        };
+
+                        const playerData = {
+                            name: playerCard.getAttribute("data-name"),
+                            position: playerCard.getAttribute("data-position"),
+                            team: playerCard.getAttribute("data-team") || "Unknown",
+                            formation_name: document.getElementById("formation-select").value,
+                            score: parseInt(playerCard.getAttribute("data-score") || "0"),
+                            position_coordinates: JSON.stringify(positionCoordinates), // Add coordinates as JSON string
+                        };
+                        teamData.push(playerData);
+                    }
+                });
+
+
+                if (teamData.length === 0) {
+                    showToast("No players selected to save.", "danger");
+                    return;
+                }
+
+                // Send the team data to the backend
+                fetch("/api/save-team/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCSRFToken(),
+                    },
+                    body: JSON.stringify({ team_name: teamName, team: teamData }), // Ensure payload matches backend expectation
+                })
+                    .then((response) => {
+                        // console.log("Response status:", response.status); // Debug log
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error("Failed to save team.");
+                    })
+                    .then((data) => {
+                        // Show success toast and disable button
+                        showToast(data.message || "Team saved successfully!", "success");
+                        saveTeamButton.disabled = true;
+                        saveTeamButton.textContent = "Team Saved";
+                        saveTeamButton.classList.add("btn-secondary");
+                        saveTeamButton.classList.remove("btn-primary");
+
+                        // Disable the Auto Pick and Reset buttons
+                        autoPickButton.disabled = true;
+                        autoPickButton.classList.add("btn-secondary"); // Optional: Update styling
+                        autoPickButton.classList.remove("btn-outline-secondary");
+
+                        resetButton.disabled = true;
+                        resetButton.classList.add("btn-secondary"); // Optional: Update styling
+                        resetButton.classList.remove("btn-outline-secondary");
+
+                        // Show the modal
+                        const leagueOptionsModal = new bootstrap.Modal(document.getElementById("leagueOptionsModal"));
+                        leagueOptionsModal.show();
+
+                        // Redirect to a new page after success
+                        // window.location.href = "/api/manageteam/"; 
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        showToast("Error saving team. Please try again.", "danger");
+                    });
+            });
+
+            const dismissButton = document.getElementById("dismissButton");
+
+            dismissButton.addEventListener("click", function () {
+                // Redirect to /api/manageteam/
+                window.location.href = "/api/manageteam/";
+            });
+
+
+            // Helper function to get CSRF token
+            function getCSRFToken() {
+                const csrfTokenElement = document.querySelector('[name=csrfmiddlewaretoken]');
+                return csrfTokenElement ? csrfTokenElement.value : "";
+            }
+
+            // Helper function to show toast messages
+            function showToast(message, type) {
+                const toastContainer = document.getElementById("toastContainer");
+                if (!toastContainer) {
+                    console.error("Toast container not found.");
+                    return;
+                }
+
+                const toast = document.createElement("div");
+                toast.className = `toast align-items-center text-white bg-${type} border-0`;
+                toast.role = "alert";
+                toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+                toastContainer.appendChild(toast);
+
+                const bootstrapToast = new bootstrap.Toast(toast);
+                bootstrapToast.show();
+
+                toast.addEventListener("hidden.bs.toast", () => {
+                    toastContainer.removeChild(toast);
+                });
+            }
+
+        });
+    </script>
+
+    <!-- Get the saved players -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pitchFormation = document.getElementById("pitch-formation");
+            const budgetDisplay = document.getElementById("budgetDisplay");
+            const totalBudget = 100.0; // Initial budget
+
+            // Function to update the budget display
+            function updateBudgetDisplay(remainingBudget) {
+                budgetDisplay.textContent = `${remainingBudget.toFixed(1)}m`;
+            }
+
+            // Function to render saved players on the pitch
+            function renderSavedPlayers(savedTeam) {
+                pitchFormation.innerHTML = ""; // Clear the pitch
+                let totalPlayerPrice = 0;
+
+                savedTeam.forEach((player) => {
+                    const positionDiv = document.createElement("div");
+                    positionDiv.className = "position-absolute text-center";
+                    positionDiv.style.transform = "translate(-50%, -50%)";
+
+                    // Parse the position coordinates from the data
+                    const coordinates = JSON.parse(player.position_coordinates || "{}");
+                    positionDiv.style.top = coordinates.top;
+                    positionDiv.style.left = coordinates.left;
+
+                    positionDiv.innerHTML = `
+                    <div class="rounded text-center shadow-sm player-card" 
+                        style="width: 50px; font-family: Arial, sans-serif; cursor: pointer;"  
+                        data-name="${player.name}" 
+                        data-position="${player.position}" 
+                        data-price="${player.price}" 
+                        data-image="${player.image || '{% static "images/m_salah.png" %}'}">
+
+                        <div class="bg-success d-flex justify-content-center align-items-center" 
+                            style="padding: 5px; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                            <img src="${player.image || '{% static "images/m_salah.png" %}'}" alt="${player.name}" 
+                                style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover;">
+                        </div>
+
+                        <div class="bg-light" 
+                            style="font-size: 0.6rem; font-weight: bold; color: #4A4A4A; margin-bottom: 2px; 
+                            border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; padding: 5px;">
+                            ${player.name.split(" ")[0]}
+                        </div>
+                    </div>
+                `;
+
+                    // Attach click event listener to open modal
+                    positionDiv.querySelector(".player-card").addEventListener("click", function () {
+                        const name = this.getAttribute("data-name");
+                        const image = this.getAttribute("data-image");
+                        const position = this.getAttribute("data-position");
+
+                        showPlayerModal(name, image, position);
+                    });
+
+                    pitchFormation.appendChild(positionDiv);
+
+                    // Add the player's price to the total
+                    totalPlayerPrice += parseFloat(player.price) || 0;
+                });
+                // Calculate remaining budget and update the display
+                const remainingBudget = totalBudget - totalPlayerPrice;
+                updateBudgetDisplay(remainingBudget);
+                console.log(totalPlayerPrice)
+            }
+
+            // Fetch saved players and render them on the pitch
+            fetch("/api/get-saved-team/", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error("Failed to fetch saved team.");
+                })
+                .then((data) => {
+                    if (data.team && data.team.length > 0) {
+                        renderSavedPlayers(data.team); // Render players
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error loading saved team:", error);
+                });
+
+            // Function to show modal with player details
+            function showPlayerModal(name, image, position) {
+                const modal = document.getElementById("playerModal");
+                document.getElementById("modalPlayerName").textContent = name;
+                document.getElementById("modalPlayerImage").src = image || "default-image.png"; // Fallback if no image
+                document.getElementById("modalPlayerPosition").textContent = position || "Unknown";
+                modal.style.display = "block";
+            }
+
+            // Close the modal
+            document.getElementById("closeModalButton").addEventListener("click", function () {
+                document.getElementById("playerModal").style.display = "none";
+            });
+
+            document.getElementById("playerModal").addEventListener("click", function (e) {
+                if (e.target === this) {
+                    this.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <!-- Load Player to table -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const teamSelect = document.getElementById("teamSelect");
+            const playerCountButton = document.getElementById("playerCountButton");
+            const autoPickButton = document.getElementById("autoPickButton");
+            const favoriteClubId = "{{ favorite_club_id }}"; // Pass this value from the backend
+            const pitchFormation = document.getElementById("pitch-formation");
+    
+            const tableBodies = {
+                Goalkeepers: document.getElementById("goalkeepersTableBody"),
+                Defenders: document.getElementById("defendersTableBody"),
+                Midfielders: document.getElementById("midfieldersTableBody"),
+                Forwards: document.getElementById("forwardsTableBody"),
+            };
+    
+            const positions = ["Goalkeepers", "Defenders", "Midfielders", "Forwards"];
+            let remainingBudget = 100; // Example budget in millions
+            let currentTotalPrice = 0; // Track total price of assigned players
+    
+            // Populate players dynamically
+            const populatePlayers = (teamId) => {
+                Object.values(tableBodies).forEach((tableBody) => {
+                    tableBody.innerHTML = `<tr><td colspan="4" class="text-center">Loading players...</td></tr>`;
+                });
+                playerCountButton.textContent = "Loading players...";
+    
+                fetch(`/api/get-players-by-team/?team_id=${teamId}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.players) {
+                            let playerCount = 0;
+    
+                            Object.values(tableBodies).forEach((tableBody) => (tableBody.innerHTML = ""));
+    
+                            data.players.forEach((player) => {
+                                playerCount++;
+                                const row = `
+                                    <tr class="player-selection-row" data-name="${player.name}" 
+                                        data-image="${player.image}" data-position="${player.position}" 
+                                        data-price="${player.price}">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="${player.image}" 
+                                                     alt="${player.name}" 
+                                                     class="me-3 rounded-circle" 
+                                                     style="width: 40px; height: 40px;" 
+                                                     onerror="this.onerror=null; this.src='/static/images/home_team.png';">
+                                                <div>
+                                                    <span class="fw-bold">${player.name}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="text-center fw-bold">${player.total_points}</td>
+                                        <td class="text-center fw-bold">${player.price}m</td>
+                                    </tr>`;
+    
+                                const tableBody = tableBodies[player.position];
+                                if (tableBody) tableBody.innerHTML += row;
+                            });
+    
+                            playerCountButton.textContent = `${playerCount} players shown`;
+                        } else {
+                            Object.values(tableBodies).forEach((tableBody) => {
+                                tableBody.innerHTML = `<tr><td colspan="4" class="text-center">No players found for this team.</td></tr>`;
+                            });
+                            playerCountButton.textContent = "0 players shown";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching players:", error);
+                        Object.values(tableBodies).forEach((tableBody) => {
+                            tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Failed to load players.</td></tr>`;
+                        });
+                        playerCountButton.textContent = "Failed to load players.";
+                    });
+            };
+    
+            // Function to auto pick players for all positions
+            const autoPickPlayers = () => {
+                const availablePlayers = {};
+                positions.forEach((position) => {
+                    availablePlayers[position] = Array.from(
+                        tableBodies[position].querySelectorAll(".player-selection-row")
+                    ).map((row) => ({
+                        name: row.getAttribute("data-name"),
+                        image: row.getAttribute("data-image"),
+                        position: row.getAttribute("data-position"),
+                        price: parseFloat(row.getAttribute("data-price")),
+                    }));
+                });
+    
+                document.querySelectorAll(".pitch-position").forEach((positionDiv) => {
+                    const position = positionDiv.textContent.trim(); // Extract position from the pitch slot
+                    if (availablePlayers[position] && availablePlayers[position].length > 0) {
+                        const player = availablePlayers[position].shift(); // Get the first available player
+                        assignPlayerToPosition(player, positionDiv);
+                    }
+                });
+            };
+    
+            // Assign player to a specific position
+            const assignPlayerToPosition = (player, positionDiv) => {
+                const playerPrice = player.price;
+    
+                if (currentTotalPrice + playerPrice > remainingBudget) {
+                    console.log("Skipping player due to insufficient budget:", player.name);
+                    return; // Skip if budget exceeded
+                }
+    
+                currentTotalPrice += playerPrice;
+                positionDiv.innerHTML = `
+                    <div class="rounded text-center shadow-sm player-card" 
+                        style="width: 50px; font-family: Arial, sans-serif; cursor: pointer;"  
+                        data-name="${player.name}" 
+                        data-image="${player.image}" 
+                        data-position="${player.position}" 
+                        data-price="${player.price}">
+                        <div class="bg-success d-flex justify-content-center align-items-center" 
+                            style="padding: 5px; border-radius: 10px;">
+                            <img src="${player.image}" alt="${player.name}" 
+                                style="width: 30px; height: 30px; border-radius: 5px; object-fit: cover;">
+                        </div>
+                        <div class="bg-light" 
+                            style="font-size: 0.6rem; font-weight: bold; color: #4A4A4A; padding: 5px;">
+                            ${player.name}
+                        </div>
+                    </div>`;
+            };
+    
+            // Populate teams dropdown and auto-load players for favorite club
+            fetch("/api/get-teams/")
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.teams) {
+                        data.teams.forEach((team) => {
+                            const option = document.createElement("option");
+                            option.value = team.id;
+                            option.textContent = team.name;
+                            teamSelect.appendChild(option);
+                        });
+    
+                        if (favoriteClubId) {
+                            populatePlayers(favoriteClubId); // Automatically load players for favorite club
+                        }
+                    }
+                })
+                .catch((error) => console.error("Error fetching teams:", error));
+    
+            // Event listener for Auto Pick button
+            autoPickButton.addEventListener("click", () => {
+                autoPickPlayers();
+            });
+        });
+    </script>
+    
+    
+    {% endblock %}

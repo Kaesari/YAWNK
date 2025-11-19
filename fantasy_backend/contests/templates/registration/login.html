@@ -1,0 +1,95 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        {% for message in messages %}
+            <div class="toast align-items-center text-white bg-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center align-items-start" style="margin-top: 100px;">
+    <div class="text-center w-100" style="max-width: 400px;">
+        <!-- Login Form -->
+        <h2 class="fw-bold mb-4">Login</h2>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+
+            <!-- Mobile Number -->
+            <div class="mb-3">
+                <label for="id_mobile" class="form-label">Username</label>
+                <input type="text" name="username" id="id_username" class="form-control bg-light border-0 shadow-sm p-2" placeholder="Enter your username" required>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3 position-relative">
+                <label for="id_password" class="form-label">Password</label>
+                <input type="password" name="password" id="id_password"
+                    class="form-control bg-light border-0 shadow-sm p-2" placeholder="Enter your password" required>
+                <span class="position-absolute top-50 end-0 translate-middle-y me-3" style="cursor: pointer;" onclick="togglePassword()">
+                    👁️
+                </span>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="btn btn-pink w-100 py-2 fw-bold">Login</button>
+        </form>
+
+        <!-- Register and Forgot Password Links -->
+        <div class="mt-3" style="margin-bottom: 100px;">
+            <p class="text-muted">Are you a new user? <a href="{% url 'register' %}" class="text-danger fw-bold">Register here</a></p>
+            <!-- <p class="text-muted">Forgot your password? <a href="{% url 'password_reset' %}" class="text-danger fw-bold">Click here to reset it</a></p> -->
+        </div>
+    </div>
+</div>
+
+<!-- Password Visibility Toggle Script -->
+<script>
+    function togglePassword() {
+        var passwordInput = document.getElementById("id_password");
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    }
+</script>
+
+<!-- Custom Styling -->
+<style>
+    .btn-pink {
+        background-color: #ff85ad;
+        color: white;
+        border: none;
+        font-size: 18px;
+    }
+    .btn-pink:hover {
+        background-color: #ff6699;
+    }
+</style>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toastElements = document.querySelectorAll(".toast");
+        toastElements.forEach((toastEl) => {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Contest Details{% endblock %}
+
+{% block content %}
+<h2>{{ contest.name }}</h2>
+<p>Sport: {{ contest.sport }}</p>
+<p>Entry Fee: {{ contest.entry_fee }}</p>
+<p>Prize Pool: {{ contest.prize_pool }}</p>
+<a href="{% url 'create_team' contest.id %}">Join and Create Team</a>
+{% endblock %}

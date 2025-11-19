@@ -1,0 +1,67 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+{% if messages %}
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        {% for message in messages %}
+            <div class="toast align-items-center text-white bg-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Login</h2>
+
+    <div class="p-5 bg-white rounded shadow-sm">
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <!-- Username or Email -->
+            <div class="mb-4">
+                <label for="id_username" class="form-label fw-bold">Username or Email</label>
+                <input type="text" name="username" id="id_username" class="form-control form-control-lg border-0 shadow-sm" placeholder="Enter your username or email" required>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label for="id_password" class="form-label fw-bold">Password</label>
+                <input type="password" name="password" id="id_password" class="form-control form-control-lg border-0 shadow-sm" placeholder="Enter your password" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-secondary btn-lg px-5 shadow">Login</button>
+            </div>
+        </form>
+
+        <!-- Forgot Password -->
+        <div class="text-end mt-3">
+            <a href="{% url 'password_reset' %}" class="text-primary fw-bold">Forgot your password?</a>
+        </div>
+    </div>
+
+    <!-- Redirect to Register -->
+    <div class="text-center mt-4">
+        <p class="text-muted">Don't have an account? <a href="{% url 'register' %}" class="text-primary fw-bold">Register here</a></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toastElements = document.querySelectorAll(".toast");
+        toastElements.forEach((toastEl) => {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    });
+</script>
+
+{% endblock %}

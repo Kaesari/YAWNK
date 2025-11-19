@@ -1,0 +1,29 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="p-4 rounded shadow-sm" style="background-color: #e9f7ef; border: 1px solid #28a745;">
+        <div class="d-flex align-items-center mb-4">
+            <i class="fas fa-check-circle text-success" style="font-size: 3rem; margin-right: 10px;"></i>
+            <h2 class="fw-bold text-dark mb-0">Payment Successful</h2>
+        </div>
+
+        <p class="text-muted">
+            Thank you for your payment! You have successfully joined the league <strong>{{ league.name }}</strong>.
+        </p>
+
+        <ul class="list-unstyled">
+            <li><strong>League Name:</strong> {{ league.name }}</li>
+            <li><strong>League Code:</strong> {{ league.league_code }}</li>
+            <li><strong>Entry Fee:</strong> Ksh {{ league.entry_fee }}</li>
+            <li><strong>Prize Pool:</strong> Ksh {{ league.prize_pool }}</li>
+        </ul>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'league' %}" class="btn btn-success px-4">Go to Leagues</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'contests/base.html' %}
+
+{% block title %}Leagues{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Navigation Buttons -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <a href="#" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Previous</a>
+        <h3 class="fw-bold text-center mb-2 mb-md-0">Gameweek 20</h3>
+        <a href="#" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Next</a>
+    </div>
+
+    <!-- Join and Create Buttons -->
+    <div class="d-flex flex-wrap justify-content-center justify-content-md-end gap-3 mb-4">
+        <a href="{% url 'join-league' %}" class="btn btn-dark px-4">Join League</a>
+        <a href="{% url 'create-league' %}" class="btn btn-dark px-4">Create League</a>
+    </div>
+
+    <!-- Invitational Leagues Section -->
+    <h4 class="fw-bold">Invitational Leagues</h4>
+    <p class="text-muted">Join invitational leagues to compete against friends and others playing the game.</p>
+
+    {% if private_leagues %}
+    {% for league in private_leagues %}
+    <div class="p-3 bg-light rounded shadow-sm mb-4">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6">
+                <p class="fw-bold mb-1">{{ league.name }}</p>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-users me-2"></i>{{ league.users.count }} players |
+                    <span class="text-dark">League Code: <span class="fw-bold">{{ league.league_code }}</span></span>
+                </p>
+            </div>
+            <div class="col-12 col-md-5 text-md-end">
+                <p class="fw-bold mb-1">Prize Pool: Ksh {{ league.prize_pool }}</p>
+                <p class="text-muted mb-0">Entry Fee: Ksh <span class="fw-bold">{{ league.entry_fee }}</span> | Start
+                    Date: {{ league.start_date|date:"M d, Y" }}</p>
+            </div>
+            <div class="col-12 col-md-1 text-md-end">
+                <!-- Add angle arrow icon with link -->
+                <a href="{% url 'league-teams' league.league_code %}" class="text-primary" title="View Teams">
+                    <i class="fas fa-angle-right fa-2x"></i>
+                </a>
+            </div>            
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="text-muted">You have not joined any private leagues yet.</p>
+    {% endif %}
+    
+
+    <!-- Global Leagues Section -->
+    <h4 class="fw-bold">Global Leagues</h4>
+    <p class="text-muted">Join the Leagues to take on the best managers in the world.</p>
+
+    {% if public_leagues %}
+    {% for league in public_leagues %}
+    <div class="p-3 bg-light rounded shadow-sm mb-3">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6">
+                <p class="fw-bold mb-1">{{ league.name }}</p>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-users me-2"></i>{{ league.users.count }} players |
+                    <span class="text-dark">League Code: <span class="fw-bold">{{ league.league_code }}</span></span>
+                </p>
+            </div>
+            <div class="col-12 col-md-5 text-md-end">
+                <p class="fw-bold mb-1">Prize Pool: Ksh {{ league.prize_pool }}</p>
+                <p class="text-muted mb-0">Start Date: {{ league.start_date|date:"M d, Y" }} | Entry Fee: <span
+                        class="fw-bold">Ksh {{ league.entry_fee }}</span></p>
+                {% if user in league.users.all %}
+                <button class="btn btn-success px-4 mt-2" disabled>Joined</button>
+                {% else %}
+                <a href="{% url 'entry-payment' league.league_code %}" class="btn btn-primary px-4 mt-2"
+                    style="background: linear-gradient(to right, #00ffc6, #007bff); border: none;">Join</a>
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-1 text-md-end">
+                <!-- Add angle arrow icon with link -->
+                <a href="{% url 'league-teams' league.league_code %}" class="text-primary" title="View Teams">
+                    <i class="fas fa-angle-right fa-2x"></i>
+                </a>
+            </div> 
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="text-muted">No public leagues available at the moment.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

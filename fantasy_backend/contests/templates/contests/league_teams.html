@@ -1,0 +1,116 @@
+{% extends 'contests/base.html' %}
+
+{% load static %}
+
+{% block title %}League Teams{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Navigation Buttons -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <a href="#" class="btn btn-outline-dark px-4 mb-2 mb-md-0" onclick="window.history.back(); return false;">Previous</a>
+    
+        {% if current_game_week %}
+            <h3 class="fw-bold text-center mb-2 mb-md-0">Gameweek {{ current_game_week.id }}</h3>
+        {% else %}
+            <h3 class="fw-bold text-center mb-2 mb-md-0">Gameweek not available</h3>
+        {% endif %}
+    
+        <a href="#" class="btn btn-outline-dark px-4 mb-2 mb-md-0">Next</a>
+    </div>
+    
+
+    <!-- League Banner -->
+    <div class="rounded shadow-sm text-center py-5 mb-4" style="background: linear-gradient(to right, #ff009d, #007bff);">
+        <h1 class="fw-bold text-white mb-3">{{ contest.name }} Leaderboard</h1>
+        <p class="text-light">
+            <i class="fas fa-bolt me-2"></i> Restricted Budget
+        </p>
+        <p class="text-light">Winner goes home with Kshs {{ contest.prize_pool}} /=</p>
+        <!-- <a href="#" class="btn btn-dark px-4">Final Deadline {{ current_game_week.deadline_time|date:"D d M H:i" }}</a>  -->
+        {% if current_game_week and current_game_week.formatted_deadline %}
+            <a href="#" class="btn btn-dark px-4">
+                Final Deadline {{ current_game_week.formatted_deadline }}
+            </a>
+        {% else %}
+            <p class="text-light">Deadline not available</p>
+        {% endif %}
+        
+        
+    </div>
+
+<!-- Teams Table -->
+<div class="table-responsive">
+    <table class="table table-striped" style="border-radius: 15px; overflow: hidden; border: 2px solid #dee2e6; background-color: #ffffff;">
+        <!-- Table Header -->
+        <thead style="background-color: #343a40; color: white;">
+            <tr>
+                <th scope="col" class="text-center" style="border-top-left-radius: 15px;">Pos</th>
+                <th scope="col">Teams</th>
+                <th scope="col" class="text-center" style="border-top-right-radius: 15px;">Points</th>
+            </tr>
+        </thead>
+
+        <!-- Table Body -->
+        <tbody style="background-color: #ffffff;">
+            {% if teams %}
+                {% for team in teams %}
+                <tr>
+                    <!-- Position -->
+                    <td class="align-middle text-center">
+                        <span class="fw-bold">{{ team.position }}</span> <!-- Position based on score -->
+                        <!-- <span class="fw-bold">{{ forloop.counter }}</span> -->
+                    </td>
+
+                    <!-- Team Details -->
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <img src="{% static 'images/gaolpost-1.png' %}" alt="Goal Post" class="me-3"
+                                     style="width: 60px; height: 60px; border-radius: 50%;">
+                            </div>
+                            <div>
+                                <span class="fw-bold">{{ team.name }}</span><br>
+                                <small class="text-muted">Manager: {{ team.user.username }}</small>
+                            </div>
+                        </div>
+                    </td>
+
+                   <!-- Team Score -->
+                    <td class="align-middle text-center">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <!-- Team score with "pts" -->
+                            <span class="me-3">{{ team.total_score|default:"0" }} pts</span>
+                            
+                            <!-- Icon -->
+                            <a href="{% url 'manage_team_user' team.user.id %}" class="text-primary" title="View Teams">
+                                <i class="fas fa-angle-right fa-2x"></i>
+                            </a>
+                        </div>
+                    </td>
+
+
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No teams have joined this league yet.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+
+        <!-- Table Footer -->
+        <tfoot>
+            <tr>
+                <td colspan="3" style="border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+
+</div>
+
+{% endblock %}
+
