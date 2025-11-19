@@ -8,10 +8,10 @@
         <p><strong>Condition:</strong> {{ product.condition }}</p>
         <p><strong>Posted by:</strong> {{ product.seller.username }}</p>
         <p><strong>Seller:</strong>
-            <a href="{% url 'user_profile' product.seller.id %}">{{ product.seller.username }}</a>
+            <a href="{% url 'accounts:public_profile' username=product.seller.username %}">{{ product.seller.username }}</a>
 
             {% if user.is_authenticated and product.seller != user %}
-                <form method="POST" action="{% url 'follow_toggle' product.seller.id %}" style="display:inline;">
+                <form method="POST" action="{% url 'accounts:follow_toggle' product.seller.id %}" style="display:inline;">
                     {% csrf_token %}
                     {% if product.seller in followed %}
                         <button type="submit">Unfollow</button>

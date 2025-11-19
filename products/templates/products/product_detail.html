@@ -3,7 +3,7 @@
 <p>Category: {{ product.category }}</p>
 <p>Size: {{ product.size }}</p>
 <p>Condition: {{ product.condition }}</p>
-<p>Seller: <a href="{% url 'user_profile' product.seller.id %}">{{ product.seller.username }}</a></p>
+<p>Seller: <a href="{% url 'accounts:public_profile' username=product.seller.username %}">{{ product.seller.username }}</a></p>
 <img src="{{ product.image.url }}" width="300"><br>
 
 {% for image in product.images.all %}

@@ -4,21 +4,29 @@
        <!-- nav item -->
        <ul class="nav flex-column nav-pills nav-pills-dark">
          <li class="nav-item">
-           <a class="nav-link {% if request.path == '/account/settings/' %}active{% endif %}" href="{% url 'account_settings' %}">
+           <a class="nav-link {% if request.path == '/account/settings/' %}active{% endif %}" href="{% url 'accounts:account_settings' %}">
               <i class="feather-icon icon-settings me-2"></i>
               Settings
            </a>
         </li>
+          {% if user.is_superuser or user.is_seller %}
+          <li class="nav-item">
+             <a class="nav-link {% if request.path == '/seller/' %}active{% endif %}" href="{% url 'seller:dashboard' %}">
+                <i class="feather-icon icon-briefcase me-2"></i>
+                Seller Dashboard
+             </a>
+          </li>
           <li class="nav-item">
              <a class="nav-link {% if request.path == '/products/listing/' %}active{% endif %}" aria-current="page" href="{% url 'listing_settings' %}">
                 <i class="feather-icon icon-shopping-bag me-2"></i>
                 Add Listing
              </a>
           </li>
+          {% endif %}
          {% if user.is_superuser %}
          <!-- nav item -->
         <li class="nav-item">
-           <a class="nav-link {% if request.path == '/users/all' %}active{% endif %}" href="{% url 'user_list' %}">
+           <a class="nav-link {% if request.path == '/users/all' %}active{% endif %}" href="{% url 'accounts:user_list' %}">
               <i class="feather-icon icon-map-pin me-2"></i>
               User Management
            </a>
@@ -44,7 +52,7 @@
          </li>
          <!-- nav item -->
          <li class="nav-item">
-            <form method="POST" action="{% url 'logout' %}?next={% url 'home' %}">
+            <form method="POST" action="{% url 'accounts:logout' %}?next={% url 'accounts:home' %}">
                {% csrf_token %}
                <button type="submit" class="nav-link">
                   <i class="feather-icon icon-log-out me-2"></i>
@@ -72,12 +80,18 @@
               
               <!-- nav item -->
               <li class="nav-item">
-               <a class="nav-link {% if request.path == '/account/settings/' %}active{% endif %}" href="{% url 'account_settings' %}">
+               <a class="nav-link {% if request.path == '/account/settings/' %}active{% endif %}" href="{% url 'accounts:account_settings' %}">
                   <i class="feather-icon icon-settings me-2"></i>
                   Settings
                </a>
             </li>
               {% if user.is_superuser or user.is_seller %}
+              <li class="nav-item">
+                 <a class="nav-link {% if request.path == '/seller/' %}active{% endif %}" href="{% url 'seller:dashboard' %}">
+                    <i class="feather-icon icon-briefcase me-2"></i>
+                    Seller Dashboard
+                 </a>
+              </li>
               <li class="nav-item">
                  <a class="nav-link {% if request.path == '/products/listing/' %}active{% endif %}" aria-current="page" href="{% url 'listing_settings' %}">
                     <i class="feather-icon icon-shopping-bag me-2"></i>
@@ -88,7 +102,7 @@
              {% if user.is_superuser %}
              <!-- nav item -->
             <li class="nav-item">
-               <a class="nav-link {% if request.path == '/users/all' %}active{% endif %}" href="{% url 'user_list' %}">
+               <a class="nav-link {% if request.path == '/users/all' %}active{% endif %}" href="{% url 'accounts:user_list' %}">
                   <i class="feather-icon icon-map-pin me-2"></i>
                   User Management
                </a>
@@ -108,7 +122,7 @@
               <ul class="nav flex-column nav-pills nav-pills-dark">
                  <!-- nav item -->
                  <li class="nav-item">
-                  <form method="POST" action="{% url 'logout' %}">
+                  <form method="POST" action="{% url 'accounts:logout' %}">
                      {% csrf_token %}
                      <button type="submit" class="nav-link">
                         <i class="feather-icon icon-log-out me-2"></i>

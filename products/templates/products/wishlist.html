@@ -5,7 +5,7 @@
         <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
             <h3>{{ product.name }} - Ksh {{ product.price }}</h3>
             <img src="{{ product.image.url }}" width="200"><br>
-            <a href="{% url 'user_profile' product.seller.id %}">Seller: {{ product.seller.username }}</a><br>
+            <a href="{% url 'accounts:public_profile' username=product.seller.username %}">Seller: {{ product.seller.username }}</a><br>
 
             <form method="POST" action="{% url 'toggle_wishlist' product.id %}">
                 {% csrf_token %}
@@ -17,4 +17,4 @@
     <p>You haven't added any products to your wishlist yet.</p>
 {% endif %}
 
-<a href="{% url 'home' %}">← Back to Home</a>
+<a href="{% url 'accounts:home' %}">← Back to Home</a>

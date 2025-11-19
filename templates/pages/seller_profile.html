@@ -62,7 +62,7 @@
                                             ← Back
                                         </a>
                                         {% if user.is_authenticated %}
-                                            <form method="POST" action="{% url 'follow_seller_toggle' seller.id %}" style="display:inline;">
+                                            <form method="POST" action="{% url 'accounts:follow_seller_toggle' seller.id %}" style="display:inline;">
                                                 {% csrf_token %}
                                                 {% if is_following %}
                                                     <button class="btn btn-primary" type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Unfollow Seller">Unfollow Seller</button>

@@ -114,3 +114,372 @@
     }
 }
 
+/* ======================================
+   Global Layout Fix for Fixed Header
+   ====================================== */
+
+/* Ensure body content starts below fixed header */
+body {
+    padding-top: 60px;
+}
+
+/* ======================================
+   Seller Dashboard Styles
+   ====================================== */
+
+.seller-dashboard-content {
+    min-height: 70vh;
+}
+
+.seller-dashboard-content h1 {
+    color: #2c3e50;
+}
+
+.seller-dashboard-content .btn-primary {
+    background-color: #D72539;
+    border-color: #D72539;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.seller-dashboard-content .btn-primary:hover {
+    background-color: #b01d2e;
+    border-color: #b01d2e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(215, 37, 57, 0.3);
+}
+
+.seller-dashboard-content .btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Mobile adjustments for seller dashboard */
+@media (max-width: 768px) {
+    .seller-dashboard-content h1 {
+        font-size: 2rem;
+    }
+    
+    .seller-dashboard-content .btn-primary {
+        font-size: 1rem;
+        padding: 10px 25px;
+    }
+}
+
+/* ======================================
+   Profile Dropdown Menu Styles
+   ====================================== */
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    padding: 8px 0;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #D72539;
+}
+
+.dropdown-item i {
+    width: 20px;
+    font-size: 1rem;
+}
+
+.dropdown-item button {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+.dropdown-divider {
+    margin: 8px 0;
+    border-color: #e0e0e0;
+}
+
+/* Profile image hover effect */
+.dropdown-toggle img {
+    transition: transform 0.2s ease;
+}
+
+.dropdown-toggle:hover img {
+    transform: scale(1.1);
+}
+
+/* Mobile dropdown adjustments */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        min-width: 180px;
+        font-size: 0.9rem;
+    }
+    
+    .dropdown-item {
+        padding: 8px 15px;
+    }
+}
+
+/* ======================================
+   Public Profile Page Styles - Depop Mobile Layout
+   ====================================== */
+
+/* Ensure smooth scrolling for tab navigation */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Profile Container */
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 15px;
+}
+
+/* Profile Top Row: Image + Info Block */
+.profile-top-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Profile Avatar - 80px Circle */
+.profile-avatar-depop {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Profile Info Block */
+.profile-info-block {
+    flex: 1;
+}
+
+.profile-username {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 2px;
+    color: #000;
+}
+
+.profile-rating {
+    font-size: 14px;
+    color: #ffa500;
+    margin-bottom: 4px;
+}
+
+.profile-location {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Profile Stats Row: Followers, Following, Button */
+.profile-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.profile-stats-row strong {
+    font-weight: 700;
+    color: #000;
+}
+
+.profile-stats-row span {
+    color: #666;
+}
+
+/* Profile Action Button - Pushed to Right */
+.profile-action-btn {
+    margin-left: auto;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Profile Bio */
+.profile-bio {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.profile-bio p {
+    margin: 0;
+}
+
+/* Profile Tabs Navigation */
+.profile-tabs-nav {
+    display: flex;
+    gap: 30px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 15px;
+    list-style: none;
+    padding: 0;
+}
+
+.tab-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    padding: 12px 0;
+    border-bottom: 2px solid transparent;
+    position: relative;
+    bottom: -1px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tab-link:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+.tab-link.active {
+    color: #000;
+    border-bottom-color: #000;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Product Grid - Strict 3 Columns on Mobile */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 20px;
+}
+
+/* Product Item - Image Only */
+.product-item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+}
+
+/* Product Image - Perfect Square */
+.product-item-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    background-color: #f5f5f5;
+}
+
+/* Price Overlay on Hover */
+.product-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+    padding: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.product-item:hover .product-overlay {
+    opacity: 1;
+}
+
+.product-price {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state i {
+    font-size: 40px;
+    color: #d0d0d0;
+    margin-bottom: 12px;
+}
+
+.empty-state h3 {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #999;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+/* Desktop Responsive */
+@media (min-width: 768px) {
+    .profile-container {
+        padding: 30px 20px;
+    }
+
+    .profile-avatar-depop {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-username {
+        font-size: 24px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 5px;
+    }
+}
+
+/* Mobile Fine-Tuning */
+@media (max-width: 480px) {
+    .profile-tabs-nav {
+        gap: 20px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    
+    .profile-tabs-nav::-webkit-scrollbar {
+        display: none;
+    }
+}
+

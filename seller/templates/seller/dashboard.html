@@ -1,0 +1,25 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}Seller Dashboard{% endblock %}
+
+{% block content %}
+<div class="container seller-dashboard-content" style="padding-top: 100px;">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="display-4 fw-bold text-center mb-5">
+                Welcome to Your Yawnk Seller Dashboard, {{ request.user.username }}
+            </h1>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="/seller/upload/" class="btn btn-primary btn-lg">
+                <i class="feather-icon icon-plus-circle me-2"></i>
+                Add New Listing
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

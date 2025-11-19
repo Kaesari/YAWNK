@@ -14,6 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
 from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView
 
 from django.db.models import Q
 
@@ -207,4 +208,48 @@ def seller_list(request):
     })
 
 
+class UserProfileView(TemplateView):
+    """
+    Public user profile page - Depop style
+    Shows user info, stats, and their product listings
+    """
+    template_name = 'accounts/public_profile.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        
+        # Get the profile user or return 404
+        profile_user = get_object_or_404(CustomUser, username=username)
+        
+        # Get all products by this user
+        user_products = Product.objects.filter(seller=profile_user).order_by('-date_posted')
+        
+        # Check if viewing own profile
+        is_own_profile = self.request.user.is_authenticated and self.request.user == profile_user
+        
+        # Check if current user is following this profile
+        is_following = False
+        if self.request.user.is_authenticated and not is_own_profile:
+            is_following = profile_user in self.request.user.followers.all()
+        
+        # Get follower and following counts
+        followers_count = profile_user.following.count()  # People who follow this user
+        following_count = profile_user.followers.count()  # People this user follows
+        
+        # Get liked products (wishlist)
+        liked_products = profile_user.wishlist.all()
+        
+        context.update({
+            'profile_user': profile_user,
+            'user_products': user_products,
+            'is_own_profile': is_own_profile,
+            'is_following': is_following,
+            'followers_count': followers_count,
+            'following_count': following_count,
+            'liked_products': liked_products,
+            'products_count': user_products.count(),
+        })
+        
+        return context
 

@@ -1,6 +1,6 @@
 <h2>All Sellers</h2>
 
-<form method="get" action="{% url 'seller_list' %}">
+<form method="get" action="{% url 'accounts:seller_list' %}">
     <input type="text" name="q" placeholder="Search sellers..." value="{{ query }}">
     <button type="submit">Search</button>
 </form>
@@ -9,7 +9,7 @@
 <ul>
     {% for seller in sellers %}
         <li>
-            <a href="{% url 'user_profile' seller.id %}">{{ seller.username }}</a>
+            <a href="{% url 'accounts:public_profile' username=seller.username %}">{{ seller.username }}</a>
             {% if seller in following %}
                 ✅ Following
             {% endif %}
@@ -25,10 +25,10 @@
     <ul>
         {% for seller in following %}
             <li>
-                <a href="{% url 'user_profile' seller.id %}">{{ seller.username }}</a> – {{ seller.location }}
+                <a href="{% url 'accounts:public_profile' username=seller.username %}">{{ seller.username }}</a> – {{ seller.location }}
             </li>
         {% endfor %}
     </ul>
 {% endif %}
 
-<a href="{% url 'home' %}">← Back to Home</a>
+<a href="{% url 'accounts:home' %}">← Back to Home</a>

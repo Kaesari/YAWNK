@@ -116,7 +116,7 @@
                            </button>
                            </form>
                            {% else %}
-                           <form method="GET" action="{% url 'login' %}?next={% url 'start_chat' product.id %}" class="d-inline">
+                           <form method="GET" action="{% url 'accounts:login' %}?next={% url 'start_chat' product.id %}" class="d-inline">
                               <button type="submit" class="btn btn-primary">
                                   <i class="feather-icon icon-message-circle me-2"></i>
                                   Message Seller
@@ -187,7 +187,7 @@
                            
                            <td>
                               <!-- Form for following/unfollowing the seller -->
-                              <!-- <form method="POST" action="{% url 'follow_toggle' product.seller.id product.id %}" style="display:inline;">
+                              <!-- <form method="POST" action="{% url 'accounts:follow_toggle' product.seller.id product.id %}" style="display:inline;">
                                   {% csrf_token %}
                                   {% if is_following %}
                                       <button class="btn btn-primary" type="submit" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Unfollow Seller">Unfollow Seller</button>
@@ -612,7 +612,7 @@
                                  {% endif %}
          
                                  {% if not user.is_authenticated %}
-                                 <a href="{% url 'login' %}?next={% url 'start_chat' product.id %}" class="btn btn-primary btn-sm rounded-pill px-3" data-bs-toggle="tooltip" title="Login to Message {{ product.seller }}">
+                                 <a href="{% url 'accounts:login' %}?next={% url 'start_chat' product.id %}" class="btn btn-primary btn-sm rounded-pill px-3" data-bs-toggle="tooltip" title="Login to Message {{ product.seller }}">
                                        <i class="bi bi-chat-text-fill me-1"></i> DM
                                  </a>
                                  {% endif %}

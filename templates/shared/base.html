@@ -14,7 +14,7 @@
       <link href="{% static 'assets/libs/slick-carousel/slick/slick.css' %}" rel="stylesheet" />
       <link href="{% static 'assets/libs/slick-carousel/slick/slick-theme.css' %}" rel="stylesheet" />
       <!-- Favicon icon-->
-      <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/images/added/small.png' %}" />
+      <link rel="icon" type="image/png" href="{% static 'site/favicon/yawnk_favicon.png' %}" />
 
       <!-- Libs CSS -->
       <link href="{% static 'assets/libs/bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet" />
@@ -169,7 +169,7 @@
                   
                         <!-- Example Icon (Reduced Size) -->
                         <div class="icon-hover">
-                          <a href="{% url 'home' %}" class="text-inherit">
+                          <a href="{% url 'accounts:home' %}" class="text-inherit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor"
                                 class="bi bi-house-gear" viewBox="0 0 16 16">
                                 <path
@@ -202,19 +202,34 @@
                         {% endif %}
                   
                         {% if user.is_authenticated %}
-                        <div class="icon-hover">
-                          <a href="{% url 'account_settings' %}" class="text-inherit">
+                        <div class="icon-hover dropdown">
+                          <a href="#" class="text-inherit dropdown-toggle" id="mobileProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.profile_picture %}
                               <img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="22" class="rounded-circle">
                             {% else %}
                               <img src="{% static 'assets/images/added/user-profile.png' %}" alt="Profile Picture" width="22">
                             {% endif %}
                           </a>
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileProfileDropdown">
+                              <li><a class="dropdown-item" href="{% url 'accounts:public_profile' username=request.user.username %}"><i class="feather-icon icon-user me-2"></i>Your profile</a></li>
+                              {% if user.is_authenticated %}
+                              <li><a class="dropdown-item" href="{% url 'seller:dashboard' %}"><i class="feather-icon icon-briefcase me-2"></i>Sellers Hub</a></li>
+                              {% endif %}
+                              <li><a class="dropdown-item" href="{% url 'accounts:account_settings' %}"><i class="feather-icon icon-settings me-2"></i>Settings</a></li>
+                              <li><a class="dropdown-item" href="{% url 'user_feed' %}"><i class="feather-icon icon-heart me-2"></i>Feeds & Follows</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li>
+                                  <form method="POST" action="{% url 'accounts:logout' %}" class="d-inline">
+                                      {% csrf_token %}
+                                      <button type="submit" class="dropdown-item"><i class="feather-icon icon-log-out me-2"></i>Log out</button>
+                                  </form>
+                              </li>
+                          </ul>
                         </div>
                         
                       {% else %}
                       <div class="icon-hover">  <!-- Aligning the sign in link to the right -->
-                          <a href="{% url 'login' %}" class="text-inherit">
+                          <a href="{% url 'accounts:login' %}" class="text-inherit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0z"/>
                                 <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
@@ -298,8 +313,8 @@
                               </div>
                           </a>
                       </div>
-                      <div class="ms-6 text-center">
-                          <a href="{% url 'account_settings' %}" class="text-reset">
+                      <div class="ms-6 text-center dropdown">
+                          <a href="#" class="text-reset dropdown-toggle" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                               <div class="lh-1">
                                   <div class="mb-2">
                                       {% if user.profile_picture %}
@@ -311,26 +326,41 @@
                                   <p class="mb-0 d-none d-xl-block small">{{ user.username }}</p>
                               </div>
                           </a>
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                              <li><a class="dropdown-item" href="{% url 'accounts:public_profile' username=request.user.username %}"><i class="feather-icon icon-user me-2"></i>Your profile</a></li>
+                              {% if user.is_authenticated %}
+                              <li><a class="dropdown-item" href="{% url 'seller:dashboard' %}"><i class="feather-icon icon-briefcase me-2"></i>Sellers Hub</a></li>
+                              {% endif %}
+                              <li><a class="dropdown-item" href="{% url 'accounts:account_settings' %}"><i class="feather-icon icon-settings me-2"></i>Settings</a></li>
+                              <li><a class="dropdown-item" href="{% url 'user_feed' %}"><i class="feather-icon icon-heart me-2"></i>Feeds & Follows</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li>
+                                  <form method="POST" action="{% url 'accounts:logout' %}" class="d-inline">
+                                      {% csrf_token %}
+                                      <button type="submit" class="dropdown-item"><i class="feather-icon icon-log-out me-2"></i>Log out</button>
+                                  </form>
+                              </li>
+                          </ul>
                       </div>
                       {% else %}
                       <div class="d-flex justify-content-end align-items-center gap-4 w-100">
                         <!-- Sell Now Button -->
                         <div class="icon-hover">
-                            <a href="{% url 'login' %}?next={% url 'create_product' %}" class="btn btn-danger w-auto">
+                            <a href="{% url 'accounts:login' %}?next={% url 'create_product' %}" class="btn btn-danger w-auto">
                                 Sell Now
                             </a>
                         </div>
                     
                         <!-- Register Now Button -->
                         <div class="icon-hover">
-                            <a href="{% url 'signup' %}" class="btn btn-outline-info w-auto">
+                            <a href="{% url 'accounts:signup' %}" class="btn btn-outline-info w-auto">
                                 Register Now
                             </a>
                         </div>
                     
                         <!-- Login Button -->
                         <div class="text-center">
-                            <a href="{% url 'login' %}" class="text-inherit">
+                            <a href="{% url 'accounts:login' %}" class="text-inherit">
                                 <div class="lh-1">
                                     <div class="mb-2">
                                         <i class="bi bi-person-circle fs-4"></i>

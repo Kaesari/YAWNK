@@ -1,0 +1,156 @@
+{% extends 'shared/base.html' %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }} - Profile{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- PROFILE TOP ROW: Image + Info -->
+    <div class="profile-top-row">
+        {% if profile_user.profile_picture %}
+            <img src="{{ profile_user.profile_picture.url }}" alt="{{ profile_user.username }}" class="profile-avatar-depop">
+        {% else %}
+            <img src="{% static 'assets/images/added/user-profile.png' %}" alt="{{ profile_user.username }}" class="profile-avatar-depop">
+        {% endif %}
+        
+        <div class="profile-info-block">
+            <h1 class="profile-username">@{{ profile_user.username }}</h1>
+            <div class="profile-rating">★★★★★ (0)</div>
+            {% if profile_user.location %}
+            <div class="profile-location">📍 {{ profile_user.location }}</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- PROFILE STATS ROW: Followers, Following, Action Button -->
+    <div class="profile-stats-row">
+        <span><strong>{{ followers_count }}</strong> Followers</span>
+        <span><strong>{{ following_count }}</strong> Following</span>
+        
+        {% if is_own_profile %}
+            <a href="{% url 'accounts:account_settings' %}" class="btn btn-dark btn-sm profile-action-btn">Edit Profile</a>
+        {% else %}
+            <form method="POST" action="{% url 'accounts:follow_seller_toggle' profile_user.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-dark btn-sm profile-action-btn">
+                    {% if is_following %}Following{% else %}Follow{% endif %}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <!-- PROFILE BIO -->
+    {% if profile_user.bio %}
+    <div class="profile-bio">
+        <p>{{ profile_user.bio }}</p>
+    </div>
+    {% endif %}
+
+    <!-- TABS -->
+    <ul class="profile-tabs-nav">
+        <li>
+            <a href="#" class="tab-link active" data-tab="selling">Selling</a>
+        </li>
+        <li>
+            <a href="#" class="tab-link" data-tab="likes">Likes</a>
+        </li>
+        <li>
+            <a href="#" class="tab-link" data-tab="saves">Saves</a>
+        </li>
+    </ul>
+
+    <!-- TAB CONTENT: Selling -->
+    <div id="selling-tab" class="tab-content active">
+        {% if user_products %}
+            <div class="product-grid">
+                {% for product in user_products %}
+                    <a href="{% url 'product_detail' product.id %}" class="product-item">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-item-image">
+                        <div class="product-overlay">
+                            <p class="product-price">KSh {{ product.price }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <h3>No items yet</h3>
+                {% if is_own_profile %}
+                    <p>Start selling by listing your first item!</p>
+                    <a href="{% url 'seller:dashboard' %}" class="btn btn-dark">List an Item</a>
+                {% else %}
+                    <p>@{{ profile_user.username }} hasn't listed any items yet.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- TAB CONTENT: Likes -->
+    <div id="likes-tab" class="tab-content">
+        {% if liked_products %}
+            <div class="product-grid">
+                {% for product in liked_products %}
+                    <a href="{% url 'product_detail' product.id %}" class="product-item">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-item-image">
+                        <div class="product-overlay">
+                            <p class="product-price">KSh {{ product.price }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-heart"></i>
+                <h3>No liked items</h3>
+                {% if is_own_profile %}
+                    <p>Items you like will appear here.</p>
+                {% else %}
+                    <p>@{{ profile_user.username }} hasn't liked any items yet.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- TAB CONTENT: Saves -->
+    <div id="saves-tab" class="tab-content">
+        <div class="empty-state">
+            <i class="fas fa-bookmark"></i>
+            <h3>No saved items</h3>
+            <p>Saved items will appear here.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Tab Switching JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabLinks.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all tabs and contents
+            tabLinks.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Show corresponding content
+            const tabName = this.getAttribute('data-tab');
+            const content = document.getElementById(tabName + '-tab');
+            if (content) {
+                content.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
