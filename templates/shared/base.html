@@ -205,9 +205,9 @@
                         <div class="icon-hover dropdown">
                           <a href="#" class="text-inherit dropdown-toggle" id="mobileProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if user.profile_picture %}
-                              <img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="22" class="rounded-circle">
+                              <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="user-avatar rounded-circle">
                             {% else %}
-                              <img src="{% static 'assets/images/added/user-profile.png' %}" alt="Profile Picture" width="22">
+                              <img src="{% static 'assets/images/added/user-profile.png' %}" alt="Profile Picture" class="user-avatar rounded-circle">
                             {% endif %}
                           </a>
                           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileProfileDropdown">
@@ -318,9 +318,9 @@
                               <div class="lh-1">
                                   <div class="mb-2">
                                       {% if user.profile_picture %}
-                                          <img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="25" class="rounded-circle">
+                                          <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="user-avatar rounded-circle">
                                       {% else %}
-                                          <img src="{% static 'assets/images/added/user-profile.png' %}" alt="Profile Picture" width="30">
+                                          <img src="{% static 'assets/images/added/user-profile.png' %}" alt="Profile Picture" class="user-avatar rounded-circle">
                                       {% endif %}
                                   </div>
                                   <p class="mb-0 d-none d-xl-block small">{{ user.username }}</p>

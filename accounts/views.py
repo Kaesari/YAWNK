@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from products.models import Banners, Category, HomeGrownBanners, Product
 
 from .models import CustomUser
-from .forms import CustomUserChangeForm, CustomUserCreationForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm, ProfileDetailsForm, AccountDetailsForm
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -88,18 +88,51 @@ def signup_view(request):
 def update_user_data(request):
     user = request.user
     
+    # Initialize all forms with current user data
+    profile_form = ProfileDetailsForm(instance=user)
+    account_form = AccountDetailsForm(instance=user)
+    password_form = None  # Only instantiate when needed
+    
     if request.method == 'POST':
-        # Create the form and populate it with POST data and the existing user's data
-        form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, user)  # Prevent the user from being logged out
-            return redirect('profile')  # Redirect to the profile page after successful update
-    else:
-        # Preload the user's data into the form
-        form = CustomUserChangeForm(instance=user)
+        # Check which form was submitted
+        if 'submit_profile' in request.POST:
+            # Handle Profile Details Form
+            profile_form = ProfileDetailsForm(request.POST, request.FILES, instance=user)
+            if profile_form.is_valid():
+                updated_user = profile_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Your profile details have been updated successfully!')
+                return redirect('/account/settings/?tab=profile-details')
+            else:
+                messages.error(request, 'Please correct the errors in Profile Details.')
+        
+        elif 'submit_account' in request.POST:
+            # Handle Account Details Form
+            account_form = AccountDetailsForm(request.POST, instance=user)
+            if account_form.is_valid():
+                updated_user = account_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Your account details have been updated successfully!')
+                return redirect('/account/settings/?tab=account-details')
+            else:
+                messages.error(request, 'Please correct the errors in Account Details.')
+        
+        elif request.POST.get('form_type') == 'password':
+            # Handle Password Change Form
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                password_form.save()
+                update_session_auth_hash(request, password_form.user)  # Keep user logged in
+                messages.success(request, 'Your password has been changed successfully!')
+                return redirect('/account/settings/?tab=password-security')
+            else:
+                messages.error(request, 'Please correct the errors in the password form.')
 
-    return render(request, 'pages/profile.html', {'form': form})
+    return render(request, 'pages/profile.html', {
+        'profile_form': profile_form,
+        'account_form': account_form,
+        'password_form': password_form,
+    })
 
 @login_required
 def change_password(request):

@@ -121,6 +121,7 @@
 /* Ensure body content starts below fixed header */
 body {
     padding-top: 60px;
+    overflow-x: hidden;  /* Prevent horizontal scrolling */
 }
 
 /* ======================================
@@ -482,4 +483,68 @@ html {
         display: none;
     }
 }
+
+/* ======================================
+   GLOBAL AVATAR FIX - Perfect Circle
+   Fixes oval bug by forcing 1:1 ratio
+   ====================================== */
+
+/* Apply to ALL user avatars across the site */
+.user-avatar,
+.rounded-circle,
+.profile-avatar,
+.profile-avatar-depop,
+.profile-picture-preview {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Ensure images maintain aspect ratio */
+img.user-avatar,
+img.rounded-circle,
+img.profile-avatar {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+}
+
+/* Header profile icon - specific sizing */
+.navbar .user-avatar,
+.navbar .rounded-circle {
+    width: 32px;
+    height: 32px;
+}
+
+/* Dropdown profile icons */
+.dropdown-toggle .user-avatar,
+.dropdown-toggle .rounded-circle {
+    width: 32px;
+    height: 32px;
+}
+
+/* Settings page preview */
+.profile-picture-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Public profile page avatars */
+.profile-avatar-depop {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+@media (min-width: 768px) {
+    .profile-avatar-depop {
+        width: 120px;
+        height: 120px;
+    }
+}
+
 

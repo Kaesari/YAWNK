@@ -1,150 +1,959 @@
 {% extends 'shared/base.html' %}
-
 {% load static %}
 
-{% block title %}Profile{% endblock %}
+{% block title %}Settings{% endblock %}
 
 {% block content %}
+<!-- Settings Page Container - Fix Header Overlap -->
+<div class="settings-page-container">
+    <div class="container-fluid">
+        <!-- Success/Error Messages -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <!-- Page Header -->
+        <div class="settings-page-header">
+            <h1>Settings</h1>
+        </div>
 
+        <!-- Two-Column Grid Layout -->
+        <div class="settings-grid">
+            <!-- LEFT SIDEBAR - 25% -->
+            <aside class="settings-sidebar">
+                <nav class="sidebar-nav">
+                    <a href="#profile-details" class="sidebar-nav-item active" data-section="profile-details">
+                        Profile Details
+                    </a>
+                    <a href="#account-details" class="sidebar-nav-item" data-section="account-details">
+                        Account Details
+                    </a>
+                    <a href="#password-security" class="sidebar-nav-item" data-section="password-security">
+                        Password & Security
+                    </a>
+                </nav>
+            </aside>
 
-<main>
-    <!-- section -->
-    <section>
-       <!-- container -->
-       <div class="container">
-          <!-- row -->
-          <div class="row">
-             <!-- col -->
-             <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center d-md-none py-4">
-                   <!-- heading -->
-                   <h3 class="fs-5 mb-0">Account Setting</h3>
-                   <!-- button -->
-                   <button
-                      class="btn btn-outline-gray-400 text-muted d-md-none btn-icon btn-sm ms-3"
-                      type="button"
-                      data-bs-toggle="offcanvas"
-                      data-bs-target="#offcanvasAccount"
-                      aria-controls="offcanvasAccount">
-                      <i class="bi bi-text-indent-left fs-3"></i>
-                   </button>
-                </div>
-             </div>
-             <!-- col -->
-             {% include 'shared/admin_nav.html' %}
-             <div class="col-lg-9 col-md-8 col-12">
-                <div class="py-6 p-md-6 p-lg-10">
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-12 col-md-6 text-center">
-                                <div class="seller-details text-center">
-                                    <!-- Profile Picture -->
+            <!-- RIGHT CONTENT AREA - 75% -->
+            <main class="settings-content-area">
+                <!-- SECTION 1: Profile Details (Public Info) -->
+                <section id="profile-details" class="settings-section active">
+                    <div class="settings-card">
+                        <h2 class="section-title">User Details</h2>
+                        <p class="section-subtitle">Public information visible on your profile</p>
 
-                                    {% if user.profile_picture %}
-                                    <a href="#"><img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;"></a>
-                                    {% else %}
-                                    <a href="#"><img src="{% static 'assets/images/added/user-profile.png' %}" class="img-fluid rounded-circle mb-3" alt="Profile Picture" style="max-width: 150px;"></a>
-                                    {% endif %}
-                                    <br>
-                                
-                                    <!-- Seller Details -->
-                                    <h3>Username: {{ user.username }}</h3>
-                                    <p>Bio: {{ user.bio }}</p>
-                                    <p class="mb-10">Location: {{ user.location }}</p>
-                                
-                                    <!-- Buttons for Follow and Message -->
-                                    <!-- <div class="d-flex justify-content-center gap-3 mb-10"> 
-                                        <a href="#" class="btn btn-outline-primary" onclick="window.history.back();">
-                                            ← Back
-                                        </a>
-                                    </div> -->
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+
+                            <!-- Profile Picture Row (Flexbox) -->
+                            <div class="form-group">
+                                <label>Profile Picture</label>
+                                <div class="profile-picture-row">
+                                    <div class="profile-picture-wrapper">
+                                        {% if user.profile_picture %}
+                                            <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="profile-picture-preview" id="profilePreview">
+                                        {% else %}
+                                            <img src="{% static 'assets/images/added/user-profile.png' %}" alt="Default" class="profile-picture-preview" id="profilePreview">
+                                        {% endif %}
+                                    </div>
+                                    <div class="profile-picture-upload">
+                                        <button type="button" class="btn-upload" id="customUploadBtn">
+                                            <i class="feather-icon icon-camera"></i> Change Photo
+                                        </button>
+                                        <!-- Hidden Django File Input (hide all default text) -->
+                                        <div class="django-file-input-hidden">
+                                            {{ profile_form.profile_picture }}
+                                        </div>
+                                        {% if profile_form.profile_picture.errors %}
+                                            <div class="error-message">
+                                                {% for error in profile_form.profile_picture.errors %}
+                                                    <small class="text-danger">{{ error }}</small>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <p class="upload-hint">JPG, PNG or GIF. Max 2MB</p>
+                                    </div>
                                 </div>
-                                
                             </div>
+
+                            <!-- Username -->
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                {{ profile_form.username }}
+                                {% if profile_form.username.errors %}
+                                    <div class="error-message">
+                                        {% for error in profile_form.username.errors %}
+                                            <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="form-hint">Choose a unique username for your profile</small>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="form-group">
+                                <label for="location">Location / City</label>
+                                {{ profile_form.location }}
+                                {% if profile_form.location.errors %}
+                                    <div class="error-message">
+                                        {% for error in profile_form.location.errors %}
+                                            <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Bio -->
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                {{ profile_form.bio }}
+                                {% if profile_form.bio.errors %}
+                                    <div class="error-message">
+                                        {% for error in profile_form.bio.errors %}
+                                            <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" name="submit_profile" class="btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: Account Details (Private Info) -->
+                <section id="account-details" class="settings-section">
+                    <div class="settings-card">
+                        <h2 class="section-title">Account Details</h2>
+                        <p class="section-subtitle">Private information for your account</p>
+
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <!-- First Name & Last Name (Two Columns) -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="first_name">First Name</label>
+                                    {{ account_form.first_name }}
+                                    {% if account_form.first_name.errors %}
+                                        <div class="error-message">
+                                            {% for error in account_form.first_name.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    <label for="last_name">Last Name</label>
+                                    {{ account_form.last_name }}
+                                    {% if account_form.last_name.errors %}
+                                        <div class="error-message">
+                                            {% for error in account_form.last_name.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="form-group">
+                                <label for="phone_number">Phone Number</label>
+                                {{ account_form.phone_number }}
+                                {% if account_form.phone_number.errors %}
+                                    <div class="error-message">
+                                        {% for error in account_form.phone_number.errors %}
+                                            <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                {{ account_form.email }}
+                                {% if account_form.email.errors %}
+                                    <div class="error-message">
+                                        {% for error in account_form.email.errors %}
+                                            <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Address -->
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                {{ account_form.address }}
+                                {% if account_form.address.errors %}
+                                    <div class="error-message">
+                                        {% for error in account_form.address.errors %}
+                                            <small class="text-danger">{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" name="submit_account" class="btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+
+                        <!-- Danger Zone -->
+                        <hr class="divider">
+                        <div class="danger-zone">
+                            <h3 class="danger-title">Danger Zone</h3>
+                            <p class="danger-subtitle">Once you delete your account, there is no going back.</p>
+                            <button type="button" class="btn-danger" onclick="alert('Account deletion is coming soon. Please contact support.')">
+                                <i class="feather-icon icon-trash-2"></i> Delete Account
+                            </button>
                         </div>
                     </div>
-                   <div class="mb-6">
-                      <!-- heading -->
-                      <h2 class="mb-0">Account Setting</h2>
-                   </div>
-                   <div>
-                      <!-- heading -->
-                      <h5 class="mb-4">Account details</h5>
-                      <div >
-                        <!-- form -->
-                        <form method="POST" enctype="multipart/form-data">
-                           {% csrf_token %}
-                           <div class="row g-3">
-                               <div class="col">
-                                   <label for="first_name" class="form-label">First Name</label>
-                                   <input type="text" class="form-control" name="first_name" id="first_name" value="{{ form.first_name.value }}" required />
-                               </div>
-                               <div class="col">
-                                   <label for="last_name" class="form-label">Last Name</label>
-                                   <input type="text" class="form-control" name="last_name" id="last_name" value="{{ form.last_name.value }}" required />
-                               </div>
-                               <div class="col-12">
-                                   <label class="form-check-label">
-                                       <input type="checkbox" name="is_seller" class="form-check-input" {% if form.is_seller.value %}checked{% endif %}>
-                                       Are you a seller?
-                                   </label>
-                               </div>
-                               <div class="col-12">
-                                   <label for="bio" class="form-label">Bio</label>
-                                   <textarea class="form-control" name="bio" id="bio" placeholder="Tell us about yourself">{{ form.bio.value }}</textarea>
-                               </div>
-                               <div class="col-12">
-                                   <label for="email" class="form-label">Email</label>
-                                   <input type="email" class="form-control" name="email" id="email" value="{{ form.email.value }}" required />
-                               </div>
-                               <div class="col-12">
-                                   <label for="location" class="form-label">Location</label>
-                                   <input type="text" class="form-control" name="location" id="location" value="{{ form.location.value }}" required />
-                               </div>
-                               <div class="col-12">
-                                   <label for="profile_picture" class="form-label">Profile Picture</label>
-                                   <input type="file" class="form-control" name="profile_picture" id="profile_picture" />
-                               </div>
-                               <div class="col-12 d-grid">
-                                   <button type="submit" class="btn btn-primary">Save Changes</button>
-                               </div>
-                           </div>
-                       </form>
-                     </div>
-                   </div>
-                   <hr class="my-10" />
-                   <div class="pe-lg-14">
-                     <!-- heading -->
-                     <h5 class="mb-4">Password</h5>
-                     <form method="POST" class="row row-cols-1 row-cols-lg-2">
-                         {% csrf_token %}
-                         <!-- input -->
-                         <div class="mb-3 col">
-                             <label class="form-label">New Password</label>
-                             <input type="password" class="form-control" name="new_password" placeholder="**********" required />
-                         </div>
-                         <!-- input -->
-                         <div class="mb-3 col">
-                             <label class="form-label">Current Password</label>
-                             <input type="password" class="form-control" name="current_password" placeholder="**********" required />
-                         </div>
-                         <!-- input -->
-                         <div class="col-12">
-                             <p class="mb-4">
-                                 Can’t remember your current password?
-                                 <a href="#">Reset your password.</a>
-                             </p>
-                             <button type="submit" class="btn btn-primary">Save Password</button>
-                         </div>
-                     </form>
-                 </div>                 
-                   <hr class="my-10" />
-                </div>
-             </div>
-          </div>
-       </div>
-    </section>
- </main>
+                </section>
 
+                <!-- SECTION 3: Password & Security -->
+                <section id="password-security" class="settings-section">
+                    <div class="settings-card">
+                        <h2 class="section-title">Security</h2>
+                        <p class="section-subtitle">Manage your password and security settings</p>
 
+                        <!-- Password Change Form (Separate & Isolated) -->
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="password">
+
+                            <h4 class="subsection-title">Change Password</h4>
+                            <p class="subsection-description">Update your password to keep your account secure</p>
+
+                            <!-- Old Password -->
+                            <div class="form-group">
+                                <label for="old_password">Current Password</label>
+                                {% if password_form %}
+                                    {{ password_form.old_password }}
+                                    {% if password_form.old_password.errors %}
+                                        <div class="error-message">
+                                            {% for error in password_form.old_password.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="password" class="form-input" id="old_password" name="old_password" placeholder="Enter current password" required>
+                                {% endif %}
+                            </div>
+
+                            <!-- New Password -->
+                            <div class="form-group">
+                                <label for="new_password1">New Password</label>
+                                {% if password_form %}
+                                    {{ password_form.new_password1 }}
+                                    {% if password_form.new_password1.errors %}
+                                        <div class="error-message">
+                                            {% for error in password_form.new_password1.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="password" class="form-input" id="new_password1" name="new_password1" placeholder="Enter new password" required>
+                                {% endif %}
+                                <small class="form-hint">Must be at least 8 characters long</small>
+                            </div>
+
+                            <!-- Confirm New Password -->
+                            <div class="form-group">
+                                <label for="new_password2">Confirm New Password</label>
+                                {% if password_form %}
+                                    {{ password_form.new_password2 }}
+                                    {% if password_form.new_password2.errors %}
+                                        <div class="error-message">
+                                            {% for error in password_form.new_password2.errors %}
+                                                <small class="text-danger">{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <input type="password" class="form-input" id="new_password2" name="new_password2" placeholder="Confirm new password" required>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" name="submit_password" class="btn-primary">Change Password</button>
+                            </div>
+                        </form>
+
+                        <hr class="divider">
+
+                        <!-- Two-Factor Authentication (Coming Soon) -->
+                        <div class="security-option">
+                            <div class="security-info">
+                                <h4>Two-Factor Authentication</h4>
+                                <p>Add an extra layer of security to your account (Coming Soon)</p>
+                            </div>
+                            <button type="button" class="btn-secondary" disabled>
+                                <i class="feather-icon icon-shield"></i> Enable 2FA
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Section Switching & Image Preview -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Section Switching
+    const navItems = document.querySelectorAll('.sidebar-nav-item');
+    const sections = document.querySelectorAll('.settings-section');
+
+    // Check URL for tab parameter and activate appropriate tab
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    
+    if (tabParam) {
+        // Remove 'active' from all
+        navItems.forEach(nav => nav.classList.remove('active'));
+        sections.forEach(section => section.classList.remove('active'));
+        
+        // Activate the specified tab
+        const targetNav = document.querySelector(`[data-section="${tabParam}"]`);
+        const targetSection = document.getElementById(tabParam);
+        
+        if (targetNav && targetSection) {
+            targetNav.classList.add('active');
+            targetSection.classList.add('active');
+        }
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Update nav items
+            navItems.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show corresponding section
+            const sectionId = this.getAttribute('data-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                }
+            });
+
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    // ====================================
+    // Simple Profile Picture Preview
+    // ====================================
+    
+    const fileInput = document.getElementById('id_profile_picture');
+    const previewImg = document.querySelector('.profile-picture-preview'); // Circle preview image
+    const changeBtn = document.getElementById('customUploadBtn'); // The "Change Photo" button
+    
+    // 1. Button triggers hidden input
+    if (changeBtn && fileInput) {
+        changeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            fileInput.click();
+        });
+    }
+    
+    // 2. Update Preview on File Selection
+    if (fileInput && previewImg) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                previewImg.src = URL.createObjectURL(file);
+                console.log('Preview updated with selected image');
+            }
+        });
+    }
+});
+</script>
+
+<style>
+/* Settings Page - Vinted Style */
+
+/* Global Box Sizing */
+* {
+    box-sizing: border-box;
+}
+
+/* TASK 2: Tightened Spacing - Desktop */
+.settings-page-container {
+    margin-top: 30px;  /* Minimal spacing below navigation */
+    padding: 20px 0 60px;
+    background: #f5f5f5;
+    min-height: calc(100vh - 100px);
+    position: relative;
+    z-index: 1;  /* TASK 3: Below header (header z-index: 1030) */
+}
+
+/* Container Padding */
+.container-fluid {
+    padding: 0 20px;
+}
+
+/* Messages/Alerts */
+.messages-container {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error,
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.settings-page-header {
+    margin-bottom: 30px;
+}
+
+.settings-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+}
+
+/* Grid Layout: Sidebar 25%, Content 75% */
+.settings-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* LEFT SIDEBAR */
+.settings-sidebar {
+    position: sticky;
+    top: 120px;
+    align-self: start;
+}
+
+.sidebar-nav {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sidebar-nav-item {
+    display: block;
+    padding: 16px 20px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-nav-item:hover {
+    background: #f8f9fa;
+    color: #000;
+}
+
+.sidebar-nav-item.active {
+    background: #000;
+    color: white;
+}
+
+/* RIGHT CONTENT AREA */
+.settings-content-area {
+    width: 100%;
+}
+
+.settings-section {
+    display: none;
+}
+
+.settings-section.active {
+    display: block;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 30px 0;
+}
+
+/* Profile Picture Row - Flexbox */
+.profile-picture-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-picture-wrapper {
+    flex-shrink: 0;
+}
+
+.profile-picture-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e0e0e0;
+}
+
+.profile-picture-upload {
+    flex: 1;
+}
+
+.btn-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.btn-upload:hover {
+    background: #e0e0e0;
+    border-color: #b0b0b0;
+}
+
+/* TASK 1: Hide ALL Django File Input UI Elements */
+.django-file-input-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Hide the actual file input and all its generated elements */
+.django-file-input-hidden * {
+    display: none !important;
+}
+
+/* Specific targeting for Django ClearableFileInput elements */
+#id_profile_picture,
+#id_profile_picture-clear_id,
+.file-input-hidden {
+    display: none !important;
+}
+
+/* Hide any labels associated with the clear checkbox */
+.profile-picture-upload label[for="id_profile_picture-clear_id"],
+.django-file-input-hidden label,
+.django-file-input-hidden a {
+    display: none !important;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: #999;
+    margin: 8px 0 0 0;
+}
+
+/* Form Styling - Vinted Style */
+.form-group {
+    margin-bottom: 24px;
+}
+
+/* Error Messages */
+.error-message {
+    margin-top: 6px;
+}
+
+.text-danger {
+    color: #dc3545;
+    font-size: 13px;
+    display: block;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+}
+
+.form-input:disabled,
+.form-input[readonly] {
+    background: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.form-hint {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+textarea.form-input {
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Checkbox */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Form Actions */
+.form-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-primary {
+    padding: 12px 32px;
+    background: #000;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.btn-secondary {
+    padding: 10px 20px;
+    background: white;
+    color: #333;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-secondary:hover {
+    background: #f0f0f0;
+    text-decoration: none;
+    color: #000;
+}
+
+.btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Divider */
+.divider {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 30px 0;
+}
+
+/* Danger Zone */
+.danger-zone {
+    padding: 20px;
+    background: #fff5f5;
+    border: 1px solid #ffdddd;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.danger-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #dc3545;
+    margin: 0 0 8px 0;
+}
+
+.danger-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 16px 0;
+}
+
+.btn-danger {
+    padding: 10px 20px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Security Options */
+.security-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.security-info h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 4px 0;
+}
+
+.security-info p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* Password Form Subsection */
+.subsection-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 6px 0;
+}
+
+.subsection-description {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 24px 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    /* TASK 2: Minimal Mobile Spacing */
+    .settings-page-container {
+        margin-top: 10px;  /* Tight spacing below red search bar */
+        padding: 0;
+        background: #f5f5f5;
+    }
+
+    .container-fluid {
+        padding: 0 15px;  /* Text doesn't touch edges */
+    }
+
+    .settings-page-header {
+        margin-bottom: 20px;
+        padding-top: 15px;
+    }
+
+    .settings-grid {
+        display: flex;  /* Change to flex for better control */
+        flex-direction: column;  /* Stack vertically */
+        gap: 15px;
+    }
+
+    /* TASK 1: Sidebar 100% width */
+    .settings-sidebar {
+        position: static;
+        width: 100%;
+        flex: 0 0 auto;
+    }
+
+    /* TASK 2: Fix Sidebar Links - Vertical Menu */
+    .sidebar-nav {
+        display: block;  /* Remove flexbox */
+        width: 100%;
+    }
+
+    .sidebar-nav-item {
+        width: 100%;  /* Full width */
+        display: block;  /* Block display */
+        padding: 14px 20px;
+        margin-bottom: 0;  /* No gap between items */
+        white-space: normal;
+        border-bottom: 1px solid #f0f0f0;
+        border-right: none;
+        flex-shrink: initial;
+        float: none;
+        text-align: left;
+    }
+
+    .sidebar-nav-item:last-child {
+        border-bottom: none;
+    }
+
+    /* TASK 1: Content 100% width */
+    .settings-content-area {
+        width: 100%;
+        flex: 1;
+    }
+
+    .settings-card {
+        padding: 20px 15px;
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .section-title {
+        font-size: 20px;
+        word-wrap: break-word;
+    }
+
+    .section-subtitle {
+        font-size: 13px;
+        word-wrap: break-word;
+    }
+    
+    /* Ensure form inputs don't overflow */
+    .form-input,
+    .btn-upload,
+    .btn-primary,
+    .btn-secondary,
+    .btn-danger {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .profile-picture-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .profile-picture-preview {
+        width: 80px;
+        height: 80px;
+    }
+
+    .security-option {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-actions .btn-primary {
+        width: 100%;
+    }
+}
+
+</style>
 {% endblock %}
