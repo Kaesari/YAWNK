@@ -10,9 +10,9 @@
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
       <meta content="Codescandy" name="author" />
-      <title>Sign Up</title>
+      <title>Sign Up - Yawnk</title>
       <!-- Favicon icon-->
-      <link rel="shortcut icon" type="image/x-icon" href="https://freshcart.codescandy.com/assets/images/favicon/favicon.ico" />
+      <link rel="icon" type="image/png" href="{% static 'site/favicon/yawnk_favicon.png' %}" />
 
       <!-- Libs CSS -->
       <link href="{% static 'assets/libs/bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet" />
@@ -86,91 +86,85 @@
                   <!-- col -->
                   <div class="col-12 col-md-6 col-lg-4 order-lg-2 order-1">
                      <div class="mb-lg-9 mb-5">
-                        <h1 class="mb-1 h2 fw-bold">Get Start Shopping</h1>
-                        <p>Welcome back, register to get started.</p>
+                        <h1 class="mb-1 h2 fw-bold">Join Yawnk</h1>
+                        <p>Create your account and start shopping with us, twin.</p>
                      </div>
                      <!-- form -->
-                     <form class="needs-validation" method="POST" enctype="multipart/form-data" novalidate>
+                     <form class="needs-validation" method="POST" novalidate>
                         {% csrf_token %}
                         <div class="row g-3">
-                            <div class="col">
-                                <label for="formSignupfname" class="form-label visually-hidden">First Name</label>
-                                <input type="text" class="form-control" name="first_name" id="formSignupfname" 
-                                       placeholder="First Name" value="{{ form.first_name.value|default:'' }}" required />
-                                <div class="invalid-feedback">Please enter first name.</div>
-                            </div>
-                            <div class="col">
-                                <label for="formSignuplname" class="form-label visually-hidden">Last Name</label>
-                                <input type="text" class="form-control" name="last_name" id="formSignuplname" 
-                                       placeholder="Last Name" value="{{ form.last_name.value|default:'' }}" required />
-                                <div class="invalid-feedback">Please enter last name.</div>
-                            </div>
+                            <!-- Username -->
                             <div class="col-12">
-                                <label class="form-check-label">
-                                    <input type="checkbox" name="is_seller" class="form-check-input" 
-                                           {% if form.is_seller.value %}checked{% endif %}>
-                                    Are you a seller?
-                                </label>
+                                <label for="id_username" class="form-label visually-hidden">Username</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.username.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
+                            
+                            <!-- Email -->
                             <div class="col-12">
-                                <label for="formBio" class="form-label visually-hidden">Bio</label>
-                                <textarea class="form-control" name="bio" id="formBio" 
-                                          placeholder="Tell us about yourself">{{ form.bio.value|default:'' }}</textarea>
+                                <label for="id_email" class="form-label visually-hidden">Email</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.email.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col">
-                                <label for="formSignupEmail" class="form-label visually-hidden">Email</label>
-                                <input type="email" class="form-control" name="email" id="formSignupEmail" 
-                                       placeholder="Email" value="{{ form.email.value|default:'' }}" required />
-                                <div class="invalid-feedback">Please enter valid email.</div>
-                            </div>
-                            <div class="col">
-                                <label for="formLocation" class="form-label visually-hidden">Location</label>
-                                <input type="text" class="form-control" name="location" id="formLocation" 
-                                       placeholder="Location" value="{{ form.location.value|default:'' }}" required />
-                                <div class="invalid-feedback">Please enter location.</div>
-                            </div>
+                            
+                            <!-- Password -->
                             <div class="col-12">
-                                <label for="formUsername" class="form-label visually-hidden">Username</label>
-                                <input type="text" class="form-control" name="username" id="formUsername" 
-                                       placeholder="Username" value="{{ form.username.value|default:'' }}" required />
-                                <div class="invalid-feedback">Please enter username.</div>
-                            </div>
-                            <div class="col">
                                 <div class="password-field position-relative">
-                                    <label for="formSignupPassword" class="form-label visually-hidden">Password</label>
-                                    <input type="password" class="form-control fakePassword" name="password1" 
-                                           id="formSignupPassword" placeholder="Password" required />
+                                    <label for="id_password1" class="form-label visually-hidden">Password</label>
+                                    {{ form.password1 }}
                                     <span><i class="bi bi-eye-slash passwordToggler"></i></span>
-                                    <div class="invalid-feedback">Please enter password.</div>
+                                    {% if form.password1.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.password1.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <div class="col">
+                            
+                            <!-- Confirm Password -->
+                            <div class="col-12">
                                 <div class="password-field position-relative">
-                                    <label for="formSignupConfirmPassword" class="form-label visually-hidden">Confirm Password</label>
-                                    <input type="password" class="form-control fakePassword" name="password2" 
-                                           id="formSignupConfirmPassword" placeholder="Confirm Password" required />
+                                    <label for="id_password2" class="form-label visually-hidden">Confirm Password</label>
+                                    {{ form.password2 }}
                                     <span><i class="bi bi-eye-slash passwordToggler"></i></span>
-                                    <div class="invalid-feedback">Passwords must match.</div>
+                                    {% if form.password2.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.password2.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                           {% if form.errors %}
-                           <ul style="color:red;">
-                              {% for field in form %}
-                                 {% for error in field.errors %}
-                                       <li>{{ field.label }}: {{ error }}</li>
-                                 {% endfor %}
-                              {% endfor %}
-                              {% for error in form.non_field_errors %}
-                                 <li>{{ error }}</li>
-                              {% endfor %}
-                           </ul>
-                           {% endif %}
-                            <div class="col-12">
-                                <label for="formProfilePicture" class="form-label">Profile Picture:</label>
-                                <input type="file" class="form-control" name="profile_picture" id="formProfilePicture">
-                            </div>
+                            
+                            <!-- Non-field errors -->
+                            {% if form.non_field_errors %}
+                                <div class="col-12">
+                                    <div class="alert alert-danger" role="alert">
+                                        {% for error in form.non_field_errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Submit Button -->
                             <div class="col-12 d-grid">
-                                <button type="submit" class="btn btn-primary">Register</button>
+                                <button type="submit" class="btn btn-danger">Create Account</button>
                             </div>
                             <p class="small">
                                 By continuing, you agree to our

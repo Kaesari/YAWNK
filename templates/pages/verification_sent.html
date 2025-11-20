@@ -1,0 +1,116 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta content="Yawnk" name="author" />
+    <title>Verify Your Email - Yawnk</title>
+    
+    <!-- Favicon icon-->
+    <link rel="icon" type="image/png" href="{% static 'site/favicon/yawnk_favicon.png' %}" />
+
+    <!-- Libs CSS -->
+    <link href="{% static 'assets/libs/bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/libs/feather-webfont/dist/feather-icons.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/libs/simplebar/dist/simplebar.min.css' %}" rel="stylesheet" />
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/theme.min.css' %}" />
+
+    <style>
+        @font-face {
+            font-family: 'Alpha Slab One';
+            src: url('{% static "assets/fonts/AlfaSlabOne-Regular.ttf" %}') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        .verification-icon {
+            font-size: 80px;
+            color: #D72539;
+            margin-bottom: 20px;
+        }
+        
+        .verification-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- navigation -->
+    <div class="border-bottom shadow-sm">
+        <nav class="navbar navbar-light py-2">
+            <div class="container justify-content-center">
+                <a href="/" style="font-family: 'Alpha Slab One', sans-serif; font-size: 36px; color: #dc3434;">
+                    Yawnk
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <main>
+        <section class="my-lg-14 my-8">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="verification-card">
+                            <i class="bi bi-envelope-check verification-icon"></i>
+                            
+                            <h1 class="mb-3 h2 fw-bold">Check Your Email</h1>
+                            
+                            <p class="text-muted mb-4">
+                                We've sent a verification link to:
+                            </p>
+                            
+                            <p class="fw-bold mb-4" style="color: #D72539;">
+                                {{ email }}
+                            </p>
+                            
+                            <div class="alert alert-info text-start" role="alert">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>What's next?</strong>
+                                <ol class="mt-2 mb-0 ps-3">
+                                    <li>Open your email inbox</li>
+                                    <li>Find the email from Yawnk</li>
+                                    <li>Click the verification link</li>
+                                    <li>Start shopping!</li>
+                                </ol>
+                            </div>
+                            
+                            <p class="text-muted small mt-4">
+                                Didn't receive the email? Check your spam folder or 
+                                <a href="{% url 'accounts:signup' %}" class="text-danger">try signing up again</a>.
+                            </p>
+                            
+                            <div class="mt-4">
+                                <a href="/" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Home
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    {% include 'shared/footer.html' %}
+
+    <!-- Libs JS -->
+    <script src="{% static 'assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+    <script src="{% static 'assets/js/theme.min.js' %}"></script>
+</body>
+</html>
+

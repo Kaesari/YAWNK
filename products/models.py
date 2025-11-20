@@ -151,6 +151,7 @@ class Product(models.Model):
     brand = models.CharField(max_length=50, choices=BRAND_CHOICES, blank=True, null=True)
     color = models.CharField(max_length=50, choices=COLOR_CHOICES, blank=True, null=True)
     date_posted = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  # Tracks when item status changes (e.g., sold)
         # Add the status field
     status = models.CharField(
         max_length=10,

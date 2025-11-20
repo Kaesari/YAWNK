@@ -199,7 +199,7 @@
                               <button class="btn btn-primary" 
                                  data-bs-toggle="tooltip" 
                                  title="{% if not user.is_authenticated %}Please login to message seller{% else %}You cannot message yourself{% endif %}">
-                                 <a href="{% url 'seller_feed' product.seller.id %}" style="text-decoration: none; color: inherit;">
+                                 <a href="{% url 'accounts:user_profile' username=product.seller.username %}" style="text-decoration: none; color: inherit;">
                                     <!-- <i class="feather-icon icon-edit me-2"></i> -->
                                     <i class="bi bi-eye me-2"></i>
                                     Seller Profile

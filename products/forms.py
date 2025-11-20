@@ -7,7 +7,8 @@ from .models import Review
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'image', 'category', 'size', 'condition', 'brand', 'subcategory', 'target', 'section', 'color']
+        fields = ['name', 'description', 'price', 'image', 'category', 'size', 'condition', 'brand', 'subcategory', 'target', 'color']
+        exclude = ['section', 'seller', 'status', 'date_posted', 'updated_at']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product name', 'required': 'required'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter product description', 'rows': 3, 'required': 'required'}),
@@ -20,7 +21,6 @@ class ProductForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': 'required'}),
             'subcategory': forms.Select(attrs={'class': 'form-control', 'required': 'required'}),
             'target': forms.Select(attrs={'class': 'form-control', 'required': 'required'}),
-            'section': forms.Select(attrs={'class': 'form-control', 'required': 'required'}),
         }
 
 
@@ -31,6 +31,11 @@ class ProductImageForm(forms.ModelForm):
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make image field optional for formset
+        self.fields['image'].required = False
 
 class ReviewForm(forms.ModelForm):
     class Meta:

@@ -211,7 +211,7 @@
                             {% endif %}
                           </a>
                           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="mobileProfileDropdown">
-                              <li><a class="dropdown-item" href="{% url 'accounts:public_profile' username=request.user.username %}"><i class="feather-icon icon-user me-2"></i>Your profile</a></li>
+                              <li><a class="dropdown-item" href="{% url 'accounts:user_profile' username=request.user.username %}"><i class="feather-icon icon-user me-2"></i>Your profile</a></li>
                               {% if user.is_authenticated %}
                               <li><a class="dropdown-item" href="{% url 'seller:dashboard' %}"><i class="feather-icon icon-briefcase me-2"></i>Sellers Hub</a></li>
                               {% endif %}
@@ -327,7 +327,7 @@
                               </div>
                           </a>
                           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                              <li><a class="dropdown-item" href="{% url 'accounts:public_profile' username=request.user.username %}"><i class="feather-icon icon-user me-2"></i>Your profile</a></li>
+                              <li><a class="dropdown-item" href="{% url 'accounts:user_profile' username=request.user.username %}"><i class="feather-icon icon-user me-2"></i>Your profile</a></li>
                               {% if user.is_authenticated %}
                               <li><a class="dropdown-item" href="{% url 'seller:dashboard' %}"><i class="feather-icon icon-briefcase me-2"></i>Sellers Hub</a></li>
                               {% endif %}

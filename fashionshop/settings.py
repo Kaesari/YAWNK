@@ -140,8 +140,28 @@ STATICFILES_DIRS = [
 ]
 
 
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
+# Email Configuration (Console backend for local testing)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Authentication Backend Configuration
+# Critical: Ensures Django uses the correct mechanism to authenticate Custom User Model
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Session Configuration
+# SESSION_ENGINE not defined = Django uses database backend (default, stable)
+# This ensures proper session persistence for logged-in users
+
+# Session Cookie Settings (for local development)
+SESSION_COOKIE_SECURE = False  # Set to False for local HTTP (no HTTPS required)
+SESSION_COOKIE_HTTPONLY = True  # Prevents JavaScript access to session cookie (security)
+
+# Authentication Settings
+LOGIN_URL = 'accounts:login'
+# TEMPORARY FIX: Redirect to protected page to force session establishment
+# This bypasses homepage conflicts and ensures session is fully established
+LOGIN_REDIRECT_URL = '/seller/'
 LOGOUT_REDIRECT_URL = '/'
 
 

@@ -1,6 +1,13 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 
 from products.models import Banners, Category, HomeGrownBanners, Product
 
@@ -74,15 +81,78 @@ def home_view(request):
 
 def signup_view(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, request.FILES)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home')  # We'll create this later
+            # Save user but set as inactive until email verification
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            
+            # Generate verification token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # Build activation URL dynamically (prevents 404 errors)
+            current_site = get_current_site(request)
+            domain = current_site.domain
+            
+            # Generate the path dynamically using reverse() to match urls.py
+            relative_link = reverse('accounts:activate', kwargs={'uidb64': uid, 'token': token})
+            activation_link = f"http://{domain}{relative_link}"
+            
+            # Send verification email (to console for local testing)
+            subject = 'Verify your Yawnk account'
+            message = f"""
+Hey {user.username},
+
+Welcome to Yawnk! We're excited to have you join our community.
+
+Please click the link below to verify your email and activate your account:
+
+{activation_link}
+
+If you didn't create this account, you can safely ignore this email.
+
+Let's Yawnk!
+The Yawnk Team
+            """
+            
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@yawnk.com',
+                [user.email],
+                fail_silently=False,
+            )
+            
+            # Redirect to verification sent page
+            return render(request, 'pages/verification_sent.html', {'email': user.email})
     else:
         form = CustomUserCreationForm()
-    # return render(request, 'accounts/signup.html', {'form': form})
+    
     return render(request, 'pages/register.html', {'form': form})
+
+
+def activate_account(request, uidb64, token):
+    """Activate user account after email verification"""
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        # Activate user
+        user.is_active = True
+        user.save()
+        
+        # Log them in
+        login(request, user)
+        messages.success(request, 'Your account has been verified! Welcome to Yawnk.')
+        return redirect('/')
+    else:
+        messages.error(request, 'The verification link is invalid or has expired.')
+        return redirect('accounts:login')
 
 @login_required
 def update_user_data(request):

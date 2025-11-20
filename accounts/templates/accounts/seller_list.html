@@ -9,7 +9,7 @@
 <ul>
     {% for seller in sellers %}
         <li>
-            <a href="{% url 'accounts:public_profile' username=seller.username %}">{{ seller.username }}</a>
+            <a href="{% url 'accounts:user_profile' username=seller.username %}">{{ seller.username }}</a>
             {% if seller in following %}
                 ✅ Following
             {% endif %}
@@ -25,7 +25,7 @@
     <ul>
         {% for seller in following %}
             <li>
-                <a href="{% url 'accounts:public_profile' username=seller.username %}">{{ seller.username }}</a> – {{ seller.location }}
+                <a href="{% url 'accounts:user_profile' username=seller.username %}">{{ seller.username }}</a> – {{ seller.location }}
             </li>
         {% endfor %}
     </ul>

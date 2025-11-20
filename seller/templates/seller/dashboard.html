@@ -1,25 +1,924 @@
 {% extends 'shared/base.html' %}
+{% load static %}
 
-{% block title %}Seller Dashboard{% endblock %}
+{% block title %}Seller Dashboard - Yawnk{% endblock %}
 
 {% block content %}
-<div class="container seller-dashboard-content" style="padding-top: 100px;">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="display-4 fw-bold text-center mb-5">
-                Welcome to Your Yawnk Seller Dashboard, {{ request.user.username }}
-            </h1>
+<!-- Seller Dashboard Container -->
+<div class="dashboard-container">
+    <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="dashboard-page-header">
+            <h1>Seller Dashboard</h1>
+            <p class="text-muted">Welcome back, {{ request.user.username }}!</p>
         </div>
-    </div>
-    
-    <div class="row">
-        <div class="col-12 text-center">
-            <a href="/seller/upload/" class="btn btn-primary btn-lg">
-                <i class="feather-icon icon-plus-circle me-2"></i>
-                Add New Listing
-            </a>
+
+        <!-- Two-Column Grid Layout -->
+        <div class="dashboard-grid">
+            <!-- LEFT SIDEBAR - 25% -->
+            <aside class="dashboard-sidebar">
+                <nav class="sidebar-nav">
+                    <a href="#listings" class="sidebar-nav-item active" data-tab="listings">
+                        <i class="bi bi-box-seam me-2"></i> Listings
+                    </a>
+                    <a href="#orders" class="sidebar-nav-item" data-tab="orders">
+                        <i class="bi bi-receipt me-2"></i> Orders
+                    </a>
+                    <a href="#earnings" class="sidebar-nav-item" data-tab="earnings">
+                        <i class="bi bi-graph-up me-2"></i> Earnings
+                    </a>
+                    <a href="#store" class="sidebar-nav-item" data-tab="store">
+                        <i class="bi bi-gear me-2"></i> Store Settings
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- RIGHT CONTENT AREA - 75% -->
+            <main class="dashboard-content-area">
+                
+                <!-- ========================================== -->
+                <!-- SECTION A: LISTINGS (Default Active) -->
+                <!-- ========================================== -->
+                <section id="listings" class="dashboard-section active">
+                    <div class="dashboard-card">
+                        <!-- Quick Stats Cards (4-Column Grid) -->
+                        <div class="stats-grid">
+                            <div class="stat-card stat-primary">
+                                <div class="stat-icon">
+                                    <i class="bi bi-box"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3>{{ active_count }}</h3>
+                                    <p>Active Listings</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card stat-success">
+                                <div class="stat-icon">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3>{{ sold_count }}</h3>
+                                    <p>Items Sold</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card stat-warning">
+                                <div class="stat-icon">
+                                    <i class="bi bi-truck"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3>{{ pending_shipments }}</h3>
+                                    <p>Pending Shipments</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card stat-info">
+                                <div class="stat-icon">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <h3>KSh {{ total_revenue|floatformat:0 }}</h3>
+                                    <p>Total Revenue</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Bar -->
+                        <div class="action-bar">
+                            <a href="{% url 'create_product' %}" class="btn-add-listing">
+                                <i class="bi bi-plus-circle me-2"></i>Add New Listing
+                            </a>
+                        </div>
+
+                        <!-- Inventory Grid -->
+                        <div class="inventory-section">
+                            <h3 class="section-subtitle">Your Inventory</h3>
+                            
+                            {% if seller_products %}
+                                <div class="inventory-grid">
+                                    {% for product in seller_products %}
+                                        <div class="inventory-item">
+                                            <div class="inventory-image">
+                                                {% if product.image %}
+                                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                                {% else %}
+                                                    <img src="{% static 'assets/images/placeholder.png' %}" alt="No image">
+                                                {% endif %}
+                                            </div>
+                                            <div class="inventory-details">
+                                                <h4>{{ product.name }}</h4>
+                                                <p class="inventory-price">KSh {{ product.price }}</p>
+                                                <div class="inventory-meta">
+                                                    <span class="badge badge-{{ product.status }}">{{ product.status|title }}</span>
+                                                    {% if product.condition %}
+                                                        <span class="condition">{{ product.condition|title }}</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="inventory-actions">
+                                                <button class="btn-icon" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button class="btn-icon" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="empty-state">
+                                    <i class="bi bi-box"></i>
+                                    <h4>No listings yet</h4>
+                                    <p>Start by adding your first product</p>
+                                    <a href="{% url 'create_product' %}" class="btn-primary">Add Listing</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- SECTION B: ORDERS -->
+                <!-- ========================================== -->
+                <section id="orders" class="dashboard-section">
+                    <div class="dashboard-card">
+                        <h2 class="section-title">Orders</h2>
+                        <p class="section-subtitle">Manage your orders and shipments</p>
+                        
+                        <div class="empty-state">
+                            <i class="bi bi-receipt"></i>
+                            <h4>No pending orders</h4>
+                            <p>Orders from buyers will appear here</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- SECTION C: EARNINGS (Financial Dashboard) -->
+                <!-- ========================================== -->
+                <section id="earnings" class="dashboard-section">
+                    <div class="dashboard-card">
+                        <h2 class="section-title">Earnings</h2>
+                        <p class="section-subtitle">Track your sales and revenue</p>
+
+                        <!-- Sales Performance Cards (3-Column) -->
+                        <div class="financial-grid">
+                            <div class="financial-card today">
+                                <div class="financial-icon">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                                <div class="financial-details">
+                                    <p class="financial-label">Earned Today</p>
+                                    <h3 class="text-success">KSh {{ earned_today|floatformat:0 }}</h3>
+                                </div>
+                            </div>
+                            
+                            <div class="financial-card week">
+                                <div class="financial-icon">
+                                    <i class="bi bi-calendar-week"></i>
+                                </div>
+                                <div class="financial-details">
+                                    <p class="financial-label">Earned This Week</p>
+                                    <h3 class="text-primary">KSh {{ earned_week|floatformat:0 }}</h3>
+                                </div>
+                            </div>
+                            
+                            <div class="financial-card total">
+                                <div class="financial-icon">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div class="financial-details">
+                                    <p class="financial-label">Total Earnings</p>
+                                    <h3 style="color: #2c3e50;">KSh {{ earned_total|floatformat:0 }}</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Area -->
+                        <div class="chart-section">
+                            <h4 class="chart-title">Weekly Earnings</h4>
+                            <canvas id="earningsChart" height="80"></canvas>
+                        </div>
+
+                        <!-- Recent Transactions -->
+                        <div class="transactions-section">
+                            <h4 class="section-subtitle">Recent Transactions</h4>
+                            <div class="empty-state-small">
+                                <p>No transactions yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================== -->
+                <!-- SECTION D: STORE SETTINGS -->
+                <!-- ========================================== -->
+                <section id="store" class="dashboard-section">
+                    <div class="dashboard-card">
+                        <h2 class="section-title">Store Settings</h2>
+                        <p class="section-subtitle">Configure your seller preferences</p>
+
+                        <form method="POST" class="store-settings-form">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label for="mpesa_number">M-Pesa Number</label>
+                                <input type="text" class="form-input" id="mpesa_number" name="mpesa_number" placeholder="+254 700 000 000">
+                                <small class="form-hint">Your payment will be sent to this number</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pickup_point">Default Pickup Point</label>
+                                <input type="text" class="form-input" id="pickup_point" name="pickup_point" placeholder="e.g., Nairobi CBD">
+                                <small class="form-hint">Where buyers can collect items</small>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn-primary">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+            </main>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Dashboard JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ====================================
+    // TAB SWITCHING LOGIC
+    // ====================================
+    const navItems = document.querySelectorAll('.sidebar-nav-item');
+    const sections = document.querySelectorAll('.dashboard-section');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Update nav items
+            navItems.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show corresponding section
+            const tabId = this.getAttribute('data-tab');
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === tabId) {
+                    section.classList.add('active');
+                }
+            });
+
+            // Smooth scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    // ====================================
+    // EARNINGS CHART INITIALIZATION (REAL DATA)
+    // ====================================
+    const ctx = document.getElementById('earningsChart');
+    if (ctx) {
+        // Get real data from Django context (last 7 days)
+        const dailyLabels = {{ daily_labels|safe }};
+        const dailyEarnings = {{ daily_earnings|safe }};
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: dailyLabels,  // Real day names from backend
+                datasets: [{
+                    label: 'Daily Earnings (KSh)',
+                    data: dailyEarnings,  // Real earnings data from backend
+                    backgroundColor: 'rgba(215, 37, 57, 0.8)',
+                    borderColor: 'rgba(215, 37, 57, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'KSh ' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+
+<!-- Dashboard Styles -->
+<style>
+/* ========================================== */
+/* DASHBOARD LAYOUT - Settings Page Style */
+/* ========================================== */
+
+.dashboard-container {
+    margin-top: 30px;
+    padding: 20px 0 60px;
+    background: #f5f5f5;
+    min-height: calc(100vh - 100px);
+}
+
+.container-fluid {
+    padding: 0 20px;
+}
+
+.dashboard-page-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 5px 0;
+}
+
+.dashboard-page-header p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Grid Layout: Sidebar 25%, Content 75% */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* ========================================== */
+/* LEFT SIDEBAR */
+/* ========================================== */
+
+.dashboard-sidebar {
+    position: sticky;
+    top: 120px;
+    align-self: start;
+}
+
+.sidebar-nav {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-nav-item:hover {
+    background: #f8f9fa;
+    color: #D72539;
+}
+
+.sidebar-nav-item.active {
+    background: #D72539;
+    color: white;
+}
+
+/* ========================================== */
+/* RIGHT CONTENT AREA */
+/* ========================================== */
+
+.dashboard-content-area {
+    width: 100%;
+}
+
+.dashboard-section {
+    display: none;
+}
+
+.dashboard-section.active {
+    display: block;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 8px 0;
+}
+
+.section-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin: 0 0 30px 0;
+    font-weight: 600;
+}
+
+/* ========================================== */
+/* QUICK STATS CARDS (4-Column Grid) */
+/* ========================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 2px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.stat-primary .stat-icon {
+    background: rgba(215, 37, 57, 0.1);
+    color: #D72539;
+}
+
+.stat-success .stat-icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.stat-warning .stat-icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.stat-info .stat-icon {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.stat-details h3 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: #2c3e50;
+}
+
+.stat-details p {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
+
+/* ========================================== */
+/* ACTION BAR */
+/* ========================================== */
+
+.action-bar {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.btn-add-listing {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 32px;
+    background: #D72539;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-listing:hover {
+    background: #b81d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(215, 37, 57, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+/* ========================================== */
+/* INVENTORY GRID */
+/* ========================================== */
+
+.inventory-section {
+    margin-top: 30px;
+}
+
+.inventory-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.inventory-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.inventory-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-color: #D72539;
+}
+
+.inventory-image {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: white;
+}
+
+.inventory-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.inventory-details {
+    flex: 1;
+}
+
+.inventory-details h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+}
+
+.inventory-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #D72539;
+    margin: 0 0 8px 0;
+}
+
+.inventory-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-sold {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.condition {
+    font-size: 12px;
+    color: #666;
+}
+
+.inventory-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #d0d0d0;
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+    background: #f0f0f0;
+    border-color: #D72539;
+    color: #D72539;
+}
+
+/* ========================================== */
+/* FINANCIAL CARDS (Earnings Tab) */
+/* ========================================== */
+
+.financial-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.financial-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.financial-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #666;
+}
+
+.financial-details {
+    flex: 1;
+}
+
+.financial-label {
+    font-size: 13px;
+    color: #666;
+    margin: 0 0 5px 0;
+}
+
+.financial-details h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* ========================================== */
+/* CHART SECTION */
+/* ========================================== */
+
+.chart-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.chart-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+}
+
+#earningsChart {
+    max-height: 300px;
+}
+
+/* ========================================== */
+/* EMPTY STATES */
+/* ========================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 64px;
+    margin-bottom: 20px;
+    color: #d0d0d0;
+}
+
+.empty-state h4 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    color: #666;
+}
+
+.empty-state p {
+    margin: 0 0 20px 0;
+}
+
+.empty-state-small {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+}
+
+/* ========================================== */
+/* FORM STYLING */
+/* ========================================== */
+
+.store-settings-form .form-group {
+    margin-bottom: 24px;
+}
+
+.store-settings-form label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #D72539;
+    box-shadow: 0 0 0 3px rgba(215, 37, 57, 0.1);
+}
+
+.form-hint {
+    display: block;
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.form-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn-primary {
+    padding: 12px 32px;
+    background: #D72539;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #b81d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(215, 37, 57, 0.3);
+}
+
+/* ========================================== */
+/* MOBILE RESPONSIVE */
+/* ========================================== */
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin-top: 10px;
+        padding: 0;
+    }
+
+    .container-fluid {
+        padding: 0 15px;
+    }
+
+    .dashboard-page-header {
+        margin-bottom: 20px;
+        padding-top: 15px;
+    }
+
+    .dashboard-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .dashboard-sidebar {
+        position: static;
+        width: 100%;
+    }
+
+    .sidebar-nav {
+        display: block;
+        width: 100%;
+    }
+
+    .sidebar-nav-item {
+        width: 100%;
+        display: block;
+        padding: 14px 20px;
+    }
+
+    .dashboard-content-area {
+        width: 100%;
+    }
+
+    .dashboard-card {
+        padding: 20px 15px;
+    }
+
+    /* Stack stats vertically on mobile */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Stack financial cards on mobile */
+    .financial-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Simplify inventory on mobile */
+    .inventory-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .inventory-image {
+        width: 100%;
+        height: 200px;
+    }
+
+    .inventory-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+/* Prevent horizontal scroll */
+body {
+    overflow-x: hidden;
+}
+</style>
+
+{% endblock %}

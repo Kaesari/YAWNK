@@ -1,70 +1,788 @@
-<h2>{{ product.name }}</h2>
-<p>Ksh {{ product.price }}</p>
-<p>Category: {{ product.category }}</p>
-<p>Size: {{ product.size }}</p>
-<p>Condition: {{ product.condition }}</p>
-<p>Seller: <a href="{% url 'accounts:public_profile' username=product.seller.username %}">{{ product.seller.username }}</a></p>
-<img src="{{ product.image.url }}" width="300"><br>
+{% extends 'shared/base.html' %}
+{% load static %}
 
-{% for image in product.images.all %}
-    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" width="150">
-{% empty %}
-    <p>No extra images</p>
-{% endfor %}
+{% block title %}{{ product.name }} - Yawnk{% endblock %}
 
+{% block content %}
+<main class="product-detail-page">
+    <div class="container">
+        <div class="row mt-4 mb-5">
+            <!-- LEFT COLUMN: Gallery -->
+            <div class="col-lg-7 col-md-6 col-12">
+                <div class="product-gallery">
+                    <!-- Main Image -->
+                    <div class="main-image-container">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="main-product-image" id="mainImage">
+                    </div>
+                    
+                    <!-- Thumbnail Gallery -->
+                    <div class="thumbnail-gallery">
+                        <!-- Main image thumbnail -->
+                        <div class="thumbnail-item active" onclick="changeImage('{{ product.image.url }}', this)">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        </div>
+                        
+                        <!-- Additional images -->
+                        {% for image in product.images.all %}
+                        <div class="thumbnail-item" onclick="changeImage('{{ image.image.url }}', this)">
+                            <img src="{{ image.image.url }}" alt="{{ image.alt_text }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RIGHT COLUMN: Product Details & Actions -->
+            <div class="col-lg-5 col-md-6 col-12">
+                <div class="product-info-container">
+                    <!-- Product Title & Price -->
+                    <div class="product-header">
+                        <h2 class="product-title">{{ product.name }}</h2>
+                        <div class="product-price">Ksh {{ product.price }}</div>
+                        <div class="product-meta">
+                            Size {{ product.size }} • {{ product.condition }}
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="#" class="btn-buy-now">Buy now</a>
+                        <button class="btn-add-bag" onclick="alert('Added to bag!')">Add to bag</button>
+                        <a href="{% url 'start_chat' product.id %}" class="link-message-seller">
+                            <i class="bi bi-chat-dots me-1"></i>Message seller for bundles
+                        </a>
+                    </div>
+                    
+                    <!-- Seller Card -->
+                    <div class="seller-card">
+                        <a href="{% url 'accounts:user_profile' username=product.seller.username %}" class="seller-card-link">
+                            <div class="seller-avatar">
+                                {% if product.seller.profile_picture %}
+                                    <img src="{{ product.seller.profile_picture.url }}" alt="{{ product.seller.username }}" class="user-avatar">
+                                {% else %}
+                                    <img src="{% static 'assets/images/added/user-profile.png' %}" alt="{{ product.seller.username }}" class="user-avatar">
+                                {% endif %}
+                            </div>
+                            <div class="seller-info">
+                                <div class="seller-username">{{ product.seller.username }}</div>
+                                <div class="seller-rating">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>4.8 (120 reviews)</span>
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right seller-arrow"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Product Description -->
+                    <div class="product-description">
+                        <h5>Description</h5>
+                        <p>{{ product.description }}</p>
+                        
+                        <div class="product-details-grid">
+                            <div class="detail-row">
+                                <span class="detail-label">Category</span>
+                                <span class="detail-value">{{ product.category }}</span>
+                            </div>
+                            {% if product.brand %}
+                            <div class="detail-row">
+                                <span class="detail-label">Brand</span>
+                                <span class="detail-value">{{ product.brand }}</span>
+                            </div>
+                            {% endif %}
+                            {% if product.color %}
+                            <div class="detail-row">
+                                <span class="detail-label">Color</span>
+                                <span class="detail-value">{{ product.color }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="detail-row">
+                                <span class="detail-label">Target</span>
+                                <span class="detail-value">{{ product.target }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reviews Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="reviews-section">
+                    <h3 class="reviews-title">Reviews ({{ reviews.count }})</h3>
+                    
+                    <div class="reviews-list">
+                        {% for review in reviews %}
+                        <div class="review-item">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <strong class="reviewer-name">{{ review.reviewer.username }}</strong>
+                                    <div class="review-rating">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="bi bi-star-fill"></i>
+                                            {% else %}
+                                                <i class="bi bi-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <span class="review-date">{{ review.timestamp|date:"M d, Y" }}</span>
+                            </div>
+                            <p class="review-comment">{{ review.comment }}</p>
+                            
+                            {% if review.seller_response %}
+                            <div class="seller-response">
+                                <strong>Seller's Response:</strong>
+                                <p>{{ review.seller_response }}</p>
+                            </div>
+                            {% endif %}
+                            
+                            {% if user.is_authenticated and user == product.seller and not review.seller_response %}
+                            <form method="POST" class="seller-response-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="review_id" value="{{ review.id }}">
+                                {{ seller_response_form.seller_response }}
+                                <button type="submit" class="btn-respond">Respond</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <p class="no-reviews">No reviews yet. Be the first to review this item!</p>
+                        {% endfor %}
+                    </div>
+                    
+                    <!-- Leave a Review (Only if user is eligible) -->
+                    {% if user.is_authenticated and user != product.seller %}
+                        {% if review_form %}
+                        <div class="leave-review-section">
+                            <h4>{% if review_form.instance.pk %}Edit Your Review{% else %}Leave a Review{% endif %}</h4>
+                            <form method="POST" class="review-form">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Rating</label>
+                                    {{ review_form.rating }}
+                                </div>
+                                <div class="form-group">
+                                    <label>Comment</label>
+                                    {{ review_form.comment }}
+                                </div>
+                                <button type="submit" class="btn-submit-review">
+                                    {% if review_form.instance.pk %}Update Review{% else %}Submit Review{% endif %}
+                                </button>
+                                
+                                {% if review_form.instance.pk %}
+                                <form method="POST" action="{% url 'delete_review' product.id %}" style="display: inline-block; margin-left: 10px;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-delete-review" onclick="return confirm('Delete your review?');">
+                                        <i class="bi bi-trash"></i> Delete Review
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </form>
+                        </div>
+                        {% else %}
+                        <p class="review-eligibility-note">
+                            <i class="bi bi-info-circle"></i> 
+                            Only verified buyers who've chatted with the seller can leave a review.
+                        </p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Back Link -->
+        <div class="row mt-4 mb-5">
+            <div class="col-12">
+                <a href="{% url 'product_list' %}" class="back-link">
+                    <i class="bi bi-arrow-left me-2"></i>Back to All Products
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
 
-<hr>
-<h3>Reviews ({{ reviews.count }})</h3>
-
-{% for review in reviews %}
-    <p><strong>{{ review.reviewer.username }}</strong> — {{ review.rating }}★</p>
-    <p>{{ review.comment }}</p>
-
-    {% if review.seller_response %}
-        <p><strong>Seller's Response:</strong> {{ review.seller_response }}</p>
-    {% endif %}
+<!-- JavaScript for Image Gallery -->
+<script>
+function changeImage(imageUrl, thumbnail) {
+    // Update main image
+    document.getElementById('mainImage').src = imageUrl;
     
-    {% if user.is_authenticated and user == product.seller %}
-        <h4>Respond to this Review</h4>
-        <form method="POST">
-            {% csrf_token %}
-            {{ seller_response_form.as_p }}
-            <button type="submit">Respond</button>
-        </form>
-    {% endif %}
-    <hr>
-{% empty %}
-    <p>No reviews yet.</p>    
-{% endfor %}
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    thumbnail.classList.add('active');
+}
+</script>
 
-{% if user.is_authenticated and user != product.seller %}
-    {% if review_form %}
-        <h4>{% if review_form.instance.pk %}Edit{% else %}Leave{% endif %} a Review</h4>
-        <form method="POST">
-            {% csrf_token %}
-            {{ review_form.as_p }}
-            <button type="submit">{% if review_form.instance.pk %}Update{% else %}Submit{% endif %}</button>
-        </form>
+<!-- CSS Styling -->
+<style>
+/* ========================================== */
+/* PRODUCT DETAIL PAGE - DEPOP STYLE */
+/* ========================================== */
 
-        <br>
-        {% if review_form.instance.pk %}
-            <form method="POST" action="{% url 'delete_review' product.id %}">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('Delete your review?');">🗑️ Delete Review</button>
-            </form>
-        {% endif %}
-    {% else %}
-        <p><em>Only verified buyers who’ve chatted with the seller can leave a review.</em></p>
-    {% endif %}
-{% endif %}
+.product-detail-page {
+    background: #fafafa;
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 40px;
+}
 
+/* ========================================== */
+/* LEFT COLUMN: GALLERY */
+/* ========================================== */
 
-<!-- {% if review_form.instance.pk %}
-    <form method="POST" action="{% url 'delete_review' product.id %}" style="margin-top: 10px;">
-        {% csrf_token %}
-        <button type="submit" onclick="return confirm('Delete your review?');">🗑️ Delete Review</button>
-    </form>
-{% endif %} -->
+.product-gallery {
+    position: sticky;
+    top: 100px;
+}
 
+.main-image-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
 
-<a href="{% url 'product_list' %}">← Back to All Products</a>
+.main-product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: zoom-in;
+}
+
+.thumbnail-gallery {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.thumbnail-item {
+    width: 80px;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.thumbnail-item:hover {
+    border-color: #D72539;
+}
+
+.thumbnail-item.active {
+    border-color: #000;
+}
+
+.thumbnail-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ========================================== */
+/* RIGHT COLUMN: PRODUCT INFO */
+/* ========================================== */
+
+.product-info-container {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.product-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.product-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    line-height: 1.3;
+}
+
+.product-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.product-meta {
+    font-size: 15px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ========================================== */
+/* ACTION BUTTONS */
+/* ========================================== */
+
+.action-buttons {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-buy-now {
+    width: 100%;
+    padding: 16px 24px;
+    background: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+
+.btn-buy-now:hover {
+    background: #333;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-add-bag {
+    width: 100%;
+    padding: 16px 24px;
+    background: white;
+    color: #000;
+    border: 2px solid #000;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-bag:hover {
+    background: #f5f5f5;
+}
+
+.link-message-seller {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 8px;
+    transition: color 0.2s ease;
+}
+
+.link-message-seller:hover {
+    color: #D72539;
+}
+
+/* ========================================== */
+/* SELLER CARD */
+/* ========================================== */
+
+.seller-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 30px;
+    transition: all 0.2s ease;
+}
+
+.seller-card:hover {
+    background: #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.seller-card-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.seller-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.seller-avatar .user-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.seller-info {
+    flex: 1;
+}
+
+.seller-username {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.seller-rating {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.seller-rating i {
+    color: #ffa500;
+}
+
+.seller-arrow {
+    color: #999;
+    font-size: 18px;
+}
+
+/* ========================================== */
+/* PRODUCT DESCRIPTION */
+/* ========================================== */
+
+.product-description {
+    margin-top: 20px;
+}
+
+.product-description h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.product-description p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.product-details-grid {
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.detail-value {
+    font-size: 14px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* ========================================== */
+/* REVIEWS SECTION */
+/* ========================================== */
+
+.reviews-section {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-top: 40px;
+}
+
+.reviews-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+}
+
+.reviews-list {
+    margin-bottom: 30px;
+}
+
+.review-item {
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.review-item:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reviewer-name {
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+.review-rating {
+    color: #ffa500;
+    font-size: 14px;
+}
+
+.review-date {
+    font-size: 13px;
+    color: #999;
+}
+
+.review-comment {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #555;
+    margin: 0;
+}
+
+.seller-response {
+    background: #f9f9f9;
+    border-left: 3px solid #D72539;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 4px;
+}
+
+.seller-response strong {
+    color: #D72539;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.seller-response p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.no-reviews {
+    text-align: center;
+    color: #999;
+    font-size: 15px;
+    padding: 40px 0;
+}
+
+/* Review Forms */
+.leave-review-section {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+.leave-review-section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.review-form .form-group {
+    margin-bottom: 20px;
+}
+
+.review-form label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.review-form textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.btn-submit-review {
+    padding: 12px 24px;
+    background: #D72539;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-submit-review:hover {
+    background: #b81d2e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(215, 37, 57, 0.3);
+}
+
+.btn-delete-review {
+    padding: 12px 24px;
+    background: white;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-review:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.review-eligibility-note {
+    background: #f0f8ff;
+    border-left: 3px solid #3498db;
+    padding: 15px;
+    border-radius: 4px;
+    color: #555;
+    font-size: 14px;
+    margin-top: 20px;
+}
+
+.review-eligibility-note i {
+    color: #3498db;
+    margin-right: 5px;
+}
+
+.seller-response-form {
+    margin-top: 15px;
+}
+
+.seller-response-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 10px;
+}
+
+.btn-respond {
+    padding: 8px 16px;
+    background: #D72539;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-respond:hover {
+    background: #b81d2e;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: #D72539;
+}
+
+/* ========================================== */
+/* MOBILE RESPONSIVE */
+/* ========================================== */
+
+@media (max-width: 768px) {
+    .product-detail-page {
+        padding-top: 10px;
+    }
+    
+    .product-gallery {
+        position: relative;
+        top: 0;
+        margin-bottom: 20px;
+    }
+    
+    .product-info-container {
+        padding: 20px;
+    }
+    
+    .product-title {
+        font-size: 22px;
+    }
+    
+    .product-price {
+        font-size: 26px;
+    }
+    
+    .thumbnail-gallery {
+        gap: 8px;
+    }
+    
+    .thumbnail-item {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .reviews-section {
+        padding: 20px;
+    }
+    
+    .reviews-title {
+        font-size: 20px;
+    }
+}
+</style>
+
+{% endblock %}

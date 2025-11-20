@@ -30,43 +30,41 @@ def create_product(request):
     
     allProducts = Product.objects.order_by('-date_posted')
 
-    # Define formset for product images
-    ImageFormSet = modelformset_factory(ProductImage, form=ProductImageForm, extra=4)
-
     if request.method == 'POST':
-        # Handle product form and image formset submission
+        # Handle product form submission
         product_form = ProductForm(request.POST, request.FILES)
-        image_formset = ImageFormSet(request.POST, request.FILES, queryset=ProductImage.objects.none())
 
-        if product_form.is_valid() and image_formset.is_valid():
+        if product_form.is_valid():
             # Save product
             product = product_form.save(commit=False)
             product.seller = request.user
             product.save()
 
-            # Save images
-            for form in image_formset:
-                image = form.cleaned_data.get('image')
-                if image:
-                    ProductImage.objects.create(
-                        product=product,
-                        image=image,
-                        alt_text=form.cleaned_data.get('alt_text') or "Fashion product image"
-                    )
+            # Handle additional images from the multiple file input
+            additional_images = request.FILES.getlist('additional_images')
+            print(f"✓ Received {len(additional_images)} additional image(s)")
+            
+            for image_file in additional_images:
+                print(f"  - Saving: {image_file.name}")
+                ProductImage.objects.create(
+                    product=product,
+                    image=image_file,
+                    alt_text=f"Product image - {image_file.name}"
+                )
 
-            return redirect('product_detail', product_id=product.id)
-
-        print("Product form errors:", product_form.errors)
-        print("Image formset errors:", image_formset.errors)
+            messages.success(request, f'✓ Product "{product.name}" listed successfully!')
+            # Redirect to Seller Dashboard so user stays anchored in their hub
+            return redirect('seller:dashboard')
+        else:
+            print("❌ Product form errors:", product_form.errors)
+            messages.error(request, 'Please fix the errors below.')
 
     else:
         product_form = ProductForm()
-        image_formset = ImageFormSet(queryset=ProductImage.objects.none())  # Create empty formset for new product
 
     return render(request, 'pages/create_product.html', {
         'form': product_form,
         'allProducts': allProducts,
-        'product_image_formset': image_formset,
     })
 
 @login_required
